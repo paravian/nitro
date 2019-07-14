@@ -13,19 +13,19 @@ tntTreeParse <- function (tnt.output, tip.labels) {
     scores.match <- regexec("Tree lengths ", tnt.output[linum])
     minsteps.match <- regexec("Minimum possible steps \\(total = ([0-9]+)\\) ", tnt.output[linum])
     maxsteps.match <- regexec("Maximum possible steps \\(total = ([0-9]+)\\) ", tnt.output[linum])
-    if(attr(tread.match[[1]], "match.length") > -1) {
+    if(attr(tread.match[[1]], "match.length")[1] > -1) {
       n.mpt <- as.numeric(regmatches(tnt.output[linum], tread.match)[[1]][2])
       mpt.str <- tail(tnt.output, -linum) %>%
         head(n.mpt)
       linum <- linum + n.mpt
     }
-    if(attr(minsteps.match[[1]], "match.length") > -1) {
+    if(attr(minsteps.match[[1]], "match.length")[1] > -1) {
       minsteps <- as.numeric(regmatches(tnt.output[linum], minsteps.match)[[1]][2])
     }
-    if(attr(maxsteps.match[[1]], "match.length") > -1) {
+    if(attr(maxsteps.match[[1]], "match.length")[1] > -1) {
       maxsteps <- as.numeric(regmatches(tnt.output[linum], maxsteps.match)[[1]][2])
     }
-    if(attr(scores.match[[1]], "match.length") > -1) {
+    if(attr(scores.match[[1]], "match.length")[1] > -1) {
       scores <- tail(tnt.output, -(linum + 3)) %>%
         head(ceiling(n.mpt/10)) %>%
         gsub("^\r +[0-9]+ +", "", .) %>%
@@ -36,7 +36,7 @@ tntTreeParse <- function (tnt.output, tip.labels) {
       stop(sub("\a", "", tnt.output[linum - 1]))
     }
   }
-  #tnt.output <- tail(tnt.output, -linum) %>% head(mpts)
+
   trees <- apply(cbind(mpt.str, scores), 1, function (tree.data) {
     newick <- gsub(" [*;] +", ";", tree.data[1]) %>%
       gsub(" ", ",", .) %>%
