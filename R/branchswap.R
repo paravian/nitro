@@ -47,6 +47,6 @@ branchswap <- function (tnt.path, matrix, hold=100, outgroup=NULL, replications=
 
   tnt.cmds <- c(tnt.cmds, c(paste("mult= replic", replications, "hold", hold, paste0(ifelse(keepall, "", "no"), "keepall"), ";")))
   output <- runTnt(tnt.path, matrix, tnt.cmds)
-  trees <- tntTeeParse(output, rownames(matrix))
+  trees <- tntTreeParse(output, rownames(matrix))
   return(trees)
 }
