@@ -47,7 +47,7 @@ ratchet <- function(tnt.path, matrix, hold=100, outgroup=NULL, iterations=50, re
                      list(paste("mult= wagner replic 10;"),
                           paste("ratchet= iter", iterations, "numsubs", replacements, "upfactor", prob.up, "downfact", prob.down, ";")
                      ))
-  output <- runTnt(tnt.path, tnt.matrix, tnt.cmds)
-  trees <- treeParse(output, names(tnt.matrix))
+  output <- runTnt(tnt.path, matrix, tnt.cmds)
+  trees <- tntTreeParse(output, names(matrix))
   return(trees)
 }
