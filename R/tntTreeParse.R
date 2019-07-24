@@ -28,11 +28,11 @@ tntTreeParse <- function (tnt.output, tip.labels) {
     if(attr(scores.match[[1]], "match.length")[1] > -1) {
       scores <- tail(tnt.output, -(linum + 3)) %>%
         head(ceiling(n.mpt/10)) %>%
-        gsub("^\r +[0-9]+ +", "", .) %>%
+        gsub("^ +[0-9]+ +", "", .) %>%
         strsplit(" +") %>%
         unlist
     }
-    if(length(grep("\rError reading .*", tnt.output[linum]))) {
+    if(length(grep("Error reading .*", tnt.output[linum]))) {
       stop(sub("\a", "", tnt.output[linum - 1]))
     }
   }
