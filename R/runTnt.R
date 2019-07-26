@@ -13,8 +13,9 @@ runTnt <- function (tnt.path, matrix, cmds) {
   write.nexus.data(tnt.matrix, file=tnt.tempfile, interleaved = FALSE,
                    format = "standard")
 
-  tnt.block <- paste(c("BEGIN TNT;", "log stdout;", cmds, "tplot *;",
-                       "length;", "minmax;", "END;"), collapse = "\n")
+  tnt.block <- paste(c("BEGIN TNT;", "log stdout;", "tables =;", cmds,
+                       "tplot *;", "length;", "minmax;", "END;"),
+                     collapse = "\n")
 
   write(tnt.block, file=tnt.tempfile, append=TRUE)
 
