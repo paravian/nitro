@@ -19,7 +19,17 @@ runTnt <- function (tnt.path, matrix, cmds) {
 
   write(tnt.block, file=tnt.tempfile, append=TRUE)
 
-  output <- system2(normalizePath(tnt.path), stdout = TRUE, stderr = FALSE,
-                    input=paste0("proc ", tnt.tempfile, ";"))
+  platform <- tolower(.Platform$OS.type)
+
+  if (platform == "windows") {
+    output <- system2(normalizePath(tnt.path),
+                      args = paste0("proc ", tnt.tempfile, ";"),
+                      stdout = TRUE, stderr = FALSE)
+  } else if (platform == "unix") {
+    output <- system2(normalizePath(tnt.path), stdout = TRUE, stderr = FALSE,
+                      input=paste0("proc ", tnt.tempfile, ";"))
+  } else {
+    stop("This platform is unsupported by TNT!")
+  }
   return(output)
 }
