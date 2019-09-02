@@ -8,7 +8,7 @@
 #' @param k The concavity constant to apply..
 #' @param extended Use extensions to implied weighting
 #' @export
-impliedWeights <- function(tnt.path, tnt.params, run.now=TRUE, k=3,
+impliedWeights <- function(tnt.path, matrix, tnt.params, run.now=TRUE, k=3,
                            multi.k=FALSE) {
   if (is.numeric(k) == FALSE | length(k) != 1) {
     stop("'k' must be an integer")
