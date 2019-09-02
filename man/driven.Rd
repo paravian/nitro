@@ -2,13 +2,13 @@
 % Please edit documentation in R/driven.R
 \name{driven}
 \alias{driven}
-\title{Phylogenetic analysis using branch swapping}
+\title{Phylogenetic analysis using driven (or "New Technology") search}
 \usage{
-driven(tnt.path, matrix, hold = 100, outgroup = NULL, hits = 1,
-  replications = 4, autoconstrain = "wagner", rss = TRUE,
-  css = FALSE, xss = FALSE, ratchet.cycles = NULL,
-  drifting.cycles = 30, hybridization = FALSE, fusing.rounds = NULL,
-  consense.times = NULL, multiply = FALSE, hold.rep = 1,
+driven(tnt.path, matrix, run.now = TRUE, collapse = 3, hold = 100,
+  outgroup = NULL, hits = 1, replications = 4, hold.rep = 1,
+  autoconstrain = "wagner", rss = TRUE, css = FALSE, xss = FALSE,
+  ratchet.cycles = 0, drifting.cycles = 30, hybridization = FALSE,
+  fusing.rounds = 0, consense.times = 0, multiply = FALSE,
   keepall = FALSE)
 }
 \arguments{
@@ -16,13 +16,21 @@ driven(tnt.path, matrix, hold = 100, outgroup = NULL, hits = 1,
 
 \item{matrix}{A \code{phyDat} object of the matrix.}
 
+\item{run.now}{Logical; perform a phylogenetic analysis straight away or save
+commands for use in other methods}
+
 \item{hold}{The maximum number of trees to allow TNT to hold in memory.}
 
-\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default, the first taxon in the matrix is considered the outgroup.}
+\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
+the first taxon in the matrix is considered the outgroup.}
 
-\item{hits}{The number of times to reach the shortest tree for each replication.}
+\item{hits}{The number of times to reach the shortest tree for each
+replication.}
 
 \item{replications}{The number of replications.}
+
+\item{hold.rep}{The maximum number of trees to retain during each
+replication.}
 
 \item{rss, css, xss}{Use random, constraint or exclusive sectorial searches.}
 
@@ -32,20 +40,24 @@ driven(tnt.path, matrix, hold = 100, outgroup = NULL, hits = 1,
 
 \item{fusing.rounds}{The number of rounds of fusing.}
 
-\item{consense.times}{Number of times to consense until the consensus is stablilised.}
+\item{consense.times}{Number of times to consense until the consensus is
+stablilised.}
 
-\item{multiply}{After hitting target score, find additional trees by fusing suboptimal with optimal trees}
+\item{multiply}{After hitting target score, find additional trees by fusing
+suboptimal with optimal trees}
 
-\item{hold.rep}{The maximum number of trees to retain during each replication.}
-
-\item{keepall}{Retain all generated trees from each replication regardless of length. This has a different
-meaning when \code{hits} = 1 and when \code{hits} > 1. When \code{hits} = 1, it is trees from each of the
-RAS + TBR +  SS or DFT or RAT, in addition to the trees resulting from fusing those.  When \code{hits} > 1,
-then it means the trees resulting from fusing the initial starting trees for each of starting points.}
+\item{keepall}{Retain all generated trees from each replication regardless of
+length. This has a different meaning when \code{hits} = 1 and when
+\code{hits} > 1. When \code{hits} = 1, it is trees from each of the RAS +
+TBR +  SS or DFT or RAT, in addition to the trees resulting from fusing
+those.  When \code{hits} > 1, then it means the trees resulting from fusing
+the initial starting trees for each of starting points.}
 }
 \value{
-A \code{multiPhylo} object.
+A list containing the search parameters and TNT command string and,
+  if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
+  found from the search commands.
 }
 \description{
-Phylogenetic analysis using branch swapping
+Phylogenetic analysis using driven (or "New Technology") search
 }

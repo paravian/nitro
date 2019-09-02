@@ -4,21 +4,28 @@
 \alias{ratchet}
 \title{Phylogenetic analysis using the parsimony ratchet}
 \usage{
-ratchet(tnt.path, matrix, hold = 100, outgroup = NULL,
-  iterations = 50, replacements = 40, prob.up = 4, prob.down = 4)
+ratchet(tnt.path, matrix, run.now = TRUE, hold = 100, collapse = 3,
+  outgroup = NULL, iterations = 50, replacements = 40, prob.up = 4,
+  prob.down = 4)
 }
 \arguments{
 \item{tnt.path}{The location of the TNT command-line binary.}
 
 \item{matrix}{A \code{phyDat} object of the matrix.}
 
-\item{hold}{The maximum number of trees to allow TNT to hold in memory (typically \code{replications} * \code{hold.rep}).}
+\item{run.now}{Logical; perform a phylogenetic analysis straight away or save
+commands for use in other methods}
 
-\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default, the first taxon in the matrix is considered the outgroup.}
+\item{hold}{The maximum number of trees to allow TNT to hold in memory
+(typically \code{replications} * \code{hold.rep}).}
+
+\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
+the first taxon in the matrix is considered the outgroup.}
 
 \item{iterations}{The number of iterations.}
 
-\item{replacements}{The number of replacements (i.e., accepted tree rearrangements) to perform in each perturbation phase.}
+\item{replacements}{The number of replacements (i.e., accepted tree
+rearrangements) to perform in each perturbation phase.}
 
 \item{prob.up}{The probability of upweighting a character.}
 
