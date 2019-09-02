@@ -7,6 +7,7 @@
 #'   commands for use in other methods
 #' @param k The concavity constant to apply..
 #' @param extended Use extensions to implied weighting
+#' @export
 impliedWeights <- function(tnt.path, tnt.params, run.now=TRUE, k=3,
                            multi.k=FALSE) {
   if (is.numeric(k) == FALSE | length(k) != 1) {
