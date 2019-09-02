@@ -31,7 +31,7 @@ mpts <- branchswap(tnt.path, matrix)
 cons <- consensus(mpts)
 plot(cons)
 ```
-
+  
 Presently, `nitro` supports performing branch swapping, parsimony ratchet and "new technology" searches (using the commands `branchswap`, `ratchet`, and `driven` respectively). A subset of the most relevant options for each method are exposed for their respective functions; see the documentation of each command for more details.
 
 Each tree search command returns a `multiPhylo` object containing all trees found. Additionally, `nitro` automatically calculates the consistency, retention and rescaled consistency indices for all trees.
@@ -41,7 +41,7 @@ Each tree search command returns a `multiPhylo` object containing all trees foun
 These features are currently not present in `nitro` but are planned for future inclusion:
 
 * Exclusion of taxa/characters
-* Specifying additive (ordered) characters
-* Running (extended) implied weighting analyses
+* ~~Specifying additive (ordered) characters~~
+* ~~Running (extended) implied weighting analyses~~
 * Calculation of support statistics (e.g., bootstrap, jackknife, symmetric resampling, Bremer support)
 * Specifying constraints on monophyly
