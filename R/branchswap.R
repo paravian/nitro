@@ -2,16 +2,24 @@
 #'
 #' @param tnt.path The location of the TNT command-line binary.
 #' @param matrix A \code{phyDat} object of the matrix.
-#' @param hold The maximum number of trees to allow TNT to hold in memory (typically \code{replications} * \code{hold.rep}).
-#' @param outgroup The outgroup taxon for the phylogenetic analysis. By default, the first taxon in the matrix is considered the outgroup.
+#' @param run.now Logical; perform a phylogenetic analysis straight away or save
+#'   commands for use in other methods
+#' @param hold The maximum number of trees to allow TNT to hold in memory
+#'   (typically \code{replications} * \code{hold.rep}).
+#' @param outgroup The outgroup taxon for the phylogenetic analysis. By default,
+#'   the first taxon in the matrix is considered the outgroup.
 #' @param replications The number of branch swapping replications.
-#' @param hold.rep The maximum number of trees to retain during each replication.
-#' @param keepall Retain all generated trees from each replication regardless of length.
-#' @return A \code{multiPhylo} object.
+#' @param hold.rep The maximum number of trees to retain during each
+#'   replication.
+#' @param keepall Retain all generated trees from each replication regardless of
+#'   length.
+#' @return A list containing the search parameters and TNT command string and,
+#'   if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
+#'   found from the search commands.
 #' @export
-branchswap <- function (tnt.path, matrix, hold=100, outgroup=NULL, replications=10, hold.rep=10, keepall=FALSE) {
-  tnt.cmds <- c(paste("hold", hold, ";"))
-
+branchswap <- function (tnt.path, matrix, run.now = TRUE, hold=100,
+                        outgroup=NULL, replications=10, hold.rep=10,
+                        keepall=FALSE) {
   # Validate command arguments
   if (file_test("-f", tnt.path) == FALSE) {
     stop("'tnt.path' does not exist")
@@ -24,7 +32,8 @@ branchswap <- function (tnt.path, matrix, hold=100, outgroup=NULL, replications=
   } else if (hold %% 1 != 0 | hold <= 0) {
     stop("'hold' must be an integer > 0")
   }
-  if ((is.null(outgroup) == TRUE | is.character(outgroup) == TRUE) == FALSE & length(outgroup) != 1) {
+  if ((is.null(outgroup) == TRUE | is.character(outgroup) == TRUE) == FALSE &
+      length(outgroup) != 1) {
     stop("'outgroup' must be a character")
   }
   if (is.numeric(replications) == FALSE | length(replications) != 1) {
@@ -41,12 +50,17 @@ branchswap <- function (tnt.path, matrix, hold=100, outgroup=NULL, replications=
     stop("'keepall' must be logical")
   }
 
-  if (!is.null(outgroup)) {
-    tnt.cmds <- c(tnt.cmds, paste("outgroup", outgroup, ";"))
-  }
+  tnt.params <- list(hold = hold, outgroup = outgroup,
+                     replications = replications)
 
-  tnt.cmds <- c(tnt.cmds, c(paste("mult= replic", replications, "hold", hold, paste0(ifelse(keepall, "", "no"), "keepall"), ";")))
-  output <- runTnt(tnt.path, matrix, tnt.cmds)
-  trees <- tntTreeParse(output, names(matrix))
-  return(trees)
+  tnt.params$cmd <- c(paste("mult= replic", replications, "hold", hold,
+                            ifelse(keepall, "keepall", "nokeepall"), ";"))
+
+  if (run.now) {
+    output <- runTnt(tnt.path, matrix, tnt.params)
+    trees <- tntTreeParse(output, names(matrix))
+    return(list(tnt.params = tnt.params, trees = trees))
+  } else {
+    return(list(tnt.params = tnt.params))
+  }
 }
