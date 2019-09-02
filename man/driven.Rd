@@ -19,6 +19,18 @@ driven(tnt.path, matrix, run.now = TRUE, collapse = 3, hold = 100,
 \item{run.now}{Logical; perform a phylogenetic analysis straight away or save
 commands for use in other methods}
 
+\item{collapse}{Set rule for collapsing of zero length branches. The options
+are:
+\itemize{
+\item \code{1}: collapse an interior branch of the maximum possible length of the
+branch is zero
+\item \code{2}: keep zero length branches if ancestor and descendent states
+differ
+\item \code{3}: collapse an interior branch if the minimum possible length of the
+branch is zero
+\item \code{4}: discard all trees that must contain a zero length branch
+}}
+
 \item{hold}{The maximum number of trees to allow TNT to hold in memory.}
 
 \item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,

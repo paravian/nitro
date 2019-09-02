@@ -19,6 +19,18 @@ commands for use in other methods}
 \item{hold}{The maximum number of trees to allow TNT to hold in memory
 (typically \code{replications} * \code{hold.rep}).}
 
+\item{collapse}{Set rule for collapsing of zero length branches. The options
+are:
+\itemize{
+\item \code{1}: collapse an interior branch of the maximum possible length of the
+branch is zero
+\item \code{2}: keep zero length branches if ancestor and descendent states
+differ
+\item \code{3}: collapse an interior branch if the minimum possible length of the
+branch is zero
+\item \code{4}: discard all trees that must contain a zero length branch
+}}
+
 \item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
 the first taxon in the matrix is considered the outgroup.}
 
@@ -32,7 +44,9 @@ rearrangements) to perform in each perturbation phase.}
 \item{prob.down}{The probability of downweighting a character.}
 }
 \value{
-A \code{multiPhylo} object.
+A list containing the search parameters and TNT command string and,
+  if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
+  found from the search commands.
 }
 \description{
 Phylogenetic analysis using the parsimony ratchet

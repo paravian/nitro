@@ -43,7 +43,9 @@ replication.}
 length.}
 }
 \value{
-A \code{multiPhylo} object.
+A list containing the search parameters and TNT command string and,
+  if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
+  found from the search commands.
 }
 \description{
 Phylogenetic analysis using branch swapping
