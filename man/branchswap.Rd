@@ -4,23 +4,43 @@
 \alias{branchswap}
 \title{Phylogenetic analysis using branch swapping}
 \usage{
-branchswap(tnt.path, matrix, hold = 100, outgroup = NULL,
-  replications = 10, hold.rep = 10, keepall = FALSE)
+branchswap(tnt.path, matrix, run.now = TRUE, collapse = 3,
+  hold = 100, outgroup = NULL, replications = 10, hold.rep = 10,
+  keepall = FALSE)
 }
 \arguments{
 \item{tnt.path}{The location of the TNT command-line binary.}
 
 \item{matrix}{A \code{phyDat} object of the matrix.}
 
-\item{hold}{The maximum number of trees to allow TNT to hold in memory (typically \code{replications} * \code{hold.rep}).}
+\item{run.now}{Logical; perform a phylogenetic analysis straight away or save
+commands for use in other methods}
 
-\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default, the first taxon in the matrix is considered the outgroup.}
+\item{collapse}{Set rule for collapsing of zero length branches. The options
+are:
+\itemize{
+\item \code{1}: collapse an interior branch of the maximum possible length of the
+branch is zero
+\item \code{2}: keep zero length branches if ancestor and descendent states
+differ
+\item \code{3}: collapse an interior branch if the minimum possible length of the
+branch is zero
+\item \code{4}: discard all trees that must contain a zero length branch
+}}
+
+\item{hold}{The maximum number of trees to allow TNT to hold in memory
+(typically \code{replications} * \code{hold.rep}).}
+
+\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
+the first taxon in the matrix is considered the outgroup.}
 
 \item{replications}{The number of branch swapping replications.}
 
-\item{hold.rep}{The maximum number of trees to retain during each replication.}
+\item{hold.rep}{The maximum number of trees to retain during each
+replication.}
 
-\item{keepall}{Retain all generated trees from each replication regardless of length.}
+\item{keepall}{Retain all generated trees from each replication regardless of
+length.}
 }
 \value{
 A \code{multiPhylo} object.
