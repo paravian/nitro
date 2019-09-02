@@ -4,6 +4,17 @@
 #' @param matrix A \code{phyDat} object of the matrix.
 #' @param run.now Logical; perform a phylogenetic analysis straight away or save
 #'   commands for use in other methods
+#' @param collapse Set rule for collapsing of zero length branches. The options
+#'   are:
+#'   \itemize{
+#'   \item \code{1}: collapse an interior branch of the maximum possible length of the
+#'   branch is zero
+#'   \item \code{2}: keep zero length branches if ancestor and descendent states
+#'   differ
+#'   \item \code{3}: collapse an interior branch if the minimum possible length of the
+#'   branch is zero
+#'   \item \code{4}: discard all trees that must contain a zero length branch
+#'   }
 #' @param hold The maximum number of trees to allow TNT to hold in memory
 #'   (typically \code{replications} * \code{hold.rep}).
 #' @param outgroup The outgroup taxon for the phylogenetic analysis. By default,
@@ -17,8 +28,9 @@
 #'   if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
 #'   found from the search commands.
 #' @export
-ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, outgroup=NULL,
-                    iterations=50, replacements=40, prob.up=4, prob.down=4) {
+ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
+                    outgroup=NULL, iterations=50, replacements=40, prob.up=4,
+                    prob.down=4) {
   if (file_test("-f", tnt.path) == FALSE) {
     stop("'tnt.path' does not exist")
   }
@@ -29,6 +41,13 @@ ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, outgroup=NULL,
     stop("'hold' must be an integer")
   } else if (hold %% 1 != 0 | hold <= 0) {
     stop("'hold' must be an integer > 0")
+  }
+  if (is.numeric(collapse) == FALSE | length(collapse) != 1) {
+    stop("'collapse' must be an integer")
+  } else {
+    if (!collapse %in% 1:4) {
+      stop("'collapse' must be an integer between 1 and 4")
+    }
   }
   if ((is.null(outgroup) == TRUE | is.integer(outgroup) == TRUE) == FALSE &
       length(outgroup) != 1) {
