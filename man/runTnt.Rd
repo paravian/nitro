@@ -18,11 +18,10 @@ runTnt(tnt.path, matrix, tnt.params, timeout = 10000)
 \item{timeout}{Time after which to terminate a non-responsive TNT process
 (milliseconds).}
 
+\item{analysis}{The parameters for an analysis as specified from the output
+of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.}
+
 \item{tnt.path}{The location of the TNT command line binary.}
-
-\item{matrix}{A \code{phyDat} object of the matrix.}
-
-\item{tnt.params}{A list of parameters for executing commands in TNT.}
 
 \item{timeout}{Time after which to terminate a non-responsive TNT process
 (milliseconds).}
