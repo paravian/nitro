@@ -10,30 +10,33 @@
 #' @param timeout Time after which to terminate a non-responsive TNT process
 #'   (milliseconds).
 #' @return A character vector of the output from TNT.
-runTnt <- function (tnt.path, matrix, tnt.params, timeout = 10000) {
+runTnt <- function (tnt.path, analysis, timeout = 10000) {
   tnt.tempfile <- tempfile("nitro", fileext = ".tnt")
-  tnt.matrix <- as.character(matrix)
+  tnt.matrix <- as.character(analysis$matrix)
 
   write.nexus.data(tnt.matrix, file=tnt.tempfile, interleaved = FALSE,
                    format = "standard")
 
-  tnt.cmds <- c(paste0("hold ", tnt.params$hold, ";"),
-                paste0("collapse ", tnt.params$collapse, ";"))
-  if (!is.null(tnt.params$outgroup)) {
-    tnt.cmds <- c(tnt.cmds, paste0("outgroup ", tnt.params$outgroup, ";"))
+  tnt.cmds <- c(paste0("hold ", analysis$tnt.params$hold, ";"),
+                paste0("collapse ", analysis$tnt.params$collapse, ";"))
+  if (!is.null(analysis$tnt.params$outgroup)) {
+    tnt.cmds <- c(tnt.cmds, paste0("outgroup ",
+                                   analysis$tnt.params$outgroup, ";"))
   }
-  if (!is.null(attr(matrix, "ordered"))) {
+  if (!is.null(attr(analysis$matrix, "ordered"))) {
     tnt.cmds <- c(tnt.cmds,
-                  paste0("ccode +", paste(which(attr(matrix, "ordered")), collapse = " "), ";"))
+                  paste0("ccode +", paste(which(attr(analysis$matrix,
+                                                     "ordered")),
+                                          collapse = " "), ";"))
   }
-  tnt.cmds <- c(tnt.cmds, tnt.params$cmd)
+  tnt.cmds <- c(tnt.cmds, analysis$tnt.params$cmd)
 
   tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))
 
-  if (!is.null(tnt.params$iw.cmd)) {
-    tnt.args <- c(tnt.params$iw.cmd, tnt.args)
-    if (!is.null(tnt.params$eiw.cmd)) {
-      tnt.cmds <- c(tnt.params$eiw.cmd, tnt.cmds)
+  if (!is.null(analysis$tnt.params$iw.cmd)) {
+    tnt.args <- c(analysis$tnt.params$iw.cmd, tnt.args)
+    if (!is.null(analysis$tnt.params$eiw.cmd)) {
+      tnt.cmds <- c(analysis$tnt.params$eiw.cmd, tnt.cmds)
     }
   }
 
