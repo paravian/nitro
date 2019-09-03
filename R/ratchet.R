@@ -72,11 +72,10 @@ ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
                             replacements, "upfactor", prob.up,
                             "downfact", prob.down, ";"))
 
+  analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, matrix, tnt.params)
-    trees <- tntTreeParse(output, names(matrix))
-    return(list(tnt.params = tnt.params, trees = trees))
-  } else {
-    return(list(tnt.params = tnt.params))
+    output <- runTnt(tnt.path, analysis)
+    analysis$trees <- tntTreeParse(output, names(matrix))
   }
+  return(analysis)
 }

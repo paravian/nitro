@@ -143,11 +143,10 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
                             ifelse(keepall, "keepall", "nokeepall"),
                             ";"))
 
+  analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, matrix, tnt.params)
-    trees <- tntTreeParse(output, names(matrix))
-    return(list(tnt.params = tnt.params, trees = trees))
-  } else {
-    return(list(tnt.params = tnt.params))
+    output <- runTnt(tnt.path, analysis)
+    analysis$trees <- tntTreeParse(output, names(matrix))
   }
+  return(analysis)
 }
