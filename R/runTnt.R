@@ -1,12 +1,11 @@
 #' Executes TNT commands
 #'
 #' @importFrom ape write.nexus.data
-#' @importFrom subprocess spawn_process process_read
 #' @description Executes commands on a supplied phylogenetic matrix in the TNT
 #'   command line binary.
 #' @param tnt.path The location of the TNT command line binary.
-#' @param matrix A \code{phyDat} object of the matrix.
-#' @param tnt.params A list of parameters for executing commands in TNT.
+#' @param analysis The parameters for an analysis as specified from the output
+#'   of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.
 #' @param timeout Time after which to terminate a non-responsive TNT process
 #'   (milliseconds).
 #' @return A character vector of the output from TNT.

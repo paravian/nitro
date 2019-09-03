@@ -4,13 +4,13 @@
 \alias{impliedWeights}
 \title{Run an analysus using implied weighting}
 \usage{
-impliedWeights(tnt.path, tnt.params, run.now = TRUE, k = 3,
+impliedWeights(tnt.path, analysis, run.now = TRUE, k = 3,
   multi.k = FALSE)
 }
 \arguments{
 \item{tnt.path}{The location of the TNT command-line binary.}
 
-\item{tnt.params}{The parameters for an analysis as specified from the output
+\item{analysis}{The parameters for an analysis as specified from the output
 of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.}
 
 \item{run.now}{Logical; perform a phylogenetic analysis straight away or save
