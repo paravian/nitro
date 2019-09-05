@@ -71,7 +71,7 @@ branchswap <- function (tnt.path, matrix, run.now = TRUE, collapse=3, hold=100,
   tnt.params <- list(collapse = collapse, hold = hold, outgroup = outgroup,
                      replications = replications)
 
-  tnt.params$cmd <- c(paste("mult= replic", replications, "hold", hold,
+  tnt.params$cmd <- c(paste("mult= replic", replications, "hold", hold.rep,
                             ifelse(keepall, "keepall", "nokeepall"), ";"))
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
