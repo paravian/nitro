@@ -32,16 +32,18 @@ runTnt <- function (tnt.path, analysis, timeout = 10000) {
 
   tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))
 
+  tnt.block <- c("BEGIN TNT;", "log stdout;", "tables =;", tnt.cmds,
+                 "condense;", "tplot *;", "length;", "minmax;")
+
   if (!is.null(analysis$tnt.params$iw.cmd)) {
     tnt.args <- c(analysis$tnt.params$iw.cmd, tnt.args)
+    tnt.block <- c(tnt.block, "score;")
     if (!is.null(analysis$tnt.params$eiw.cmd)) {
       tnt.cmds <- c(analysis$tnt.params$eiw.cmd, tnt.cmds)
     }
   }
 
-  tnt.block <- paste(c("BEGIN TNT;", "log stdout;", "tables =;", tnt.cmds,
-                       "condense;", "tplot *;", "length;", "minmax;", "END;"),
-                     collapse = "\n")
+  tnt.block <- c(tnt.block, "END;")
 
   write(tnt.block, file=tnt.tempfile, append=TRUE)
 
