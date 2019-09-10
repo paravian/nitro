@@ -22,12 +22,20 @@ runTnt <- function (tnt.path, analysis, timeout = 10000) {
     tnt.cmds <- c(tnt.cmds, paste0("outgroup ",
                                    analysis$tnt.params$outgroup, ";"))
   }
+
+  char.codes <- c()
   if (!is.null(attr(analysis$matrix, "ordered"))) {
-    tnt.cmds <- c(tnt.cmds,
-                  paste0("ccode +", paste(which(attr(analysis$matrix,
-                                                     "ordered")),
-                                          collapse = " "), ";"))
+    char.codes <- c(char.codes, "+",
+                    which(attr(analysis$matrix, "ordered")) - 1)
   }
+  if (!is.null(attr(analysis$matrix, "inactive.characters"))) {
+    char.codes <- c(char.codes, "]",
+                    which(attr(analysis$matrix, "inactive.characters")) - 1)
+  }
+  if (length(char.codes)) {
+    tnt.cmds <- c(tnt.cmds, paste(c("ccode", char.codes, ";"), collapse=" "))
+  }
+
   tnt.cmds <- c(tnt.cmds, analysis$tnt.params$cmd)
 
   tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))

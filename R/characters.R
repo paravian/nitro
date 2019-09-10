@@ -24,11 +24,12 @@ orderedCharacters <- function (matrix, characters) {
   return(matrix)
 }
 
-#' Define active characters
+#' Define inactive characters
 #'
 #' @param matrix A \code{phyDat} object of USER type.
 #' @param charactes A numeric vector of characters to be set as inactive.
 #' @return A \code{phyDat} object.
+#' @export
 inactiveCharacters <- function (matrix, characters) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
@@ -42,6 +43,6 @@ inactiveCharacters <- function (matrix, characters) {
     stop(paste("Values of 'characters' exceed number of characters in the matrix (", attr(matrix, "nr"), ")"))
   }
 
-  attr(matrix, "inactive") <- 1:attr(matrix, "nr") %in% characters
+  attr(matrix, "inactive.characters") <- 1:attr(matrix, "nr") %in% characters
   return(matrix)
 }
