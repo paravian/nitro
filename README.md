@@ -40,7 +40,7 @@ Each tree search command returns a `multiPhylo` object containing all trees foun
 
 These features are currently not present in `nitro` but are planned for future inclusion:
 
-* Exclusion of taxa/characters
+* ~~Exclusion of taxa/characters~~
 * ~~Specifying additive (ordered) characters~~
 * ~~Running (extended) implied weighting analyses~~
 * Calculation of support statistics (e.g., bootstrap, jackknife, symmetric resampling, Bremer support)

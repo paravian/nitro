@@ -36,6 +36,11 @@ runTnt <- function (tnt.path, analysis, timeout = 10000) {
     tnt.cmds <- c(tnt.cmds, paste(c("ccode", char.codes, ";"), collapse=" "))
   }
 
+  if (!is.null(attr(analysis$matrix, "inactive.taxa"))) {
+    tnt.cmds <- c(tnt.cmds, paste(c("taxcode -",
+                                    which(attr(analysis$matrix, "inactive.taxa")) - 1, ";"), collapse=" "))
+  }
+
   tnt.cmds <- c(tnt.cmds, analysis$tnt.params$cmd)
 
   tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))
