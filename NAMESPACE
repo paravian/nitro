@@ -3,6 +3,8 @@
 export(branchswap)
 export(driven)
 export(impliedWeights)
+export(inactiveCharacters)
+export(inactiveTaxa)
 export(orderedCharacters)
 export(ratchet)
 importFrom(ape,.compressTipLabel)
