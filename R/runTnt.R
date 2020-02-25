@@ -16,11 +16,14 @@ runTnt <- function (tnt.path, analysis, timeout = 10000) {
   write.nexus.data(tnt.matrix, file=tnt.tempfile, interleaved = FALSE,
                    format = "standard")
 
-  tnt.cmds <- c(paste0("hold ", analysis$tnt.params$hold, ";"),
-                paste0("collapse ", analysis$tnt.params$collapse, ";"))
+  tnt.cmds <- c(paste0("collapse ", analysis$tnt.params$collapse, ";"))
+  if (!is.null(analysis$tnt.params$hold)) {
+    tnt.cmds <- c(tnt.cmds, paste0("hold ", analysis$tnt.params$hold, ";"))
+  }
   if (!is.null(analysis$tnt.params$outgroup)) {
-    tnt.cmds <- c(tnt.cmds, paste0("outgroup ",
-                                   analysis$tnt.params$outgroup, ";"))
+    tnt.cmds <-
+      c(tnt.cmds, paste0("outgroup ",
+                         which(names(analysis$matrix) == analysis$tnt.params$outgroup) - 1, ";"))
   }
 
   char.codes <- c()
