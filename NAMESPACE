@@ -2,6 +2,7 @@
 
 export(branchswap)
 export(driven)
+export(implicit.enum)
 export(impliedWeights)
 export(inactiveCharacters)
 export(inactiveTaxa)
