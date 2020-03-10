@@ -44,7 +44,7 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, collapse=3, outgroup=
     stop("'outgroup' must be a character")
   }
 
-  if (length(r.mtx$mtx) > 25) {
+  if (length(matrix) > 25) {
     warning("Matrix contains more than 25 OTUs, analysis may not complete in a
             reasonable timeframe")
   }
