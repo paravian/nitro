@@ -14,27 +14,24 @@ devtools::install_github("paravian/nitro")
 
 `nitro` requires the command line version (not the menu-driven graphical version) of TNT to be installed. Windows, macOS and Linux versions of TNT are available at [http://www.lillo.org.ar/phylogeny/tnt/](http://www.lillo.org.ar/phylogeny/tnt/). If you have not used TNT before, you must also agree to the license conditions for TNT by running it once and following the instructions before you can start using `nitro`.
 
-The following example shows the generation of a set of most parsimonious trees using TNT's traditional branch swapping method and the calculation and visualisation of a strict consensus tree. `nitro` accepts matrices as `phyDat` objects and can be created either directly from Nexus files, as in the example below with `ReadAsPhyDat` in the `TreeSearch` package, or from dataframes or matrices using `as.phyDat` in `phangorn`.
+The following example shows the generation of a set of most parsimonious trees using TNT's traditional branch swapping method and the calculation and visualisation of a strict consensus tree. All tree search commands expect `phyDat` representations of phylogenetic matrices. These can be created created either from Nexus or TNT files, using `ReadAsPhyDat` or `ReadTntAsPhyDat` respectively from `TreeTools`, or directly from a `data.frame` or `matrix` object using `as.phyDat` from `phangorn`.
 
 ```
-library(nitro)
-library(ape)
-library(TreeSearch)
-
 # The location of the TNT command line executable file
 tnt.path <- "~/tnt64/tnt
 
-matrix <- ReadAsPhyDat("matrix.nex")
+matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
 
-mpts <- branchswap(tnt.path, matrix)
+mpts <- nitro::branchswap(tnt.path, matrix)
 
-cons <- consensus(mpts)
+cons <- ape::consensus(mpts$trees)
 plot(cons)
 ```
   
 Presently, `nitro` supports performing branch swapping, parsimony ratchet and "new technology" searches (using the commands `branchswap`, `ratchet`, and `driven` respectively). A subset of the most relevant options for each method are exposed for their respective functions; see the documentation of each command for more details.
 
-Each tree search command returns a `multiPhylo` object containing all trees found. Additionally, `nitro` automatically calculates the consistency, retention and rescaled consistency indices for all trees.
+Each tree search command returns an list containing the parameters and TNT tree search command(s)
+used and a `multiPhylo` object containing all trees found. Additionally, `nitro` automatically calculates the consistency, retention and rescaled consistency indices for all trees.
 
 ## Planned features
 
