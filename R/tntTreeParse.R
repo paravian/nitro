@@ -1,3 +1,7 @@
+if(getRversion() >= "2.15.1") {
+  utils::globalVariables(c("."))
+}
+
 #' Extracts trees from TNT output.
 #'
 #' @importFrom magrittr %>%
