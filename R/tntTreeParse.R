@@ -2,9 +2,12 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom ape read.tree .compressTipLabel
-#' @param tnt.output TNT output.
-#' @param tip.labels A list or vector containing the names of the tips.
-#' @return A \code{multiphylo} object.
+#' @param tnt.output a character vector containing raw TNT output from the
+#'   \code{implicit.enum}, \code{branchswap}, \code{ratchet} or \code{driven}
+#'   functions.
+#' @param tip.labels a list or vector containing the names of the taxa from the
+#'   analysed matrix.
+#' @return a \code{multiPhylo} object.
 tntTreeParse <- function (tnt.output, tip.labels) {
   # Get start lines for tree strings and lengths output
   first.trees <- grep("Tread 'set of [0-9]+ trees' ", tnt.output) + 1
