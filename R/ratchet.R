@@ -1,7 +1,6 @@
 #' Phylogenetic analysis using the parsimony ratchet
 #'
 #' @importFrom utils file_test tail
-#' @importFrom progress progress_bar
 #' @param tnt.path the location of the TNT command-line binary.
 #' @param matrix a \code{phyDat} object of the matrix.
 #' @param run.now a logical value indicating whether to perform a phylogenetic
