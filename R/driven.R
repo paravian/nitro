@@ -1,52 +1,61 @@
 #' Phylogenetic analysis using driven (or "New Technology") search
 #'
-#' @param tnt.path The location of the TNT command-line binary.
-#' @param matrix A \code{phyDat} object of the matrix.
-#' @param run.now Logical; perform a phylogenetic analysis straight away or save
-#'   commands for use in other methods
-#' @param collapse Set rule for collapsing of zero length branches. The options
-#'   are:
+#' @importFrom utils file_test tail
+#' @param tnt.path the location of the TNT command-line binary.
+#' @param matrix a \code{phyDat} object of the matrix.
+#' @param run.now a logical value indicating whether to perform a phylogenetic
+#'   analysis straight away or save the parameters commands for use in other
+#'   methods.
+#' @param collapse an integer indicating the rule for collapsing of zero length
+#'   branches. The options are:
 #'   \itemize{
-#'   \item \code{1}: collapse an interior branch of the maximum possible length of the
-#'   branch is zero
+#'   \item \code{1}: collapse an interior branch of the maximum possible length
+#'     of the branch is zero
 #'   \item \code{2}: keep zero length branches if ancestor and descendent states
-#'   differ
-#'   \item \code{3}: collapse an interior branch if the minimum possible length of the
-#'   branch is zero
+#'     differ
+#'   \item \code{3}: collapse an interior branch if the minimum possible length
+#'     of the branch is zero (the default)
 #'   \item \code{4}: discard all trees that must contain a zero length branch
 #'   }
-#' @param hold The maximum number of trees to allow TNT to hold in memory.
-#' @param outgroup The outgroup taxon for the phylogenetic analysis. By default,
-#'   the first taxon in the matrix is considered the outgroup.
-#' @param hits The number of times to reach the shortest tree for each
-#'   replication.
-#' @param replications The number of replications.
-#' @param rss,css,xss Use random, constraint or exclusive sectorial searches.
-#' @param ratchet.cycles The number of cycles of the parsimony ratchet.
-#' @param drifting.cycles The number of cycles of tree drifting.
-#' @param fusing.rounds The number of rounds of fusing.
-#' @param consense.times Number of times to consense until the consensus is
-#'   stablilised.
-#' @param multiply After hitting target score, find additional trees by fusing
-#'   suboptimal with optimal trees
-#' @param hold.rep The maximum number of trees to retain during each
-#'   replication.
-#' @param keepall Retain all generated trees from each replication regardless of
-#'   length. This has a different meaning when \code{hits} = 1 and when
-#'   \code{hits} > 1. When \code{hits} = 1, it is trees from each of the RAS +
-#'   TBR +  SS or DFT or RAT, in addition to the trees resulting from fusing
-#'   those.  When \code{hits} > 1, then it means the trees resulting from fusing
-#'   the initial starting trees for each of starting points.
-#' @return A list containing the search parameters and TNT command string and,
-#'   if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
-#'   found from the search commands.
+#' @param hold an integer value indicating the maximum number of trees to allow
+#'   TNT to hold in memory.
+#' @param outgroup the name of the taxon to set as the outgroup for the
+#'   phylogenetic analysis. By default, the first taxon in the matrix is the
+#'   outgroup.
+#' @param hits an integer value indicating the number of times the shortest
+#'   tree must be found on consecutive re-runs of the analysis before stopping.
+#' @param replications an integer value indicating the number of replications.
+#' @param hold.rep an integer value inficating the maximum number of trees to
+#'   retain during each replication.
+#' @param rss,css,xss a logival value indicating whether to use random,
+#'   constraint or exclusive sectorial searches.
+#' @param ratchet.cycles an integer value indicating the number of cycles of
+#'   the parsimony ratchet to perform per replication.
+#' @param drifting.cycles an integer value indicating the number of cycles of
+#'   tree drifting to perform per replication.
+#' @param fusing.rounds an integer value indicating the number of rounds of
+#'   fusing per replication.
+#' @param consense.times an integer value indicating the number of times to
+#'   consense until the consensus is stablilised.
+#' @param multiply a logical value indicating whether to find additional trees
+#'   by fusing suboptimal with optimal trees after hitting the target score.
+#' @param keepall a logical value indicating whether to retain all generated
+#'   trees from each replication regardless of length. This has a different
+#'   meaning when \code{hits} = 1 and when \code{hits} > 1. When
+#'   \code{hits} = 1, it is trees from each of the RAS + TBR +  SS or DFT or
+#'   RAT, in addition to the trees resulting from fusing those. When
+#'   \code{hits} > 1, then it means the trees resulting from fusing the
+#'   initial starting trees for each of starting points.
+#' @return a list containing the search parameters and TNT command string, a
+#'   \code{phyDat} object containing the phylogenetic matrix analysed and, if
+#'   \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
+#'   from the search commands.
 #' @export
 driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
                    outgroup=NULL, hits=1, replications=4, hold.rep=1,
-                   autoconstrain="wagner", rss=TRUE, css=FALSE, xss=FALSE,
-                   ratchet.cycles=0, drifting.cycles=30, hybridization=FALSE,
-                   fusing.rounds=0, consense.times=0, multiply=FALSE,
-                   keepall=FALSE) {
+                   rss=TRUE, css=FALSE, xss=FALSE, ratchet.cycles=0,
+                   drifting.cycles=30, fusing.rounds=0, consense.times=0,
+                   multiply=FALSE, keepall=FALSE) {
   if (file_test("-f", tnt.path) == FALSE) {
     stop("'tnt.path' does not exist")
   }
@@ -112,9 +121,6 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
   }  else if (consense.times < 0) {
     stop("'consense.times' must be >= 0")
   }
-  if (is.logical(hybridization) == FALSE & length(hybridization) != 1) {
-    stop("'hybridizaation' must be a logical")
-  }
   if (is.logical(multiply) == FALSE & length(multiply) != 1) {
     stop("'multiply' must be a logical")
   }
@@ -139,7 +145,6 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
                             ifelse(consense.times == 0, "noconsense",
                                    paste("consense", consense.times)),
                             ifelse(multiply, "multiply", "nomultiply"),
-                            ifelse(hybridization, "hybrid", "nohybrid"),
                             ifelse(keepall, "keepall", "nokeepall"),
                             ";"))
 

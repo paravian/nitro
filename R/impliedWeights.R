@@ -1,12 +1,15 @@
 #' Run an analysus using implied weighting
 #'
-#' @param tnt.path The location of the TNT command-line binary.
-#' @param analysis The parameters for an analysis as specified from the output
-#'   of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.
-#' @param run.now Logical; perform a phylogenetic analysis straight away or save
-#'   commands for use in other methods
-#' @param k The concavity constant to apply..
-#' @param extended Use extensions to implied weighting
+#' @param tnt.path the location of the TNT command-line binary.
+#' @param analysis the parameters for an analysis as specified from the output
+#'   of the \code{implicit.enum}, \code{branchswap}, \code{ratchet}, or
+#'   \code{driven} commands.
+#' @param run.now a logical value indicating whether to perform a phylogenetic
+#'   analysis straight away or save the parameters commands for use in other
+#'   methods.
+#' @param k an integer value indicating the concavity constant to apply.
+#' @param multi.k a logical value indicating whether each character will be
+#'   given an independent concavity constant based on the value of \code{k}.
 #' @export
 impliedWeights <- function(tnt.path, analysis, run.now=TRUE, k=3,
                            multi.k=FALSE) {

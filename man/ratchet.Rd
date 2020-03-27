@@ -4,49 +4,64 @@
 \alias{ratchet}
 \title{Phylogenetic analysis using the parsimony ratchet}
 \usage{
-ratchet(tnt.path, matrix, run.now = TRUE, hold = 100, collapse = 3,
-  outgroup = NULL, iterations = 50, replacements = 40, prob.up = 4,
-  prob.down = 4)
+ratchet(
+  tnt.path,
+  matrix,
+  run.now = TRUE,
+  hold = 100,
+  collapse = 3,
+  outgroup = NULL,
+  iterations = 50,
+  replacements = 40,
+  prob.up = 4,
+  prob.down = 4
+)
 }
 \arguments{
-\item{tnt.path}{The location of the TNT command-line binary.}
+\item{tnt.path}{the location of the TNT command-line binary.}
 
-\item{matrix}{A \code{phyDat} object of the matrix.}
+\item{matrix}{a \code{phyDat} object of the matrix.}
 
-\item{run.now}{Logical; perform a phylogenetic analysis straight away or save
-commands for use in other methods}
+\item{run.now}{a logical value indicating whether to perform a phylogenetic
+analysis straight away or save the parameters commands for use in other
+methods.}
 
-\item{hold}{The maximum number of trees to allow TNT to hold in memory
-(typically \code{replications} * \code{hold.rep}).}
+\item{hold}{an integer value indicating the maximum number of trees to allow
+TNT to hold in memory.}
 
-\item{collapse}{Set rule for collapsing of zero length branches. The options
-are:
+\item{collapse}{an integer indicating the rule for collapsing of zero length
+branches. The options are:
 \itemize{
-\item \code{1}: collapse an interior branch of the maximum possible length of the
-branch is zero
+\item \code{1}: collapse an interior branch of the maximum possible length
+  of the branch is zero
 \item \code{2}: keep zero length branches if ancestor and descendent states
-differ
-\item \code{3}: collapse an interior branch if the minimum possible length of the
-branch is zero
+  differ
+\item \code{3}: collapse an interior branch if the minimum possible length
+  of the branch is zero (the default)
 \item \code{4}: discard all trees that must contain a zero length branch
 }}
 
-\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
-the first taxon in the matrix is considered the outgroup.}
+\item{outgroup}{the name of the taxon to set as the outgroup for the
+phylogenetic analysis. By default, the first taxon in the matrix is the
+outgroup.}
 
-\item{iterations}{The number of iterations.}
+\item{iterations}{an integer value indicating the number of iterations.}
 
-\item{replacements}{The number of replacements (i.e., accepted tree
-rearrangements) to perform in each perturbation phase.}
+\item{replacements}{an integer value indicating the number of replacements
+(i.e., accepted tree rearrangements) to perform in each perturbation
+phase.}
 
-\item{prob.up}{The probability of upweighting a character.}
+\item{prob.up}{an integer value indicating the probability of upweighting a
+character.}
 
-\item{prob.down}{The probability of downweighting a character.}
+\item{prob.down}{an integer value indicating the probability of
+downweighting a character.}
 }
 \value{
-A list containing the search parameters and TNT command string and,
-  if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
-  found from the search commands.
+a list containing the search parameters and TNT command string, a
+  \code{phyDat} object containing the phylogenetic matrix analysed and, if
+  \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
+  from the search commands.
 }
 \description{
 Phylogenetic analysis using the parsimony ratchet

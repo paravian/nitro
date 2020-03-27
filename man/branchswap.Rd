@@ -4,48 +4,59 @@
 \alias{branchswap}
 \title{Phylogenetic analysis using branch swapping}
 \usage{
-branchswap(tnt.path, matrix, run.now = TRUE, collapse = 3,
-  hold = 100, outgroup = NULL, replications = 10, hold.rep = 10,
-  keepall = FALSE)
+branchswap(
+  tnt.path,
+  matrix,
+  run.now = TRUE,
+  collapse = 3,
+  hold = 100,
+  outgroup = NULL,
+  replications = 10,
+  hold.rep = 10,
+  keepall = FALSE
+)
 }
 \arguments{
-\item{tnt.path}{The location of the TNT command-line binary.}
+\item{tnt.path}{the location of the TNT command-line binary.}
 
-\item{matrix}{A \code{phyDat} object of the matrix.}
+\item{matrix}{a \code{phyDat} object of the matrix.}
 
-\item{run.now}{Logical; perform a phylogenetic analysis straight away or save
-commands for use in other methods}
+\item{run.now}{a logical value indicating whether to perform a phylogenetic
+analysis straight away or save the parameters commands for use in other
+methods.}
 
-\item{collapse}{Set rule for collapsing of zero length branches. The options
-are:
+\item{collapse}{an integer indicating the rule for collapsing of zero length
+branches. The options are:
 \itemize{
-\item \code{1}: collapse an interior branch of the maximum possible length of the
-branch is zero
+\item \code{1}: collapse an interior branch of the maximum possible length
+  of the branch is zero
 \item \code{2}: keep zero length branches if ancestor and descendent states
-differ
-\item \code{3}: collapse an interior branch if the minimum possible length of the
-branch is zero
+  differ
+\item \code{3}: collapse an interior branch if the minimum possible length
+  of the branch is zero (the default)
 \item \code{4}: discard all trees that must contain a zero length branch
 }}
 
-\item{hold}{The maximum number of trees to allow TNT to hold in memory
-(typically \code{replications} * \code{hold.rep}).}
+\item{hold}{an integer value indicating the maximum number of trees to allow
+TNT to hold in memory.}
 
-\item{outgroup}{The outgroup taxon for the phylogenetic analysis. By default,
-the first taxon in the matrix is considered the outgroup.}
+\item{outgroup}{the name of the taxon to set as the outgroup for the
+phylogenetic analysis. By default, the first taxon in the matrix is the
+outgroup.}
 
-\item{replications}{The number of branch swapping replications.}
+\item{replications}{an integer value indicating the number of replications.}
 
-\item{hold.rep}{The maximum number of trees to retain during each
-replication.}
+\item{hold.rep}{an integer value inficating the maximum number of trees to
+retain during each replication.}
 
-\item{keepall}{Retain all generated trees from each replication regardless of
-length.}
+\item{keepall}{a logical value indicating whether to retain all generated
+trees from each replication regardless of length.}
 }
 \value{
-A list containing the search parameters and TNT command string and,
-  if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
-  found from the search commands.
+a list containing the search parameters and TNT command string, a
+  \code{phyDat} object containing the phylogenetic matrix analysed and, if
+  \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
+  from the search commands.
 }
 \description{
 Phylogenetic analysis using branch swapping

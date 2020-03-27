@@ -1,8 +1,8 @@
 #' Define inactive taxa
 #'
-#' @param matrix A \code{phyDat} object of USER type.
-#' @param charactes A numeric vector of characters to be set as inactive.
-#' @return A \code{phyDat} object.
+#' @param matrix a \code{phyDat} object of USER type.
+#' @param taxa a character vector of taxa to be set as inactive.
+#' @return a \code{phyDat} object.
 #' @export
 inactiveTaxa <- function (matrix, taxa) {
   if (class(matrix) != "phyDat") {

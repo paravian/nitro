@@ -7,12 +7,12 @@
 orderedCharacters(matrix, characters)
 }
 \arguments{
-\item{matrix}{A \code{phyDat} object of USER type.}
+\item{matrix}{a \code{phyDat} object of USER type.}
 
-\item{charactes}{A vector of characters to be set as ordered.}
+\item{characters}{a vector of characters to be set as ordered.}
 }
 \value{
-A \code{phyDat} object.
+a \code{phyDat} object.
 }
 \description{
 Define ordered characters

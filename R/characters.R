@@ -1,8 +1,8 @@
 #' Define ordered characters
 #'
-#' @param matrix A \code{phyDat} object of USER type.
-#' @param charactes A vector of characters to be set as ordered.
-#' @return A \code{phyDat} object.
+#' @param matrix a \code{phyDat} object of USER type.
+#' @param characters a vector of characters to be set as ordered.
+#' @return a \code{phyDat} object.
 #' @export
 orderedCharacters <- function (matrix, characters) {
   if (class(matrix) != "phyDat") {
@@ -26,9 +26,9 @@ orderedCharacters <- function (matrix, characters) {
 
 #' Define inactive characters
 #'
-#' @param matrix A \code{phyDat} object of USER type.
-#' @param charactes A numeric vector of characters to be set as inactive.
-#' @return A \code{phyDat} object.
+#' @param matrix a \code{phyDat} object of USER type.
+#' @param characters a numeric vector of characters to be set as inactive.
+#' @return a \code{phyDat} object.
 #' @export
 inactiveCharacters <- function (matrix, characters) {
   if (class(matrix) != "phyDat") {

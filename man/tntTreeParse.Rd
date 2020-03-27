@@ -7,12 +7,15 @@
 tntTreeParse(tnt.output, tip.labels)
 }
 \arguments{
-\item{tnt.output}{TNT output.}
+\item{tnt.output}{a character vector containing raw TNT output from the
+\code{implicit.enum}, \code{branchswap}, \code{ratchet} or \code{driven}
+functions.}
 
-\item{tip.labels}{A list or vector containing the names of the tips.}
+\item{tip.labels}{a list or vector containing the names of the taxa from the
+analysed matrix.}
 }
 \value{
-A \code{multiphylo} object.
+a \code{multiPhylo} object.
 }
 \description{
 Extracts trees from TNT output.

@@ -7,12 +7,12 @@
 inactiveTaxa(matrix, taxa)
 }
 \arguments{
-\item{matrix}{A \code{phyDat} object of USER type.}
+\item{matrix}{a \code{phyDat} object of USER type.}
 
-\item{charactes}{A numeric vector of characters to be set as inactive.}
+\item{taxa}{a character vector of taxa to be set as inactive.}
 }
 \value{
-A \code{phyDat} object.
+a \code{phyDat} object.
 }
 \description{
 Define inactive taxa
