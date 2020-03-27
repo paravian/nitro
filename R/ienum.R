@@ -21,7 +21,7 @@
 #'   if \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees
 #'   found from the search commands.
 #' @export
-implicit.enum <- function (tnt.path, matrix, run.now=TRUE, collapse=3, outgroup=NULL) {
+implicit.enum <- function (tnt.path, matrix, run.now=TRUE, hold=100, collapse=3, outgroup=NULL) {
   # Validate command arguments
   if (file_test("-f", tnt.path) == FALSE) {
     stop("'tnt.path' does not exist")
@@ -31,6 +31,11 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, collapse=3, outgroup=
   }
   if (is.logical(run.now) == FALSE) {
     stop("'run.now' must be a logical")
+  }
+  if (is.numeric(hold) == FALSE | length(hold) != 1) {
+    stop("'hold' must be an integer")
+  } else if (hold %% 1 != 0 | hold <= 0) {
+    stop("'hold' must be an integer > 0")
   }
   if (is.numeric(collapse) == FALSE | length(collapse) != 1) {
     stop("'collapse' must be an integer")
@@ -49,7 +54,7 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, collapse=3, outgroup=
             reasonable timeframe")
   }
 
-  tnt.params <- list(collapse = collapse, outgroup = outgroup,
+  tnt.params <- list(collapse = collapse, hold = hold, outgroup = outgroup,
                      cmd = "ienum;")
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
