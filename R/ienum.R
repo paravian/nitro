@@ -65,7 +65,19 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, hold=100, collapse=3,
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, analysis)
+    # Set up progress bar and define function for determining progress
+    progress <- list(
+      bar = progress_bar$new(format = "Enumerating: [:bar] | Best score: :score", total = 30),
+      value = function (out) {
+        ienum.re <- regexec("\\rSearching \\(score ([0-9]+)\\) ([X=]+)\r", out)
+        prog.value <- NULL
+        if(length(attr(ienum.re[[1]], "match.length")) != 1) {
+          ienum.m <- tail(regmatches(out, ienum.re)[[1]], -1)
+          return(list(ratio = as.numeric(nchar(gsub("=", "", ienum.m[2]))) / 30,
+                      tokens = list(score = ienum.m[1])))
+        }
+      })
+    output <- runTnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)
