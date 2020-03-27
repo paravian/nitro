@@ -80,7 +80,19 @@ branchswap <- function (tnt.path, matrix, run.now = TRUE, collapse=3, hold=100,
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, analysis)
+    # Set up progress bar and define function for determining progress
+    progress <- list(
+      bar = progress_bar$new(format = "Branch swapping: [:bar] :current/:total reps | Best score: :score", total = replications),
+      value = function (out) {
+        branchswap.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+        prog.value <- NULL
+        if(length(attr(branchswap.re[[1]], "match.length")) != 1) {
+          branchswap.m <- tail(regmatches(out, branchswap.re)[[1]], -1)
+          return(list(ratio = as.numeric(branchswap.m[1]) / replications,
+                      tokens = list(score = branchswap.m[3])))
+        }
+      })
+    output <- runTnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)

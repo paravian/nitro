@@ -16,4 +16,6 @@ LazyData: true
 RoxygenNote: 7.0.2
 Imports: 
     ape,
-    magrittr
+    magrittr,
+    processx,
+    progress

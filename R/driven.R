@@ -150,7 +150,20 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, analysis)
+    # Set up progress bar and define function for determining progress
+    progress <- list(
+      bar = progress_bar$new(format = "Driven search: [:bar] run :run | :current/:total reps | Best score: :score", total = replications),
+      value = function (out) {
+        driven.re <- regexec("\\r([0-9]+) +[A-Z]+ +([0-9]+) +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+        prog.value <- NULL
+        if(length(attr(driven.re[[1]], "match.length")) != 1) {
+          driven.m <- tail(regmatches(out, driven.re)[[1]], -1)
+          return(list(ratio = (as.numeric(driven.m[2]) / replications) - 0.1,
+                      tokens = list(score = driven.m[4],
+                                    run = ifelse(hits > 1, as.numeric(driven.m[1]) + 1, 1))))
+        }
+      })
+    output <- runTnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)

@@ -82,7 +82,19 @@ ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
 
   analysis <- list(tnt.params = tnt.params, matrix = matrix)
   if (run.now) {
-    output <- runTnt(tnt.path, analysis)
+    # Set up progress bar and define function for determining progress
+    progress <- list(
+      bar = progress_bar$new(format = "Ratcheting: [:bar] :current/:total iters | Best score: :score", total = iterations),
+      value = function (out) {
+        ratchet.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+        prog.value <- NULL
+        if(length(attr(ratchet.re[[1]], "match.length")) != 1) {
+          ratchet.m <- tail(regmatches(out, ratchet.re)[[1]], -1)
+          return(list(ratio = as.numeric(ratchet.m[1]) / iterations,
+                      tokens = list(score = ratchet.m[3])))
+        }
+      })
+    output <- runTnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)
