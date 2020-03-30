@@ -10,7 +10,7 @@
 #' @param progress A list providing the progress bar object and a callback
 #'   function for updating the progress bar.
 #' @return A character vector of the output from TNT.
-runTnt <- function (tnt.path, analysis, progress) {
+tnt <- function (tnt.path, analysis, progress) {
   tnt.tempfile <- tempfile("nitro", fileext = ".tnt")
   tnt.matrix <- as.character(analysis$matrix)
 

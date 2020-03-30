@@ -93,7 +93,7 @@ branchswap <- function (tnt.path, matrix, run.now = TRUE, collapse=3, hold=100,
                       tokens = list(score = branchswap.m[3])))
         }
       })
-    output <- runTnt(tnt.path, analysis, progress)
+    output <- tnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)
