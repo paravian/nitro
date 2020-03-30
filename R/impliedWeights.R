@@ -4,15 +4,11 @@
 #' @param analysis the parameters for an analysis as specified from the output
 #'   of the \code{implicit.enum}, \code{branchswap}, \code{ratchet}, or
 #'   \code{driven} commands.
-#' @param run.now a logical value indicating whether to perform a phylogenetic
-#'   analysis straight away or save the parameters commands for use in other
-#'   methods.
 #' @param k an integer value indicating the concavity constant to apply.
 #' @param multi.k a logical value indicating whether each character will be
 #'   given an independent concavity constant based on the value of \code{k}.
 #' @export
-impliedWeights <- function(tnt.path, analysis, run.now=TRUE, k=3,
-                           multi.k=FALSE) {
+implied.weighting <- function(tnt.path, analysis, k=3, multi.k=FALSE) {
   if (is.numeric(k) == FALSE | length(k) != 1) {
     stop("'k' must be an integer")
   } else if (k <= 0 | k > 1000) {
@@ -30,9 +26,5 @@ impliedWeights <- function(tnt.path, analysis, run.now=TRUE, k=3,
     analysis$tnt.params$eiw.cmd <- "xpiwe (*;"
   }
 
-  if (run.now) {
-    output <- runTnt(tnt.path, analysis)
-    analysis$trees <- tntTreeParse(output, names(analysis$matrix))
-  }
   return(analysis)
 }

@@ -3,7 +3,7 @@
 export(branchswap)
 export(driven)
 export(implicit.enum)
-export(impliedWeights)
+export(implied.weighting)
 export(inactiveCharacters)
 export(inactiveTaxa)
 export(orderedCharacters)
