@@ -2,6 +2,7 @@
 #'
 #' @importFrom utils file_test tail
 #' @param tnt.path the location of the TNT command-line binary.
+#' @importFrom progress progress_bar
 #' @param matrix a \code{phyDat} object of the matrix.
 #' @param run.now a logical value indicating whether to perform a phylogenetic
 #'   analysis straight away or save the parameters commands for use in other
