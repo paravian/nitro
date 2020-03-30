@@ -164,7 +164,7 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
                                     run = ifelse(hits > 1, as.numeric(driven.m[1]) + 1, 1))))
         }
       })
-    output <- runTnt(tnt.path, analysis, progress)
+    output <- tnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)

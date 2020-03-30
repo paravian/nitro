@@ -78,7 +78,7 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, hold=100, collapse=3,
                       tokens = list(score = ienum.m[1])))
         }
       })
-    output <- runTnt(tnt.path, analysis, progress)
+    output <- tnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)

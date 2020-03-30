@@ -94,7 +94,7 @@ ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
                       tokens = list(score = ratchet.m[3])))
         }
       })
-    output <- runTnt(tnt.path, analysis, progress)
+    output <- tnt(tnt.path, analysis, progress)
     analysis$trees <- tntTreeParse(output, names(matrix))
   }
   return(analysis)
