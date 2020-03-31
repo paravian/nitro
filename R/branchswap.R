@@ -1,12 +1,8 @@
 #' Phylogenetic analysis using branch swapping
 #'
-#' @importFrom utils file_test tail
-#' @param tnt.path the location of the TNT command-line binary.
+#' @importFrom utils tail
 #' @importFrom progress progress_bar
 #' @param matrix a \code{phyDat} object of the matrix.
-#' @param run.now a logical value indicating whether to perform a phylogenetic
-#'   analysis straight away or save the parameters commands for use in other
-#'   methods.
 #' @param collapse an integer indicating the rule for collapsing of zero length
 #'   branches. The options are:
 #'   \itemize{
@@ -33,13 +29,9 @@
 #'   \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
 #'   from the search commands.
 #' @export
-branchswap <- function (tnt.path, matrix, run.now = TRUE, collapse=3, hold=100,
-                        outgroup=NULL, replications=10, hold.rep=10,
-                        keepall=FALSE) {
+branchswap <- function (matrix, collapse=3, hold=100, outgroup=NULL,
+                        replications=10, hold.rep=10, keepall=FALSE) {
   # Validate command arguments
-  if (file_test("-f", tnt.path) == FALSE) {
-    stop("'tnt.path' does not exist")
-  }
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
   }
@@ -79,22 +71,19 @@ branchswap <- function (tnt.path, matrix, run.now = TRUE, collapse=3, hold=100,
   tnt.params$cmd <- c(paste("mult= replic", replications, "hold", hold.rep,
                             ifelse(keepall, "keepall", "nokeepall"), ";"))
 
-  analysis <- list(tnt.params = tnt.params, matrix = matrix)
-  if (run.now) {
-    # Set up progress bar and define function for determining progress
-    progress <- list(
-      bar = progress_bar$new(format = "Branch swapping: [:bar] :current/:total reps | Best score: :score", total = replications),
-      value = function (out) {
-        branchswap.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
-        prog.value <- NULL
-        if(length(attr(branchswap.re[[1]], "match.length")) != 1) {
-          branchswap.m <- tail(regmatches(out, branchswap.re)[[1]], -1)
-          return(list(ratio = as.numeric(branchswap.m[1]) / replications,
-                      tokens = list(score = branchswap.m[3])))
-        }
-      })
-    output <- tnt(tnt.path, analysis, progress)
-    analysis$trees <- tntTreeParse(output, names(matrix))
-  }
+  # Set up progress bar and define function for determining progress
+  progress <- list(
+    bar = progress_bar$new(format = "Branch swapping: [:bar] :current/:total reps | Best score: :score", total = replications),
+    value = function (out) {
+      branchswap.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+      prog.value <- NULL
+      if(length(attr(branchswap.re[[1]], "match.length")) != 1) {
+        branchswap.m <- tail(regmatches(out, branchswap.re)[[1]], -1)
+        return(list(ratio = as.numeric(branchswap.m[1]) / replications,
+                    tokens = list(score = branchswap.m[3])))
+      }
+    })
+  analysis <- list(tnt.params = tnt.params, matrix = matrix,
+                   progress = progress)
   return(analysis)
 }

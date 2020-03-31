@@ -1,12 +1,8 @@
 #' Phylogenetic analysis using the parsimony ratchet
 #'
-#' @importFrom utils file_test tail
-#' @param tnt.path the location of the TNT command-line binary.
+#' @importFrom utils tail
 #' @importFrom progress progress_bar
 #' @param matrix a \code{phyDat} object of the matrix.
-#' @param run.now a logical value indicating whether to perform a phylogenetic
-#'   analysis straight away or save the parameters commands for use in other
-#'   methods.
 #' @param collapse an integer indicating the rule for collapsing of zero length
 #'   branches. The options are:
 #'   \itemize{
@@ -36,12 +32,8 @@
 #'   \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
 #'   from the search commands.
 #' @export
-ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
-                    outgroup=NULL, iterations=50, replacements=40, prob.up=4,
-                    prob.down=4) {
-  if (file_test("-f", tnt.path) == FALSE) {
-    stop("'tnt.path' does not exist")
-  }
+ratchet <- function(matrix, hold=100, collapse=3, outgroup=NULL, iterations=50,
+                    replacements=40, prob.up=4, prob.down=4) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
   }
@@ -80,22 +72,19 @@ ratchet <- function(tnt.path, matrix, run.now = TRUE, hold=100, collapse=3,
                             replacements, "upfactor", prob.up,
                             "downfact", prob.down, ";"))
 
-  analysis <- list(tnt.params = tnt.params, matrix = matrix)
-  if (run.now) {
-    # Set up progress bar and define function for determining progress
-    progress <- list(
-      bar = progress_bar$new(format = "Ratcheting: [:bar] :current/:total iters | Best score: :score", total = iterations),
-      value = function (out) {
-        ratchet.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
-        prog.value <- NULL
-        if(length(attr(ratchet.re[[1]], "match.length")) != 1) {
-          ratchet.m <- tail(regmatches(out, ratchet.re)[[1]], -1)
-          return(list(ratio = as.numeric(ratchet.m[1]) / iterations,
-                      tokens = list(score = ratchet.m[3])))
-        }
-      })
-    output <- tnt(tnt.path, analysis, progress)
-    analysis$trees <- tntTreeParse(output, names(matrix))
-  }
+  # Set up progress bar and define function for determining progress
+  progress <- list(
+    bar = progress_bar$new(format = "Ratcheting: [:bar] :current/:total iters | Best score: :score", total = iterations),
+    value = function (out) {
+      ratchet.re <- regexec("\\r([0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+ +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+      prog.value <- NULL
+      if(length(attr(ratchet.re[[1]], "match.length")) != 1) {
+        ratchet.m <- tail(regmatches(out, ratchet.re)[[1]], -1)
+        return(list(ratio = as.numeric(ratchet.m[1]) / iterations,
+                    tokens = list(score = ratchet.m[3])))
+      }
+    })
+  analysis <- list(tnt.params = tnt.params, matrix = matrix,
+                   progress = progress)
   return(analysis)
 }

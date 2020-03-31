@@ -4,19 +4,19 @@
 \alias{tnt}
 \title{Executes TNT commands}
 \usage{
-tnt(tnt.path, analysis, progress)
+tnt(params, tnt.path)
 }
 \arguments{
-\item{tnt.path}{The location of the TNT command line binary.}
+\item{params}{the parameters for an analysis as specified from the output
+of the \code{implicit.enum}, \code{branchswap}, \code{ratchet}, or
+\code{driven} commands.}
 
-\item{analysis}{The parameters for an analysis as specified from the output
-of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.}
-
-\item{progress}{A list providing the progress bar object and a callback
-function for updating the progress bar.}
+\item{tnt.path}{the location of the TNT command line binary.}
 }
 \value{
-A character vector of the output from TNT.
+An object containing the TNT parameters and the \code{phyDat} matrix
+  used in the analysis, and a \code{multiPhylo} containing the trees found
+  during the search.
 }
 \description{
 Executes commands on a supplied phylogenetic matrix in the TNT

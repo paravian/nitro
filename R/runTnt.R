@@ -4,59 +4,61 @@
 #' @importFrom ape write.nexus.data
 #' @description Executes commands on a supplied phylogenetic matrix in the TNT
 #'   command line binary.
-#' @param tnt.path The location of the TNT command line binary.
-#' @param analysis The parameters for an analysis as specified from the output
-#'   of the \code{branchswap}, \code{ratchet}, or \code{driven} commands.
-#' @param progress A list providing the progress bar object and a callback
-#'   function for updating the progress bar.
-#' @return A character vector of the output from TNT.
-tnt <- function (tnt.path, analysis, progress) {
+#' @param params the parameters for an analysis as specified from the output
+#'   of the \code{implicit.enum}, \code{branchswap}, \code{ratchet}, or
+#'   \code{driven} commands.
+#' @param tnt.path the location of the TNT command line binary.
+#' @return An object containing the TNT parameters and the \code{phyDat} matrix
+#'   used in the analysis, and a \code{multiPhylo} containing the trees found
+#'   during the search.
+#' @export
+tnt <- function (params, tnt.path) {
   tnt.tempfile <- tempfile("nitro", fileext = ".tnt")
-  tnt.matrix <- as.character(analysis$matrix)
+  tnt.matrix <- as.character(params$matrix)
 
   write.nexus.data(tnt.matrix, file=tnt.tempfile, interleaved = FALSE,
                    format = "standard")
 
-  tnt.cmds <- c(paste0("collapse ", analysis$tnt.params$collapse, ";"))
-  if (!is.null(analysis$tnt.params$hold)) {
-    tnt.cmds <- c(tnt.cmds, paste0("hold ", analysis$tnt.params$hold, ";"))
+  tnt.cmds <- c(paste0("collapse ", params$tnt.params$collapse, ";"))
+  if (!is.null(params$tnt.params$hold)) {
+    tnt.cmds <- c(tnt.cmds, paste0("hold ", params$tnt.params$hold, ";"))
   }
-  if (!is.null(analysis$tnt.params$outgroup)) {
+  if (!is.null(params$tnt.params$outgroup)) {
     tnt.cmds <-
       c(tnt.cmds, paste0("outgroup ",
-                         which(names(analysis$matrix) == analysis$tnt.params$outgroup) - 1, ";"))
+                         which(names(params$matrix) == params$tnt.params$outgroup) - 1, ";"))
   }
 
   char.codes <- c()
-  if (!is.null(attr(analysis$matrix, "ordered"))) {
+  if (!is.null(attr(params$matrix, "ordered"))) {
     char.codes <- c(char.codes, "+",
-                    which(attr(analysis$matrix, "ordered")) - 1)
+                    which(attr(params$matrix, "ordered")) - 1)
   }
-  if (!is.null(attr(analysis$matrix, "inactive.characters"))) {
+  if (!is.null(attr(params$matrix, "inactive.characters"))) {
     char.codes <- c(char.codes, "]",
-                    which(attr(analysis$matrix, "inactive.characters")) - 1)
+                    which(attr(params$matrix, "inactive.characters")) - 1)
   }
   if (length(char.codes)) {
     tnt.cmds <- c(tnt.cmds, paste(c("ccode", char.codes, ";"), collapse=" "))
   }
 
-  if (!is.null(attr(analysis$matrix, "inactive.taxa"))) {
+  if (!is.null(attr(params$matrix, "inactive.taxa"))) {
     tnt.cmds <- c(tnt.cmds, paste(c("taxcode -",
-                                    which(attr(analysis$matrix, "inactive.taxa")) - 1, ";"), collapse=" "))
+                                    which(attr(params$matrix, "inactive.taxa")) - 1, ";"), collapse=" "))
   }
 
-  tnt.cmds <- c(tnt.cmds, analysis$tnt.params$cmd)
+  tnt.cmds <- c(tnt.cmds, params$tnt.params$cmd)
 
   tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))
 
   tnt.block <- c("BEGIN TNT;", "log stdout;", "tables =;", tnt.cmds,
                  "condense;", "tplot *;", "length;", "minmax;")
 
-  if (!is.null(analysis$tnt.params$iw.cmd)) {
-    tnt.args <- c(analysis$tnt.params$iw.cmd, tnt.args)
+  if (!is.null(params$tnt.params$iw.cmd)) {
+    tnt.args <- c(params$tnt.params$iw.cmd, tnt.args)
     tnt.block <- c(tnt.block, "score;")
-    if (!is.null(analysis$tnt.params$eiw.cmd)) {
-      tnt.cmds <- c(analysis$tnt.params$eiw.cmd, tnt.cmds)
+    if (!is.null(params$tnt.params$eiw.cmd)) {
+      tnt.cmds <- c(params$tnt.params$eiw.cmd, tnt.cmds)
     }
   }
 
@@ -70,13 +72,13 @@ tnt <- function (tnt.path, analysis, progress) {
                     ifelse(platform == "windows", ":", ","))
 
   # Initialise progress bar
-  progress$bar$tick(0)
+  params$progress$bar$tick(0)
 
   # Define callback function for process line-by-line TNT output
   callback <- function (out, proc) {
-    prog.info <- progress$value(out)
-    if (!is.null(prog.info) & !progress$bar$finished) {
-      progress$bar$update(prog.info$ratio, tokens = prog.info$tokens)
+    prog.info <- params$progress$value(out)
+    if (!is.null(prog.info) & !params$progress$bar$finished) {
+      params$progress$bar$update(prog.info$ratio, tokens = prog.info$tokens)
     }
     return(out)
   }
@@ -86,7 +88,11 @@ tnt <- function (tnt.path, analysis, progress) {
                     stderr_callback = callback)
 
   # Terminate progress bar and split TNT stdout
-  progress$bar$update(1)
+  if (!params$progress$bar$finished) {
+    params$progress$terminate
+  }
   tnt.output <- strsplit(tnt.output$stdout, "[\n\r]+")[[1]]
-  return(tnt.output)
+  params$trees <- tntTreeParse(tnt.output, names(params$matrix))
+  params$progress <- NULL
+  return(params)
 }

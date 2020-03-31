@@ -21,13 +21,24 @@ The following example shows the generation of a set of most parsimonious trees u
 tnt.path <- "~/tnt64/tnt
 
 matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
-
-mpts <- nitro::branchswap(tnt.path, matrix)
-
-cons <- ape::consensus(mpts$trees)
+branchswap.params <- nitro::branchswap()
+mpts <- nitro::tnt(branchswap.params, tnt.path)
+consensus <- ape::consensus(mpts$trees)
 plot(cons)
 ```
   
+Alternatively, `nitro` functions support pipelining as implemented in packages such as [`magrittr`](https://magrittr.tidyverse.org/) which eliminates temporary variables and results in more readable code.
+
+```
+library(magrittr)
+
+TreeTools::ReadAsPhyDat("matrix.nex") %>%
+  nitro::branchswap(matrix) %>%
+  tnt(tnt.path) %$%
+  consensus(trees) %>%
+  plot()
+```
+
 Presently, `nitro` supports performing branch swapping, parsimony ratchet and "new technology" searches (using the commands `branchswap`, `ratchet`, and `driven` respectively). A subset of the most relevant options for each method are exposed for their respective functions; see the documentation of each command for more details.
 
 Each tree search command returns an list containing the parameters and TNT tree search command(s)
