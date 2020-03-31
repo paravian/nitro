@@ -5,9 +5,7 @@
 \title{Phylogenetic analysis using driven (or "New Technology") search}
 \usage{
 driven(
-  tnt.path,
   matrix,
-  run.now = TRUE,
   collapse = 3,
   hold = 100,
   outgroup = NULL,
@@ -26,13 +24,7 @@ driven(
 )
 }
 \arguments{
-\item{tnt.path}{the location of the TNT command-line binary.}
-
 \item{matrix}{a \code{phyDat} object of the matrix.}
-
-\item{run.now}{a logical value indicating whether to perform a phylogenetic
-analysis straight away or save the parameters commands for use in other
-methods.}
 
 \item{collapse}{an integer indicating the rule for collapsing of zero length
 branches. The options are:

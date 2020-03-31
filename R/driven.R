@@ -1,12 +1,8 @@
 #' Phylogenetic analysis using driven (or "New Technology") search
 #'
-#' @importFrom utils file_test tail
-#' @param tnt.path the location of the TNT command-line binary.
+#' @importFrom utils tail
 #' @importFrom progress progress_bar
 #' @param matrix a \code{phyDat} object of the matrix.
-#' @param run.now a logical value indicating whether to perform a phylogenetic
-#'   analysis straight away or save the parameters commands for use in other
-#'   methods.
 #' @param collapse an integer indicating the rule for collapsing of zero length
 #'   branches. The options are:
 #'   \itemize{
@@ -52,19 +48,13 @@
 #'   \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
 #'   from the search commands.
 #' @export
-driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
-                   outgroup=NULL, hits=1, replications=4, hold.rep=1,
-                   rss=TRUE, css=FALSE, xss=FALSE, ratchet.cycles=0,
-                   drifting.cycles=30, fusing.rounds=0, consense.times=0,
-                   multiply=FALSE, keepall=FALSE) {
-  if (file_test("-f", tnt.path) == FALSE) {
-    stop("'tnt.path' does not exist")
-  }
+driven <- function(matrix, collapse=3, hold=100, outgroup=NULL,
+                   hits=1, replications=4, hold.rep=1, rss=TRUE, css=FALSE,
+                   xss=FALSE, ratchet.cycles=0, drifting.cycles=30,
+                   fusing.rounds=0, consense.times=0, multiply=FALSE,
+                   keepall=FALSE) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
-  }
-  if (is.logical(run.now) == FALSE) {
-    stop("'run.now' must be a logical")
   }
   if (is.numeric(hold) == FALSE | length(hold) != 1) {
     stop("'hold' must be an integer")
@@ -149,23 +139,20 @@ driven <- function(tnt.path, matrix, run.now=TRUE, collapse=3, hold=100,
                             ifelse(keepall, "keepall", "nokeepall"),
                             ";"))
 
-  analysis <- list(tnt.params = tnt.params, matrix = matrix)
-  if (run.now) {
-    # Set up progress bar and define function for determining progress
-    progress <- list(
-      bar = progress_bar$new(format = "Driven search: [:bar] run :run | :current/:total reps | Best score: :score", total = replications),
-      value = function (out) {
-        driven.re <- regexec("\\r([0-9]+) +[A-Z]+ +([0-9]+) +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
-        prog.value <- NULL
-        if(length(attr(driven.re[[1]], "match.length")) != 1) {
-          driven.m <- tail(regmatches(out, driven.re)[[1]], -1)
-          return(list(ratio = (as.numeric(driven.m[2]) / replications) - 0.1,
-                      tokens = list(score = driven.m[4],
-                                    run = ifelse(hits > 1, as.numeric(driven.m[1]) + 1, 1))))
-        }
-      })
-    output <- tnt(tnt.path, analysis, progress)
-    analysis$trees <- tntTreeParse(output, names(matrix))
-  }
+  # Set up progress bar and define function for determining progress
+  progress <- list(
+    bar = progress_bar$new(format = "Driven search: [:bar] run :run | :current/:total reps | Best score: :score", total = replications),
+    value = function (out) {
+      driven.re <- regexec("\\r([0-9]+) +[A-Z]+ +([0-9]+) +([0-9\\.]+|-+) +([0-9\\.]+|-+) +([0-9:]+) +([0-9,]+)", out)
+      prog.value <- NULL
+      if(length(attr(driven.re[[1]], "match.length")) != 1) {
+        driven.m <- tail(regmatches(out, driven.re)[[1]], -1)
+        return(list(ratio = as.numeric(driven.m[2]) / replications,
+                    tokens = list(score = driven.m[4],
+                                  run = ifelse(hits > 1, as.numeric(driven.m[1]) + 1, 1))))
+      }
+    })
+  analysis <- list(tnt.params = tnt.params, matrix = matrix,
+                   progress = progress)
   return(analysis)
 }

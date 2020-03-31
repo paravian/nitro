@@ -1,12 +1,8 @@
 #' Phylogenetic analysis using implicit enumeration
 #'
-#' @importFrom utils file_test tail
-#' @param tnt.path the location of the TNT command-line binary.
+#' @importFrom utils tail
 #' @importFrom progress progress_bar
 #' @param matrix a \code{phyDat} object of the matrix.
-#' @param run.now a logical value indicating whether to perform a phylogenetic
-#'   analysis straight away or save the parameters commands for use in other
-#'   methods.
 #' @param collapse an integer indicating the rule for collapsing of zero length
 #'   branches. The options are:
 #'   \itemize{
@@ -28,16 +24,10 @@
 #'   \code{run.now} is \code{TRUE}, a \code{multiPhylo} object of trees found
 #'   from the search commands.
 #' @export
-implicit.enum <- function (tnt.path, matrix, run.now=TRUE, hold=100, collapse=3, outgroup=NULL) {
+implicit.enum <- function (matrix, hold=100, collapse=3, outgroup=NULL) {
   # Validate command arguments
-  if (file_test("-f", tnt.path) == FALSE) {
-    stop("'tnt.path' does not exist")
-  }
   if (!inherits(matrix, "phyDat")) {
     stop("'matrix' must be a phyDat object")
-  }
-  if (is.logical(run.now) == FALSE) {
-    stop("'run.now' must be a logical")
   }
   if (is.numeric(hold) == FALSE | length(hold) != 1) {
     stop("'hold' must be an integer")
@@ -64,22 +54,19 @@ implicit.enum <- function (tnt.path, matrix, run.now=TRUE, hold=100, collapse=3,
   tnt.params <- list(collapse = collapse, hold = hold, outgroup = outgroup,
                      cmd = "ienum;")
 
-  analysis <- list(tnt.params = tnt.params, matrix = matrix)
-  if (run.now) {
-    # Set up progress bar and define function for determining progress
-    progress <- list(
-      bar = progress_bar$new(format = "Enumerating: [:bar] | Best score: :score", total = 30),
-      value = function (out) {
-        ienum.re <- regexec("\\rSearching \\(score ([0-9]+)\\) ([X=]+)\r", out)
-        prog.value <- NULL
-        if(length(attr(ienum.re[[1]], "match.length")) != 1) {
-          ienum.m <- tail(regmatches(out, ienum.re)[[1]], -1)
-          return(list(ratio = as.numeric(nchar(gsub("=", "", ienum.m[2]))) / 30,
-                      tokens = list(score = ienum.m[1])))
-        }
-      })
-    output <- tnt(tnt.path, analysis, progress)
-    analysis$trees <- tntTreeParse(output, names(matrix))
-  }
+  # Set up progress bar and define function for determining progress
+  progress <- list(
+    bar = progress_bar$new(format = "Enumerating: [:bar] | Best score: :score", total = 30),
+    value = function (out) {
+      ienum.re <- regexec("\\rSearching \\(score ([0-9]+)\\) ([X=]+)\r", out)
+      prog.value <- NULL
+      if(length(attr(ienum.re[[1]], "match.length")) != 1) {
+        ienum.m <- tail(regmatches(out, ienum.re)[[1]], -1)
+        return(list(ratio = as.numeric(nchar(gsub("=", "", ienum.m[2]))) / 30,
+                    tokens = list(score = ienum.m[1])))
+      }
+    })
+  analysis <- list(tnt.params = tnt.params, matrix = matrix,
+                   progress = progress)
   return(analysis)
 }
