@@ -33,9 +33,9 @@ Alternatively, `nitro` functions support pipelining as implemented in packages s
 library(magrittr)
 
 TreeTools::ReadAsPhyDat("matrix.nex") %>%
-  nitro::branchswap(matrix) %>%
-  tnt(tnt.path) %$%
-  consensus(trees) %>%
+  nitro::branchswap() %>%
+  nitro::tnt(tnt.path) %$%
+  ape::consensus(trees) %>%
   plot()
 ```
 
