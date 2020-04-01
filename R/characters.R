@@ -4,7 +4,7 @@
 #' @param characters a vector of characters to be set as ordered.
 #' @return a \code{phyDat} object.
 #' @export
-orderedCharacters <- function (matrix, characters) {
+ordered.characters <- function (matrix, characters) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
   }
@@ -30,7 +30,7 @@ orderedCharacters <- function (matrix, characters) {
 #' @param characters a numeric vector of characters to be set as inactive.
 #' @return a \code{phyDat} object.
 #' @export
-inactiveCharacters <- function (matrix, characters) {
+inactive.characters <- function (matrix, characters) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
   }
