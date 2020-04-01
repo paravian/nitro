@@ -4,7 +4,7 @@
 #' @param taxa a character vector of taxa to be set as inactive.
 #' @return a \code{phyDat} object.
 #' @export
-inactiveTaxa <- function (matrix, taxa) {
+inactive.taxa <- function (matrix, taxa) {
   if (class(matrix) != "phyDat") {
     stop("'matrix' must be a phyDat object")
   }
