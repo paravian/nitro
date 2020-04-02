@@ -49,13 +49,16 @@ tnt <- function (params, tnt.path) {
 
   tnt.cmds <- c(tnt.cmds, params$tnt.params$cmd)
 
-  tnt.args <- c(paste0("proc ", tnt.tempfile, ";"))
+  # Prepare command line arguments for the TNT binary
+  platform <- .Platform$OS.type
+  tnt.arg <- paste0("proc ", tnt.tempfile,
+                    ifelse(platform == "windows", ":", ","))
 
   tnt.block <- c("BEGIN TNT;", "log stdout;", "tables =;", tnt.cmds,
                  "condense;", "tplot *;", "length;", "minmax;")
 
   if (!is.null(params$tnt.params$iw.cmd)) {
-    tnt.args <- c(params$tnt.params$iw.cmd, tnt.args)
+    tnt.arg <- c(params$tnt.params$iw.cmd, tnt.arg)
     tnt.block <- c(tnt.block, "score;")
     if (!is.null(params$tnt.params$eiw.cmd)) {
       tnt.cmds <- c(params$tnt.params$eiw.cmd, tnt.cmds)
@@ -65,11 +68,6 @@ tnt <- function (params, tnt.path) {
   tnt.block <- c(tnt.block, "END;")
 
   write(tnt.block, file=tnt.tempfile, append=TRUE)
-
-  # Prepare command line arguments for the TNT binary
-  platform <- .Platform$OS.type
-  tnt.arg <- paste0("proc ", tnt.tempfile,
-                    ifelse(platform == "windows", ":", ","))
 
   # Initialise progress bar
   params$progress$bar$tick(0)
