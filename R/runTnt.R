@@ -13,9 +13,10 @@
 #'   during the search.
 #' @export
 tnt <- function (params, tnt.path) {
+  # Read matrix; convert NAs to "?" and write to temporary minimal nexus file
   tnt.tempfile <- tempfile("nitro", fileext = ".tnt")
   tnt.matrix <- as.character(params$matrix)
-
+  tnt.matrix[is.na(tnt.matrix)] <- "?"
   write.nexus.data(tnt.matrix, file=tnt.tempfile, interleaved = FALSE,
                    format = "standard")
 
