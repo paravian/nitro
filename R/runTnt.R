@@ -90,6 +90,15 @@ tnt <- function (params, tnt.path) {
   if (!params$progress$bar$finished) {
     params$progress$terminate
   }
+
+  # Check for any error messages and display if found
+  err.out <- strsplit(tnt.output$stderr, "[\n\r]+")[[1]]
+  err.re <- sapply(regmatches(err.out, regexec("^Error reading ", err.out)),
+                   length)
+  if (any(err.re)) {
+    stop(sub("^\a", "", err.out[which(err.re > 0)[1] - 1]))
+  }
+
   tnt.output <- strsplit(tnt.output$stdout, "[\n\r]+")[[1]]
   params$trees <- tntTreeParse(tnt.output, names(params$matrix))
   params$progress <- NULL
