@@ -1,11 +1,11 @@
 # nitro
 
 This package provides integration for the maximum parsimony phylogenetic
-software TNT in R. It interfaces with a locally installed copy of the TNT
-command line executable and provides functions for performing branch swapping,
-parsimony ratchet and driven (i.e., "New Technology") searches. Each tree search
-function automatically returns a set of trees for visualisation or use with
-other R packages.
+software TNT (Goloboff et al. 2008, Goloboff and Catalano 2016), in R. It
+interfaces with a locally installed copy of the TNT command line executable and
+provides functions for performing branch swapping, parsimony ratchet and driven
+(i.e., "New Technology") searches. Each tree search function automatically
+returns a set of trees for visualisation or use with other R packages.
 
 ## Installation
 
@@ -35,12 +35,12 @@ either directly from Nexus or TNT files using `ReadAsPhyDat` or
 
 ```
 # The location of the TNT command line executable file
-tnt.path <- "~/tnt64/tnt
+tnt_path <- "~/tnt64/tnt
 
 matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
-branchswap.params <- nitro::branchswap()
-mpts <- nitro::tnt(branchswap.params, tnt.path)
-consensus <- ape::consensus(mpts$trees)
+branch_swap <- nitro::NitroBranchSwap(matrix, replications = 10, hold_rep = 10)
+mpts <- nitro::tnt(branch_swap, tnt_path, hold = 100)
+cons <- ape::consensus(mpts)
 plot(cons)
 ```
   
@@ -52,17 +52,19 @@ variables and results in more readable code.
 library(magrittr)
 
 TreeTools::ReadAsPhyDat("matrix.nex") %>%
-  nitro::branchswap() %>%
-  nitro::tnt(tnt.path) %$%
-  ape::consensus(trees) %>%
+  nitro::NitroBranchSwap(replications = 10, hold_rep = 10)
+  nitro::tnt(tnt_path, hold = 100)
+  ape::consensus()
   plot()
 ```
 
 Presently, `nitro` supports performing branch swapping, parsimony ratchet and
-"new technology" searches (using the commands `implicit.enum`, `branchswap`,
-`ratchet`, and `driven` respectively). A subset of the most relevant options for
-each method are exposed for their respective functions; see the documentation of
-each command for more details.
+"new technology" searches (using the commands `NitroImplicitEnum`,
+`NitroBranchSwap`, `NitroRatchet`, and `NitroDriven` respectively). A subset of
+the most relevant options for each method are exposed for their respective
+functions, in addition to defining zero-length branch collapsing rules,
+outgroup selection, inactive characters and taxa and character ordering.
+See the documentation of each command for more details.
 
 Each tree search command returns an list containing the parameters and TNT tree
 search command(s) used and a `multiPhylo` object containing all trees found.
@@ -80,3 +82,22 @@ inclusion:
 * Calculation of support statistics (e.g., bootstrap, jackknife, symmetric
   resampling, Bremer support)
 * Specifying constraints on monophyly
+
+## Citing
+
+If you have used `nitro` in a publication and have found it useful, please
+consider citing it alongside TNT as follows:
+
+Brougham, T. 2020. nitro: Integration of TNT in R. GitHub repository:
+https://github.com/paravian/nitro.
+
+## References
+
+Goloboff, P.A., Farris, J.S., Nixon, K.C., 2008. TNT, a free program for
+phylogenetic analysis. Cladistics 24, 774–786.
+https://doi.org/10.1111/j.1096-0031.2008.00217.x
+
+Goloboff, P.A., Catalano, S.A., 2016. TNT version 1.5, including a full
+implementation of phylogenetic morphometrics. Cladistics 32, 221–238.
+https://doi.org/10.1111/cla.12160
+
