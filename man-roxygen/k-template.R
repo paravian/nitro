@@ -1,0 +1,1 @@
+#' @param <%= ifelse(isgeneric, "value", "k") %> an numeric value indicating the concavity constant to apply during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.
