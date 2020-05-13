@@ -52,9 +52,9 @@ variables and results in more readable code.
 library(magrittr)
 
 TreeTools::ReadAsPhyDat("matrix.nex") %>%
-  nitro::NitroBranchSwap(replications = 10, hold_rep = 10)
-  nitro::tnt(tnt_path, hold = 100)
-  ape::consensus()
+  nitro::NitroBranchSwap(replications = 10, hold_rep = 10) %>%
+  nitro::tnt(tnt_path, hold = 100) %>%
+  ape::consensus() %>%
   plot()
 ```
 
