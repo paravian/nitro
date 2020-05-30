@@ -94,4 +94,28 @@ check_NitroImpliedWeights <- function (object) {
     return("max_ratio must be a number between 1 and 1000")
   }
 }
+
+check_NitroConstrainedSearch <- function (object) {
+  print("Validating constraints")
+  for (constraint in c(object@positive, object@negative)) {
+    c_names <- names(constraint) == c("fixed", "floating")
+    if (!all(c_names) | !length(c_names)) {
+      return("All constraints must contain named 'fixed' and 'floating' attributes")
+    }
+  }
+}
+
+check_NitroConstraintsBase <- function (object) {
+  if (!all(sapply(object@constraints, inherits, "NitroConstraint"))) {
+    return("constraints must be a list of NitroConstraint objects")
+  }
+}
+
+check_NitroConstraint <- function (object) {
+  if (sum(object@fixed) == 0 & sum(object@floating) > 0) {
+    return("Cannot have floating constraints without fixed constraints")
+  }
+  if (any(object@fixed & object@floating)) {
+    return("A constraint in floating cannot also be fixed")
+  }
 }
