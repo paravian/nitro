@@ -8,8 +8,9 @@
 #' and \code{Driven}.
 #' @keywords classes
 #' @include check-classes.R
+#' @include NitroMethodsBase-class.R
 setClass("NitroBranchSwap",
-  contains = "NitroTreeSearch",
+  contains = "NitroMethodsBase",
   slots = c(
     replications = "integer",
     hold_rep = "integer",

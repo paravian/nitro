@@ -56,7 +56,7 @@ downweighting a character.}
 
 \item{weighting}{a character value indicating the type of character weighting to use during the analysis. The available options are \code{equal} (the default) or \code{implied}.}
 
-\item{k}{an numeric value indicating the concavity constant to apply during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.}
+\item{k}{an numeric value indicating the concavity constant to apply during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}. When \code{multi_k} is \code{TRUE}, \code{k} represents the concavity for a character with no missing entries and serves as the basis for calculating per-site concavity constants.}
 
 \item{multi_k}{a logical value indicating whether each character will be given an independent concavity constant based on the value of \code{k} during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.}
 }
