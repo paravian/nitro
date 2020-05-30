@@ -9,7 +9,8 @@
 required to perform a driven search in \code{nitro}.
 }
 \seealso{
-The S4 classes \code{ImplicitEnum}, \code{BranchSwap}, \code{Ratchet}
-and \code{Driven}.
+The inheriting S4 class \code{\link{NitroMethodsBase}} and
+\code{\link{NitroImplicitEnum}}, \code{\link{NitroBranchSwap}},
+\code{\link{NitroRatchet}} and \code{\link{Driven}}.
 }
 \keyword{classes}

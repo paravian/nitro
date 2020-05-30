@@ -9,7 +9,8 @@
 analysis in \code{nitro}.
 }
 \seealso{
-The S4 classes \code{ImplicitEnum}, \code{Ratchet} and
-\code{Driven}.
+The inheriting S4 class \code{\link{NitroMethodsBase}} and
+\code{\link{NitroBranchSwap}}, \code{\link{NitroRatchet}} and
+\code{\link{NitroDriven}}.
 }
 \keyword{classes}

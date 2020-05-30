@@ -27,6 +27,7 @@ Collate:
     'NitroTreeSearch-class.R'
     'NitroBase-class.R'
     'NitroBase-methods.R'
+    'NitroMethodsBase-class.R'
     'NitroBranchSwap-class.R'
     'NitroWeightsBase-class.R'
     'NitroBranchSwap-methods.R'

@@ -3,12 +3,13 @@
 #' \code{NitroBranchSwap} is an S4 class that defines the set of parameters
 #' required to perform a driven search in \code{nitro}.
 #' @name NitroDriven-class
-#' @seealso The S4 classes \code{ImplicitEnum}, \code{BranchSwap}, \code{Ratchet}
-#' and \code{Driven}.
+#' @seealso The inheriting S4 class \code{\link{NitroMethodsBase}} and
+#' \code{\link{NitroImplicitEnum}}, \code{\link{NitroBranchSwap}},
+#' \code{\link{NitroRatchet}} and \code{\link{Driven}}.
 #' @keywords classes
 #' @include check-classes.R
 setClass("NitroDriven",
-  contains = "NitroTreeSearch",
+  contains = "NitroMethodsBase",
   slots = c(
     replications = "integer",
     hits = "integer",
