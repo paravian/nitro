@@ -1,11 +1,27 @@
 #' Define tree searches
 #'
-#' \code{NitroBase} is an S4 class that serves as the basis for classes that
-#' define parameters for equal and implied weights analyses.
+#' \code{NitroTreeSearch} is an S4 class that stores information regarding the
+#' tree search method, character weighting scheme and constraints on monophyly.
 #' @name NitroTreeSearch-class
 #' @docType class
-#' @seealso The inheriting S4 classes \code{NitroEqualWeights} and
-#' \code{NitroImpliedWeights}.
+#' @seealso The S4 classes \code{\link{NitroConstraintsBase}},
+#' \link{\code{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
 #' @keywords classes
 #' @include check-classes.R
-setClass("NitroTreeSearch", contains = "VIRTUAL")
+#' @include NitroConstraintsBase-class.R
+#' @include NitroMethodsBase-class.R
+#' @include NitroWeightsBase-class.R
+setClass("NitroTreeSearch",
+  slots = c(
+    matrix = "matrix",
+    ordered_characters = "logical",
+    inactive_taxa = "logical",
+    inactive_characters = "logical",
+    outgroup = "integer",
+    collapse = "integer",
+    constraints = "NitroConstraintsBase",
+    method = "NitroMethodsBase",
+    weights = "NitroWeightsBase"
+))
+
+setValidity("NitroTreeSearch", check_NitroTreeSearch)
