@@ -1,8 +1,9 @@
 #' Validate Nitro S4 objects
 #'
-#' @param object a prospective object that inherits \code{NitroBase}.
+#' @param object a prospective object that inherits
+#' \code{\link{NitroTreeSearch}}.
 #' @return a validated object.
-check_NitroBase <- function (object) {
+check_NitroTreeSearch <- function (object) {
   if (nrow(object@matrix) < 5) {
     return("matrix must contain at least 4 taxa")
   }
@@ -26,6 +27,15 @@ check_NitroBase <- function (object) {
   }
   if (length(object@ordered_characters) != ncol(object@matrix)) {
     return("length of inactive_characters must equal columns of matrix")
+  }
+  if (!inherits(object@constraints, "NitroConstraintsBase")) {
+    return("tree_search must be an object of class NitroTreeSearch")
+  }
+  if (!inherits(object@method, "NitroMethodsBase")) {
+    return("tree_search must be an object of class NitroTreeSearch")
+  }
+  if (!inherits(object@weights, "NitroWeightsBase")) {
+    return("tree_search must be an object of class NitroTreeSearch")
   }
   return(TRUE)
 }

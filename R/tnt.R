@@ -18,8 +18,8 @@
 #'   during the search.
 #' @export
 tnt <- function (obj, tnt_path, hold, max_ram = 16) {
-  if (!inherits(obj, "NitroBase")) {
-    stop("'obj' must inherit class NitroBase")
+  if (!inherits(obj, "NitroTreeSearch")) {
+    stop("'obj' must inherit class NitroTreeSearch")
   }
   if (!is.numeric(hold)) {
     stop("'hold' must be of class numeric")

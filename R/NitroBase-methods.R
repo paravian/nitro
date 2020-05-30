@@ -1,5 +1,5 @@
 #' @importFrom methods show
-setMethod("show", "NitroBase", function (object) {
+setMethod("show", "NitroTreeSearch", function (object) {
   cat("Matrix properties:\n\n")
   cat(paste("Number of taxa:             ", nrow(object@matrix), "\n"))
   cat(paste("Number of characters        ", ncol(object@matrix), "\n"))
@@ -27,7 +27,7 @@ setMethod("show", "NitroBase", function (object) {
 })
 
 #' @importFrom methods callNextMethod
-setMethod("initialize", "NitroBase",
+setMethod("initialize", "NitroTreeSearch",
   function (.Object, matrix, ordered_characters, inactive_taxa,
             inactive_characters, collapse, outgroup, constraints,
             method, weights) {
@@ -77,17 +77,17 @@ setMethod("initialize", "NitroBase",
 #'
 #' Function to return or set the rule used for collapsing of zero-length
 #' branches.
-#' @param n an object that inherits \code{NitroBase}.
+#' @param n an object that inherits \code{NitroTreeSearch}.
 #' @return a numeric vector indicating the rule used for collapsing of
 #' zero-length branches.
 #' @export
-#' @include NitroBase-class.R
+#' @include NitroTreeSearch-class.R
 #' @rdname collapse
 setGeneric("collapse", function (n) standardGeneric("collapse"))
 
 #' @aliases collapse
 #' @rdname collapse
-setMethod("collapse", c("NitroBase"), function (n) n@collapse)
+setMethod("collapse", c("NitroTreeSearch"), function (n) n@collapse)
 
 #' @templateVar isgeneric TRUE
 #' @template collapse-template
@@ -99,7 +99,7 @@ setGeneric("collapse<-", function (n, value) standardGeneric("collapse<-"))
 #' @importFrom methods validObject
 #' @aliases collapse
 #' @rdname collapse
-setMethod("collapse<-", signature("NitroBase", "numeric"), function (n, value) {
+setMethod("collapse<-", signature("NitroTreeSearch", "numeric"), function (n, value) {
   n@collapse <- as.integer(value)
   validObject(n)
   n
@@ -108,15 +108,15 @@ setMethod("collapse<-", signature("NitroBase", "numeric"), function (n, value) {
 #' Outgroup
 #'
 #' Function to return or set the outgroup taxon.
-#' @param n an object that inherits \code{NitroBase}.
+#' @param n an object that inherits \code{NitroTreeSearch}.
 #' @return a character vector indicating the name of the outgroup taxon.
 #' @export
-#' @include NitroBase-class.R
+#' @include NitroTreeSearch-class.R
 #' @rdname outgroup
 setGeneric("outgroup", function (n) standardGeneric("outgroup"))
 
 #' @rdname outgroup
-setMethod("outgroup", c("NitroBase"), function (n) rownames(n@matrix)[n@outgroup])
+setMethod("outgroup", c("NitroTreeSearch"), function (n) rownames(n@matrix)[n@outgroup])
 
 #' @templateVar isgeneric TRUE
 #' @template outgroup-template
@@ -126,7 +126,7 @@ setGeneric("outgroup<-", function (n, value) standardGeneric("outgroup<-"))
 
 #' @importFrom methods validObject
 #' @rdname outgroup
-setMethod("outgroup<-", signature("NitroBase", "character"),
+setMethod("outgroup<-", signature("NitroTreeSearch", "character"),
           function (n, value) {
   n@outgroup <- as.integer(which(rownames(n@matrix) == value)[1])
   if (is.na(n@outgroup)) {
@@ -140,16 +140,16 @@ setMethod("outgroup<-", signature("NitroBase", "character"),
 #'
 #' Function to return or set indexes of characters as ordered.
 #' @title Character modification functions
-#' @param n an object that inherits \code{NitroBase}.
+#' @param n an object that inherits \code{NitroTreeSearch}.
 #' @return a numeric vector indicating the characters defined as ordered.
 #' @export
-#' @include NitroBase-class.R
+#' @include NitroTreeSearch-class.R
 #' @rdname character-methods
 setGeneric("ordered_characters", function (n)
   standardGeneric("ordered_characters"))
 
 #' @rdname character-methods
-setMethod("ordered_characters", signature("NitroBase"), function (n)
+setMethod("ordered_characters", signature("NitroTreeSearch"), function (n)
   which(n@ordered_characters))
 
 #' @templateVar isgeneric TRUE
@@ -170,27 +170,27 @@ setGeneric("ordered_characters<-", function (n, value)
 
 #' @importFrom methods validObject
 #' @rdname character-methods
-setMethod("ordered_characters<-", signature("NitroBase", "numeric"),
+setMethod("ordered_characters<-", signature("NitroTreeSearch", "numeric"),
           .ordered_characters_body)
 
 #' @rdname character-methods
-setMethod("ordered_characters<-", signature("NitroBase", "NULL"),
+setMethod("ordered_characters<-", signature("NitroTreeSearch", "NULL"),
           .ordered_characters_body)
 
 #' List inactive characters
 #'
 #' Function that returns the indexes of characters defined as inactive.
 #' @title Character modification functions
-#' @param n an object that inherits \code{NitroBase}.
+#' @param n an object that inherits \code{NitroTreeSearch}.
 #' @return a numeric vector indicating the characters defined as inactive.
 #' @export
-#' @include NitroBase-class.R
+#' @include NitroTreeSearch-class.R
 #' @rdname character-methods
 setGeneric("inactive_characters", function (n)
   standardGeneric("inactive_characters"))
 
 #' @rdname character-methods
-setMethod("inactive_characters", signature("NitroBase"), function (n)
+setMethod("inactive_characters", signature("NitroTreeSearch"), function (n)
   which(n@inactive_characters))
 
 #' @templateVar isgeneric TRUE
@@ -210,26 +210,26 @@ setGeneric("inactive_characters<-", function (n, value)
 }
 
 #' @rdname character-methods
-setMethod("inactive_characters<-", signature("NitroBase", "numeric"),
+setMethod("inactive_characters<-", signature("NitroTreeSearch", "numeric"),
           .inactive_characters_body)
 
 #' @rdname character-methods
-setMethod("inactive_characters<-", signature("NitroBase", "NULL"),
+setMethod("inactive_characters<-", signature("NitroTreeSearch", "NULL"),
           .inactive_characters_body)
 
 #' List inactive taxa
 #'
 #' Function that returns the names of taxa defined as inactive.
-#' @param n an object that inherits \code{NitroBase}.
+#' @param n an object that inherits \code{NitroTreeSearch}.
 #' @return a character vector indicating the taxa defined as inactive.
 #' @export
-#' @include NitroBase-class.R
+#' @include NitroTreeSearch-class.R
 #' @rdname taxa-methods
 setGeneric("inactive_taxa", function (n)
   standardGeneric("inactive_taxa"))
 
 #' @rdname taxa-methods
-setMethod("inactive_taxa", signature("NitroBase"), function (n)
+setMethod("inactive_taxa", signature("NitroTreeSearch"), function (n)
   rownames(n@matrix)[n@inactive_taxa])
 
 .inactive_taxa_body <- function (n, value) {
@@ -254,17 +254,17 @@ setGeneric("inactive_taxa<-", function (n, value)
   standardGeneric("inactive_taxa<-"))
 
 #' @rdname taxa-methods
-setMethod("inactive_taxa<-", signature("NitroBase", "character"),
+setMethod("inactive_taxa<-", signature("NitroTreeSearch", "character"),
           .inactive_taxa_body)
 
 #' @rdname taxa-methods
-setMethod("inactive_taxa<-", signature("NitroBase", "NULL"),
+setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
           .inactive_taxa_body)
 
 #' Return TNT command
 #'
 #' A function that returns the TNT command(s).
-#' @param n an object that inherits from class \code{NitroBase}.
+#' @param n an object that inherits from class \code{NitroTreeSearch}.
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd
 setGeneric("tnt_cmd", function (n) standardGeneric("tnt_cmd"))
