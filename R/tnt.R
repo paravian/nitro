@@ -41,10 +41,6 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
 
   tnt_block <- c("BEGIN TNT;", "log stdout;", "tables =;")
 
-  if (inherits(obj, "NitroImpliedWeights")) {
-    tnt_arg <- c(paste0("piwe =", obj@k, ";"), tnt_arg)
-    if (obj@multi_k) {
-      tnt_block <- c(tnt_block, "xpiwe (*;")
     }
   }
 

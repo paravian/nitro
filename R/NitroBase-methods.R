@@ -18,11 +18,6 @@ setMethod("show", "NitroBase", function (object) {
                          collapse=", "),
                    "None"), "\n\n"))
   show(object@tree_search)
-  if (inherits(object, "NitroImpliedWeights")) {
-    cat(paste("\nImplied weighting:           enabled\n"))
-    cat(paste("Concavity constant (k):     ", object@k, "\n"))
-    cat(paste0("Multi-k                      ",
-               ifelse(object@multi_k, "en", "dis"), "abled\n"))
   }
 })
 

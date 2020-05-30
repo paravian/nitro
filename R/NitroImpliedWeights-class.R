@@ -4,15 +4,18 @@
 #' classes that define parameters for implied weights phylogenetic analyses.
 #' @name NitroImpliedWeights-class
 #' @docType class
-#' @seealso The inheriting S4 classes \code{NitroImplicitEnum},
-#' \code{NitroBranchswap}, \code{NitroRatchet}, \code{NitroDriven}.
+#' @seealso The inheriting S4 class \code{\link{NitroWeightsBase}} and
+#' \code{\link{NitroEqualWeights}}
 #' @keywords classes
 #' @include check-classes.R
 setClass("NitroImpliedWeights",
-  contains = "NitroBase",
+  contains = "NitroWeightsBase",
   slots = c(
     k = "numeric",
-    multi_k = "logical"
+    weights = "numeric",
+    multi_k = "logical",
+    proportion = "numeric",
+    max_ratio = "numeric"
   )
 )
 

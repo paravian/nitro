@@ -140,11 +140,7 @@ setMethod("hits", signature("NitroDriven"), function (n) n@hits)
 setGeneric("hits<-", function (n, value) standardGeneric("hits<-"))
 
 .hits_body <- function (n, value) {
-  if (inherits(n, "NitroImpliedWeights")) {
-    n@nitro_obj@hits <- as.integer(value)
-  } else if (inherits(n, "NitroBase")) {
-    n@hits <- as.integer(value)
-  }
+  n@hits <- as.integer(value)
   validObject(n)
   n
 }

@@ -1,0 +1,1 @@
+#' @param weights numeric

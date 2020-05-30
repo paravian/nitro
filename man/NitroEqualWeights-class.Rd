@@ -9,7 +9,7 @@
 that define parameters for equal weights phylogenetic analyses.
 }
 \seealso{
-The inheriting S4 classes \code{NitroImplicitEnum},
-\code{NitroBranchswap}, \code{NitroRatchet}, \code{NitroDriven}.
+The inheriting S4 class \code{\link{NitroWeightsBase}}
+and \code{\link{NitroImpliedWeights}}.
 }
 \keyword{classes}

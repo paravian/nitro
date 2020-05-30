@@ -1,18 +1,28 @@
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroImpliedWeights",
-          function (.Object, matrix, tree_search, ordered_characters,
-                    inactive_taxa, inactive_characters, collapse, outgroup, k,
-                    multi_k) {
-  .Object@k <- k
-  .Object@multi_k <- multi_k
-  .Object <- callNextMethod(.Object, matrix = matrix, tree_search = tree_search,
-    ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
-    inactive_characters = inactive_characters, collapse = collapse,
-    outgroup = outgroup)
+          function (.Object, k, weights, multi_k, proportion, max_ratio) {
+  .Object <- callNextMethod(.Object, k = k, weights = weights,
+                            multi_k = multi_k, proportion = proportion,
+                            max_ratio = max_ratio)
   validObject(.Object)
   .Object
 })
 
 setMethod("tnt_cmd", "NitroImpliedWeights", function (n) {
-  tnt_cmd(n@tree_search)
+  cmds <- c(paste0("piwe =", n@k))
+  if (n@multi_k) {
+    cmds <- c(cmds, paste("xpiwe ( *", n@proportion, " <", n@max_ratio,
+                          " /", n@k, ";", sep = ""))
+  }
+  return(cmds)
+})
+
+setMethod("show", "NitroImpliedWeights", function (object) {
+  cat("\nParameters for implied weights:\n\n")
+  cat(paste("Concavity constant (k):     ", object@k, "\n"))
+  cat(paste("Multiple constants:         ", object@multi_k, "\n"))
+  if (object@multi_k) {
+    cat(paste("Proportion:                 ", object@proportion, "\n"))
+    cat(paste("Maximum ratio:              ", object@max_ratio, "\n"))
+  }
 })
