@@ -1,25 +1,27 @@
 #' Define base parameters
 #'
-#' \code{NitroBase} is a virtual S4 class that defines the basic set of
-#' parameters required to perform a phylogenetic analysis in \code{nitro}.
-#' As this is a virtual class it cannot be constructed directly.
-#' @name NitroBase-class
+#' \code{NitroBase} is an S4 class that stores information regarding the
+#' tree search method, character weighting scheme and constraints on monophyly.
+#' @name NitroTreeSearch-class
 #' @docType class
-#' @seealso The S4 classes \code{NitroTreeSearch}, \code{NitroEqualWeights}
-#' and \code{NitroImpliedWeights}.
+#' @seealso The S4 classes \code{\link{NitroConstraintsBase}},
+#' \link{\code{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
 #' @keywords classes
 #' @include check-classes.R
-#' @include NitroTreeSearch-class.R
+#' @include NitroConstraintsBase-class.R
+#' @include NitroMethodsBase-class.R
+#' @include NitroWeightsBase-class.R
 setClass("NitroBase",
-  contains = "VIRTUAL",
   slots = c(
     matrix = "matrix",
-    tree_search = "NitroTreeSearch",
     ordered_characters = "logical",
     inactive_taxa = "logical",
     inactive_characters = "logical",
     outgroup = "integer",
     collapse = "integer"
+    constraints = "NitroConstraintsBase",
+    method = "NitroMethodsBase",
+    weights = "NitroWeightsBase"
   )
 )
 

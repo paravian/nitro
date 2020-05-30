@@ -6,9 +6,6 @@ check_NitroBase <- function (object) {
   if (nrow(object@matrix) < 5) {
     return("matrix must contain at least 4 taxa")
   }
-  if (!inherits(object@tree_search, "NitroTreeSearch")) {
-    return("tree_search must be an object of class NitroTreeSearch")
-  }
   if (object@collapse < 1 | object@collapse > 4) {
     return("collapse must be an integer between 1 and 4")
   }
