@@ -51,22 +51,21 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
   )
 
   char_codes <- c()
-  if (any(ordered_characters(obj))) {
+  if (any(obj@ordered_characters)) {
     char_codes <- c(char_codes, "+",
-                    which(ordered_characters(obj)) - 1)
+                    which(obj@ordered_characters) - 1)
   }
-  if (any(inactive_characters(obj))) {
+  if (any(obj@inactive_characters)) {
     char_codes <- c(char_codes, "]",
-                    which(inactive_characters(obj)) - 1)
+                    which(obj@inactive_characters) - 1)
   }
   if (length(char_codes)) {
     tnt_block <- c(tnt_block, paste(c("ccode", char_codes, ";"), collapse=" "))
   }
-
-  if (any(inactive_taxa(obj))) {
+  if (any(obj@inactive_taxa)) {
     tnt_block <- c(tnt_block,
                    paste(c("taxcode -",
-                           which(inactive_taxa(obj)) - 1, ";"), collapse=" "))
+                           which(obj@inactive_taxa) - 1, ";"), collapse=" "))
   }
 
   tnt_block <- c(tnt_block, tnt_cmd(obj), "condense;", "tplot *;", "length;",
