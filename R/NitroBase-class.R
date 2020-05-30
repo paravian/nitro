@@ -1,6 +1,6 @@
-#' Define base parameters
+#' Define tree searches
 #'
-#' \code{NitroBase} is an S4 class that stores information regarding the
+#' \code{NitroTreeSearch} is an S4 class that stores information regarding the
 #' tree search method, character weighting scheme and constraints on monophyly.
 #' @name NitroTreeSearch-class
 #' @docType class
@@ -11,7 +11,7 @@
 #' @include NitroConstraintsBase-class.R
 #' @include NitroMethodsBase-class.R
 #' @include NitroWeightsBase-class.R
-setClass("NitroBase",
+setClass("NitroTreeSearch",
   slots = c(
     matrix = "matrix",
     ordered_characters = "logical",
@@ -25,4 +25,4 @@ setClass("NitroBase",
   )
 )
 
-setValidity("NitroBase", check_NitroBase)
+setValidity("NitroTreeSearch", check_NitroTreeSearch)
