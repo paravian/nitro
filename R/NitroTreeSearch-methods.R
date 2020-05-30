@@ -263,7 +263,8 @@ setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
 
 #' Return TNT command
 #'
-#' A function that returns the TNT command(s).
+#' A function that returns the command to perform the phylogenetic analysis for
+#' a branch swapping analysis.
 #' @param n an object that inherits from class \code{NitroTreeSearch}.
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd

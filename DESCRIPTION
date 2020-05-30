@@ -24,13 +24,12 @@ Imports:
     TreeTools
 Collate: 
     'check-classes.R'
-    'NitroTreeSearch-class.R'
-    'NitroBase-class.R'
-    'NitroBase-methods.R'
     'NitroMethodsBase-class.R'
     'NitroBranchSwap-class.R'
     'NitroWeightsBase-class.R'
     'NitroConstraintsBase-class.R'
+    'NitroTreeSearch-class.R'
+    'NitroTreeSearch-methods.R'
     'NitroBranchSwap-methods.R'
     'NitroConstraint-class.R'
     'NitroConstraint-methods.R'
@@ -38,7 +37,6 @@ Collate:
     'NitroDriven-class.R'
     'NitroDriven-methods.R'
     'NitroEqualWeights-class.R'
-    'NitroEqualWeights-methods.R'
     'NitroImplicitEnum-class.R'
     'NitroImplicitEnum-methods.R'
     'NitroImpliedWeights-class.R'
