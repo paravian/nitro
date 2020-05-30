@@ -41,6 +41,11 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
 
   tnt_block <- c("BEGIN TNT;", "log stdout;", "tables =;")
 
+  if (inherits(obj@weights, "NitroImpliedWeights")) {
+    iw_opts <- tnt_cmd(obj@weights)
+    tnt_arg <- c(iw_opts[1], tnt_arg)
+    if (obj@weights@multi_k) {
+      tnt_block <- c(tnt_block, iw_opts[2])
     }
   }
 
@@ -68,7 +73,11 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
                            which(obj@inactive_taxa) - 1, ";"), collapse=" "))
   }
 
-  tnt_block <- c(tnt_block, tnt_cmd(obj), "condense;", "tplot *;", "length;",
+  if (length(obj@constraints)) {
+    tnt_block <- c(tnt_block, tnt_cmd(obj@constraints))
+  }
+
+  tnt_block <- c(tnt_block, tnt_cmd(obj@method), "condense;", "tplot *;", "length;",
                  "minmax;")
 
   if (inherits(obj, "NitroImpliedWeights")) {
@@ -85,18 +94,18 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
   pb_setup$score <- 3L
   pb_setup$ratio_num <- 1L
   pb_setup$hits <- 1L
-  if (class(obj@tree_search) == "NitroBranchSwap") {
-    pb_setup$total <- replications(obj@tree_search)
+  if (class(obj@method) == "NitroBranchSwap") {
+    pb_setup$total <- replications(obj@method)
     pb_setup$format <- "Branch swapping: [:bar] :current/:total reps | Best score: :score"
-  } else if (class(obj@tree_search) == "NitroRatchet") {
-    pb_setup$total <- iterations(obj@tree_search)
+  } else if (class(obj@method) == "NitroRatchet") {
+    pb_setup$total <- iterations(obj@method)
     pb_setup$format <- "Ratcheting: [:bar] :current/:total iters | Best score: :score"
-  } else if (class(obj@tree_search) == "NitroDriven") {
-    pb_setup$hits <- hits(obj@tree_search)
+  } else if (class(obj@method) == "NitroDriven") {
+    pb_setup$hits <- hits(obj@method)
     pb_setup$ratio_num <- 2L
-    pb_setup$total <- replications(obj@tree_search)
-    pb_setup$format <- paste0("Driven search: [:bar]", ifelse(hits(obj@tree_search) > 1, " run :run", ""), " | :current/:total reps | Best score: :score")
-  } else if (class(obj@tree_search) == "NitroImplicitEnum") {
+    pb_setup$total <- replications(obj@method)
+    pb_setup$format <- paste0("Driven search: [:bar]", ifelse(hits(obj@method) > 1, " run :run", ""), " | :current/:total reps | Best score: :score")
+  } else if (class(obj@method) == "NitroImplicitEnum") {
     pb_setup$re <- "Searching \\(score ([0-9]+)\\) ([X=]+)\r"
     pb_setup$score <- 1L
     pb_setup$total <- 30L

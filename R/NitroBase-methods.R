@@ -17,15 +17,22 @@ setMethod("show", "NitroBase", function (object) {
                    paste(rownames(object@matrix)[object@inactive_taxa],
                          collapse=", "),
                    "None"), "\n\n"))
-  show(object@tree_search)
+  show(object@method)
+  if (inherits(object@weights, "NitroImpliedWeights")) {
+    show(object@weights)
+  }
+  if (length(object@constraints) > 0) {
+    show(object@constraints)
   }
 })
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroBase",
-  function (.Object, matrix, tree_search, ordered_characters,
-            inactive_taxa, inactive_characters, collapse, outgroup) {
+  function (.Object, matrix, ordered_characters, inactive_taxa,
+            inactive_characters, collapse, outgroup, constraints,
+            method, weights) {
     matrix <- PhyDatToMatrix(matrix)
+    rownames(matrix) <- gsub("_", " ", rownames(matrix))
     if (class(collapse) == "numeric") {
       collapse <- as.integer(collapse)
     }
@@ -59,9 +66,10 @@ setMethod("initialize", "NitroBase",
       }
     }
     .Object <- callNextMethod(.Object, matrix = matrix,
-      tree_search = tree_search, collapse = collapse, outgroup = outgroup,
       ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
-      inactive_characters = inactive_characters)
+      inactive_characters = inactive_characters, collapse = collapse,
+      outgroup = outgroup, constraints = constraints, method = method,
+      weights = weights)
     .Object
   })
 
@@ -77,16 +85,19 @@ setMethod("initialize", "NitroBase",
 #' @rdname collapse
 setGeneric("collapse", function (n) standardGeneric("collapse"))
 
+#' @aliases collapse
 #' @rdname collapse
 setMethod("collapse", c("NitroBase"), function (n) n@collapse)
 
 #' @templateVar isgeneric TRUE
 #' @template collapse-template
+#' @aliases collapse
 #' @export
 #' @rdname collapse
 setGeneric("collapse<-", function (n, value) standardGeneric("collapse<-"))
 
 #' @importFrom methods validObject
+#' @aliases collapse
 #' @rdname collapse
 setMethod("collapse<-", signature("NitroBase", "numeric"), function (n, value) {
   n@collapse <- as.integer(value)
@@ -214,11 +225,11 @@ setMethod("inactive_characters<-", signature("NitroBase", "NULL"),
 #' @export
 #' @include NitroBase-class.R
 #' @rdname taxa-methods
-setGeneric("inactive_taxa", function (n, value)
+setGeneric("inactive_taxa", function (n)
   standardGeneric("inactive_taxa"))
 
 #' @rdname taxa-methods
-setMethod("inactive_taxa", signature("NitroBase", "missing"), function (n)
+setMethod("inactive_taxa", signature("NitroBase"), function (n)
   rownames(n@matrix)[n@inactive_taxa])
 
 .inactive_taxa_body <- function (n, value) {
@@ -252,9 +263,8 @@ setMethod("inactive_taxa<-", signature("NitroBase", "NULL"),
 
 #' Return TNT command
 #'
-#' A function that returns the command to perform the phylogenetic analysis for
-#' a branch swapping analysis.
-#' @param n an object of class \code{NitroBranchSwap}.
+#' A function that returns the TNT command(s).
+#' @param n an object that inherits from class \code{NitroBase}.
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd
 setGeneric("tnt_cmd", function (n) standardGeneric("tnt_cmd"))
