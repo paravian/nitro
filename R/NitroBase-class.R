@@ -18,7 +18,7 @@ setClass("NitroBase",
     ordered_characters = "logical",
     inactive_taxa = "logical",
     inactive_characters = "logical",
-    outgroup = "character",
+    outgroup = "integer",
     collapse = "integer"
   )
 )

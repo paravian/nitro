@@ -3,7 +3,7 @@ setMethod("show", "NitroBase", function (object) {
   cat("Matrix properties:\n\n")
   cat(paste("Number of taxa:             ", nrow(object@matrix), "\n"))
   cat(paste("Number of characters        ", ncol(object@matrix), "\n"))
-  cat(paste("Outgroup taxon:             ", object@outgroup, "\n"))
+  cat(paste("Outgroup taxon:             ", rownames(object@matrix)[object@outgroup], "\n"))
   cat(paste("Ordered characters:         ",
             ifelse(any(object@ordered_characters),
                    paste(which(object@ordered_characters), collapse=", "),
@@ -35,7 +35,12 @@ setMethod("initialize", "NitroBase",
       collapse <- as.integer(collapse)
     }
     if (is.null(outgroup)) {
-      outgroup <- rownames(matrix)[1]
+      outgroup <- 1L
+    } else if (is.character(outgroup)) {
+      outgroup <- as.integer(which(rownames(matrix) == outgroup)[1])
+    }
+    if (is.na(outgroup)) {
+      stop("outgroup must be a valid taxon name")
     }
     if (class(ordered_characters) %in% c("numeric", "integer")) {
       if (length(ordered_characters)) {
@@ -105,7 +110,7 @@ setMethod("collapse<-", signature("NitroBase", "numeric"), function (n, value) {
 setGeneric("outgroup", function (n) standardGeneric("outgroup"))
 
 #' @rdname outgroup
-setMethod("outgroup", c("NitroBase"), function (n) n@outgroup)
+setMethod("outgroup", c("NitroBase"), function (n) rownames(n@matrix)[n@outgroup])
 
 #' @templateVar isgeneric TRUE
 #' @template outgroup-template
@@ -117,7 +122,10 @@ setGeneric("outgroup<-", function (n, value) standardGeneric("outgroup<-"))
 #' @rdname outgroup
 setMethod("outgroup<-", signature("NitroBase", "character"),
           function (n, value) {
-  n@outgroup <- value
+  n@outgroup <- as.integer(which(rownames(n@matrix) == value)[1])
+  if (is.na(n@outgroup)) {
+    stop("outgroup must be a valid taxon name")
+  }
   validObject(n)
   n
 })

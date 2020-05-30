@@ -51,8 +51,7 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
   tnt_block <- c(tnt_block,
     paste0("collapse ", collapse(obj), ";"),
     paste0("hold ", as.integer(hold), ";"),
-    paste0("outgroup ",
-           which(rownames(obj@matrix) == outgroup(obj)) - 1, ";")
+    paste0("outgroup ", obj@outgroup - 1, ";")
   )
 
   char_codes <- c()

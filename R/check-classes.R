@@ -13,9 +13,9 @@ check_NitroBase <- function (object) {
     return("collapse must be an integer between 1 and 4")
   }
   if (length(object@outgroup) != 1) {
-    return("outgroup must be a character vector of length 1")
+    return("outgroup must be an integer of length 1")
   }
-  if (!object@outgroup %in% rownames(object@matrix)) {
+  if (object@outgroup < 1 | object@outgroup > nrow(object@matrix)) {
     return("outgroup is not a taxon listed in matrix")
   }
   if (object@outgroup %in% rownames(object@matrix)[object@inactive_taxa]) {
