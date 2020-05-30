@@ -79,8 +79,19 @@ check_NitroDriven <- function (object) {
   }
 }
 
+#' Validate Nitro S4 objects
+#'
+#' @param object a prospective object that inherits \code{NitroImpliedWeights}.
+#' @return a validated object.
 check_NitroImpliedWeights <- function (object) {
   if (object@k <= 0 | object@k > 1000) {
     return("k must be a number between 0 and 1000")
   }
+  if (object@proportion < 0 | object@proportion > 1) {
+    return("proportion must be a number between 0 and 1")
+  }
+  if (object@max_ratio < 1 | object@max_ratio > 1000) {
+    return("max_ratio must be a number between 1 and 1000")
+  }
+}
 }

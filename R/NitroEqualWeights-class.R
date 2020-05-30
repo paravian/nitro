@@ -4,10 +4,10 @@
 #' that define parameters for equal weights phylogenetic analyses.
 #' @name NitroEqualWeights-class
 #' @docType class
-#' @seealso The inheriting S4 classes \code{NitroImplicitEnum},
-#' \code{NitroBranchswap}, \code{NitroRatchet}, \code{NitroDriven}.
+#' @seealso The inheriting S4 class \code{\link{NitroWeightsBase}}
+#' and \code{\link{NitroImpliedWeights}}.
 #' @keywords classes
-#' @include check-classes.R
+#' @include NitroWeightsBase-class.R
 setClass("NitroEqualWeights",
-  contains = "NitroBase"
+  contains = "NitroWeightsBase"
 )

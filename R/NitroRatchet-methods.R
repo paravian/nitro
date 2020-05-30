@@ -79,7 +79,6 @@ setMethod("show", "NitroRatchet", function (object) {
 #' @return a numeric vector indicating the number of iterations for the
 #' analysis.
 #' @export
-#' @include NitroBase-class.R
 #' @rdname iterations
 setGeneric("iterations", function (n, value) standardGeneric("iterations"))
 
@@ -93,11 +92,7 @@ setMethod("iterations", signature("NitroRatchet", "missing"), function (n) { n@i
 setGeneric("iterations<-", function (n, value) standardGeneric("iterations<-"))
 
 .iterations_body <- function (n, value) {
-  if (inherits(n, "NitroImpliedWeights")) {
-    n@nitro_obj@iterations <- as.integer(value)
-  } else if (inherits(n, "NitroRatchet")) {
-    n@iterations <- as.integer(value)
-  }
+  n@iterations <- as.integer(value)
   validObject(n)
   n
 }
