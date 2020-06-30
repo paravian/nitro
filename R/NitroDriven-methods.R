@@ -1,20 +1,9 @@
-#' Construct a branch swapping analysis
+#' Definte parameters for a driven analysis
 #'
 #' @importFrom methods new
-#' @importFrom TreeTools PhyDatToMatrix
-#' @param matrix an object of class \code{phyDat}.
 #' @param replications an integer value indicating the number of replications.
 #' @param hits an integer value indicating the number of times the shortest
 #'   tree must be found on consecutive re-runs of the analysis before stopping.
-#' @param replications an integer value indicating the number of replications.
-#' @param rss,css,xss a logical value indicating whether to use random,
-#'   constraint or exclusive sectorial searches.
-#' @param ratchet_cycles an integer value indicating the number of cycles of
-#'   the parsimony ratchet to perform per replication.
-#' @param drifting_cycles an integer value indicating the number of cycles of
-#'   tree drifting to perform per replication.
-#' @param fusing_rounds an integer value indicating the number of rounds of
-#'   fusing per replication.
 #' @param consense_times an integer value indicating the number of times to
 #'   consense until the consensus is stablilised.
 #' @param keep_all a logical value indicating whether to retain all generated
@@ -24,15 +13,6 @@
 #'   RAT, in addition to the trees resulting from fusing those. When
 #'   \code{hits} > 1, then it means the trees resulting from fusing the
 #'   initial starting trees for each of starting points.
-#' @templateVar isgeneric FALSE
-#' @template ordered_characters-template
-#' @template inactive_taxa-template
-#' @template inactive_characters-template
-#' @template outgroup-template
-#' @template collapse-template
-#' @template weighting-template
-#' @template k-template
-#' @template multi_k-template
 #' @export
 NitroDriven <- function (matrix, replications, hits = 1, rss = TRUE,
                          css = FALSE, xss = FALSE, ratchet_cycles = 0,

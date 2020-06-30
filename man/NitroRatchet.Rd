@@ -2,27 +2,11 @@
 % Please edit documentation in R/NitroRatchet-methods.R
 \name{NitroRatchet}
 \alias{NitroRatchet}
-\title{Construct a parsimony ratchet analysis}
+\title{Define parameters for a parsimony ratchet analysis}
 \usage{
-NitroRatchet(
-  matrix,
-  iterations,
-  replacements = 40,
-  prob_up = 4,
-  prob_down = 4,
-  ordered_characters = numeric(),
-  inactive_taxa = character(),
-  inactive_characters = numeric(),
-  outgroup = NULL,
-  collapse = 3,
-  weighting = c("equal", "implied"),
-  k = 3,
-  multi_k = FALSE
-)
+NitroRatchet(iterations = 50, replacements = 40, prob_up = 4, prob_down = 4)
 }
 \arguments{
-\item{matrix}{an object of class \code{phyDat}.}
-
 \item{iterations}{an integer value indicating the number of iterations.}
 
 \item{replacements}{an integer value indicating the number of replacements
@@ -34,32 +18,7 @@ character.}
 
 \item{prob_down}{an integer value indicating the probability of
 downweighting a character.}
-
-\item{ordered_characters}{a numeric vector indicating the characters to be treated as ordered.}
-
-\item{inactive_taxa}{a character vector indicating the taxa to be marked as inactive.}
-
-\item{inactive_characters}{a numeric vector indicating the characters to be marked as inactive.}
-
-\item{outgroup}{a single character vector indicating the taxon to be the outgroup.}
-
-\item{collapse}{an integer indicating the rule for collapsing of zero length branches. The options are:
-\itemize{
-\item \code{1}: collapse an interior branch of the maximum possible length
-  of the branch is zero
-\item \code{2}: keep zero length branches if ancestor and descendent states
-  differ
-\item \code{3}: collapse an interior branch if the minimum possible length
-  of the branch is zero (the default)
-\item \code{4}: discard all trees that must contain a zero length branch
-}}
-
-\item{weighting}{a character value indicating the type of character weighting to use during the analysis. The available options are \code{equal} (the default) or \code{implied}.}
-
-\item{k}{an numeric value indicating the concavity constant to apply during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}. When \code{multi_k} is \code{TRUE}, \code{k} represents the concavity for a character with no missing entries and serves as the basis for calculating per-site concavity constants.}
-
-\item{multi_k}{a logical value indicating whether each character will be given an independent concavity constant based on the value of \code{k} during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.}
 }
 \description{
-Construct a parsimony ratchet analysis
+Define parameters for a parsimony ratchet analysis
 }

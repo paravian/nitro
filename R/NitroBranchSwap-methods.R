@@ -1,41 +1,15 @@
-#' Construct a branch swapping analysis
+#' Define parameters for a branch swapping analysis
 #'
 #' @importFrom methods new
-#' @importFrom TreeTools PhyDatToMatrix
-#' @param matrix an object of class \code{phyDat}.
 #' @param replications an integer value indicating the number of replications.
 #' @param hold_rep an integer value indicating the maximum number of trees to
 #'   retain during each replication.
 #' @param keep_all a logical value indicating whether to retain all generated
 #'   trees from each replication regardless of length.
-#' @templateVar isgeneric FALSE
-#' @template ordered_characters-template
-#' @template inactive_taxa-template
-#' @template inactive_characters-template
-#' @template outgroup-template
-#' @template collapse-template
-#' @template weighting-template
-#' @template k-template
-#' @template multi_k-template
 #' @export
-NitroBranchSwap <- function (matrix, replications, hold_rep, keep_all = FALSE,
-                             ordered_characters = numeric(),
-                             inactive_taxa = character(),
-                             inactive_characters = numeric(), outgroup = NULL,
-                             collapse = 3, weighting = c("equal", "implied"),
-                             k = 3, multi_k = FALSE) {
-   weighting <- match.arg(weighting)
-   tree_search <- new("NitroBranchSwap", replications = replications,
-      hold_rep = hold_rep, keep_all = keep_all)
-   if (weighting == "equal") {
-      obj <- new("NitroEqualWeights", matrix, tree_search, ordered_characters,
-                 inactive_taxa, inactive_characters, collapse, outgroup)
-   } else {
-      obj <- new("NitroImpliedWeights", matrix, tree_search, ordered_characters,
-                 inactive_taxa, inactive_characters, collapse, outgroup, k,
-                 multi_k)
-   }
-   obj
+NitroBranchSwap <- function (replications, hold_rep, keep_all = FALSE) {
+  new("NitroBranchSwap", replications = replications, hold_rep = hold_rep,
+      keep_all = keep_all)
 }
 
 #' @importFrom methods callNextMethod
@@ -82,6 +56,7 @@ setGeneric("replications<-", function (n, value) standardGeneric("replications<-
 setMethod("replications<-", signature("NitroBranchSwap", "numeric"), .replications_body)
 
 #' @rdname tnt_cmd
+#' @include NitroTreeSearch-methods.R
 setMethod("tnt_cmd", "NitroBranchSwap", function (n) {
    return(paste0("mult= replic ", n@replications, " hold ", n@hold_rep,
                  ifelse(n@keep_all, " ", " no"), "keepall;"))

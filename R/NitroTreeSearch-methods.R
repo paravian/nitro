@@ -1,3 +1,50 @@
+#' Define tree search parameters
+#'
+#' @importFrom methods new
+#' @importFrom TreeTools PhyDatToMatrix
+#' @param matrix a \code{phyDat} object representing a character-taxon matrix
+#' @param method an object that inherits from class \code{\link{NitroMethodsBase}}
+#' @templateVar isgeneric FALSE
+#' @template ordered_characters-template
+#' @template inactive_taxa-template
+#' @template inactive_characters-template
+#' @template outgroup-template
+#' @template collapse-template
+#' @template weighting-template
+#' @template k-template
+#' @template weights-template
+#' @template multi_k-template
+#' @template proportion-template
+#' @template max_ratio-template
+#' @export
+newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
+                           inactive_taxa = character(),
+                           inactive_characters = numeric(), outgroup = NULL,
+                           collapse = 3, weighting = c("equal", "implied"),
+                           k = 3, weights = numeric(), multi_k = FALSE,
+                           proportion = 0.5, max_ratio = 5) {
+  if (class(matrix) != "phyDat") {
+    stop("matrix must be of class phyDat")
+  }
+  if (!inherits(method, "NitroMethodsBase")) {
+    stop("method must inherit from class NitroMethodsBase")
+  }
+  matrix <- PhyDatToMatrix(matrix)
+  weighting <- match.arg(weighting)
+  if (weighting == "equal") {
+    weights_obj <- new("NitroEqualWeights")
+  } else {
+    weights_obj <- new("NitroImpliedWeights", k, weights, multi_k, proportion,
+                       max_ratio)
+  }
+  constraints_obj <- new("NitroConstraintsBase")
+  tree_search <- new("NitroTreeSearch", matrix = matrix,
+    ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
+    inactive_characters = inactive_characters, collapse = collapse,
+    outgroup = outgroup, constraints = constraints_obj, method = method,
+    weights = weights_obj)
+}
+
 #' @importFrom methods show
 setMethod("show", "NitroTreeSearch", function (object) {
   cat("Matrix properties:\n\n")
@@ -31,8 +78,6 @@ setMethod("initialize", "NitroTreeSearch",
   function (.Object, matrix, ordered_characters, inactive_taxa,
             inactive_characters, collapse, outgroup, constraints,
             method, weights) {
-    matrix <- PhyDatToMatrix(matrix)
-    rownames(matrix) <- gsub("_", " ", rownames(matrix))
     if (class(collapse) == "numeric") {
       collapse <- as.integer(collapse)
     }
@@ -52,6 +97,11 @@ setMethod("initialize", "NitroTreeSearch",
       }
     }
     if (class(inactive_taxa) == "character") {
+      if (any(!inactive_taxa %in% rownames(matrix))) {
+        stop("taxa in inactive_taxa not present in matrix: ",
+             paste(inactive_taxa[!inactive_taxa %in% rownames(matrix)],
+                   collapse = ", "))
+      }
       if (length(inactive_taxa)) {
         inactive_taxa <- rownames(matrix) %in% inactive_taxa
       } else {
