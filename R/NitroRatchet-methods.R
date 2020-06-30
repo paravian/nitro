@@ -1,8 +1,6 @@
-#' Construct a parsimony ratchet analysis
+#' Define parameters for a parsimony ratchet analysis
 #'
 #' @importFrom methods new
-#' @importFrom TreeTools PhyDatToMatrix
-#' @param matrix an object of class \code{phyDat}.
 #' @param iterations an integer value indicating the number of iterations.
 #' @param replacements an integer value indicating the number of replacements
 #'   (i.e., accepted tree rearrangements) to perform in each perturbation
@@ -11,35 +9,11 @@
 #'   character.
 #' @param prob_down an integer value indicating the probability of
 #'   downweighting a character.
-#' @templateVar isgeneric FALSE
-#' @template ordered_characters-template
-#' @template inactive_taxa-template
-#' @template inactive_characters-template
-#' @template outgroup-template
-#' @template collapse-template
-#' @template weighting-template
-#' @template k-template
-#' @template multi_k-template
 #' @export
-NitroRatchet <- function (matrix, iterations, replacements = 40, prob_up = 4,
-                          prob_down = 4, ordered_characters = numeric(),
-                          inactive_taxa = character(),
-                          inactive_characters = numeric(), outgroup = NULL,
-                          collapse = 3, weighting = c("equal", "implied"),
-                          k = 3, multi_k = FALSE) {
-  weighting <- match.arg(weighting)
-  tree_search <- new("NitroRatchet", iterations = iterations,
-                     replacements = replacements, prob_up = prob_up,
-                     prob_down = prob_down)
-  if (weighting == "equal") {
-    obj <- new("NitroEqualWeights", matrix, tree_search, ordered_characters,
-               inactive_taxa, inactive_characters, collapse, outgroup)
-  } else {
-    obj <- new("NitroImpliedWeights", matrix, tree_search, ordered_characters,
-               inactive_taxa, inactive_characters, collapse, outgroup, k,
-               multi_k)
-  }
-  obj
+NitroRatchet <- function (iterations = 50, replacements = 40, prob_up = 4,
+                          prob_down = 4) {
+  new("NitroRatchet", iterations = iterations, replacements = replacements,
+    prob_up = prob_up, prob_down = prob_down)
 }
 
 #' @importFrom methods callNextMethod
