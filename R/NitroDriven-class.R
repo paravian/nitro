@@ -8,19 +8,24 @@
 #' \code{\link{NitroRatchet}} and \code{\link{Driven}}.
 #' @keywords classes
 #' @include check-classes.R
+#' @include NitroSectorialSearch-class.R
+#' @include NitroTreeFuse-class.R
+#' @include NitroTreeHybridize-class.R
+#' @include NitroTreeDrift-class.R
+#' @include NitroRatchet-class.R
 setClass("NitroDriven",
   contains = "NitroMethodsBase",
   slots = c(
     replications = "integer",
     hits = "integer",
-    rss = "logical",
-    css = "logical",
-    xss = "logical",
-    ratchet_cycles = "integer",
-    drifting_cycles = "integer",
-    fusing_rounds = "integer",
     consense_times = "integer",
-    keep_all = "logical"
+    keep_all = "logical",
+    multiply = "logical",
+    sectorial_search = "list",
+    tree_fuse = "NitroTreeFuse",
+    tree_hybridize = "NitroTreeHybridize",
+    tree_drift = "NitroTreeDrift",
+    ratchet = "NitroRatchet"
   )
 )
 

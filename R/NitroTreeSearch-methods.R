@@ -115,6 +115,16 @@ setMethod("initialize", "NitroTreeSearch",
         inactive_characters <- rep(FALSE, ncol(matrix))
       }
     }
+    if (class(method) == "NitroDriven") {
+      if (method@sectorial_search@random) {
+        if (method@sectorial_search@min_size == 0) {
+          method@sectorial_search@min_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
+        }
+        if (method@sectorial_search@max_size == 0) {
+          method@sectorial_search@max_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
+        }
+      }
+    }
     .Object <- callNextMethod(.Object, matrix = matrix,
       ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
       inactive_characters = inactive_characters, collapse = collapse,

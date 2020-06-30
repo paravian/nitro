@@ -7,14 +7,14 @@
 NitroDriven(
   replications,
   hits = 1,
-  rss = TRUE,
-  css = FALSE,
-  xss = FALSE,
-  ratchet_cycles = 0,
-  drifting_cycles = 30,
-  fusing_rounds = 0,
   consense_times = 0,
   keep_all = FALSE,
+  multiply = TRUE,
+  sectorial_search = NULL,
+  tree_fuse = NULL,
+  tree_hybridize = NULL,
+  tree_drift = NULL,
+  ratchet = NULL
 )
 }
 \arguments{
@@ -22,18 +22,6 @@ NitroDriven(
 
 \item{hits}{an integer value indicating the number of times the shortest
 tree must be found on consecutive re-runs of the analysis before stopping.}
-
-\item{rss, css, xss}{a logical value indicating whether to use random,
-constraint or exclusive sectorial searches.}
-
-\item{ratchet_cycles}{an integer value indicating the number of cycles of
-the parsimony ratchet to perform per replication.}
-
-\item{drifting_cycles}{an integer value indicating the number of cycles of
-tree drifting to perform per replication.}
-
-\item{fusing_rounds}{an integer value indicating the number of rounds of
-fusing per replication.}
 
 \item{consense_times}{an integer value indicating the number of times to
 consense until the consensus is stablilised.}
@@ -46,11 +34,19 @@ RAT, in addition to the trees resulting from fusing those. When
 \code{hits} > 1, then it means the trees resulting from fusing the
 initial starting trees for each of starting points.}
 
+\item{multiply}{a logical value indicating whether to find additional trees
+by fusing suboptimal trees with optimal trees.}
 
+\item{sectorial_search}{an object of class
+\code{\link{NitroSectorialSearch}}.}
 
+\item{tree_fuse}{an object of class \code{\link{NitroTreeFuse}}.}
 
+\item{tree_hybridize}{an object of class \code{\link{NitroTreeHybridize}}.}
 
+\item{tree_drift}{an object of class \code{\link{NitroTreeDrift}}.}
 
+\item{ratchet}{an object of class \code{\link{NitroRatchet}}.}
 }
 \description{
 Definte parameters for a driven analysis
