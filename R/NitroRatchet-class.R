@@ -1,8 +1,8 @@
 #' Define a parsimony ratchet analysis
 #'
 #' \code{NitroRatchet} is an S4 class that defines the set of parameters
-#' required to perform a branch swapping ('traditional', in TNTs terminology)
-#' phylogenetic analysis in \code{nitro}.
+#' required to perform a parsimony ratchet phylogenetic analysis in
+#' \code{nitro}.
 #' @name NitroRatchet-class
 #' @seealso The S4 classes \code{\link{NitroImplicitEnum}},
 #' \code{\link{NitroRatchet}} and \code{\link{NitroDriven}}.

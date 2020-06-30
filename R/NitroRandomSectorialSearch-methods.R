@@ -55,7 +55,7 @@ setMethod("initialize", "NitroRandomSectorialSearch",
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroRandomSectorialSearch", function (n) {
-  env <- parent.frame()
+  env <- sys.frame(-4)
   sect_cmd <- c(" minsize ", n@min_size,
                 " maxsize ", n@max_size,
                 " selfact ", n@selection_factor,
