@@ -116,12 +116,15 @@ setMethod("initialize", "NitroTreeSearch",
       }
     }
     if (class(method) == "NitroDriven") {
-      if (method@sectorial_search@random) {
-        if (method@sectorial_search@min_size == 0) {
-          method@sectorial_search@min_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
+      sect_classes <- sapply(method@sectorial_search, class)
+      if ("NitroRandomSectorialSearch" %in% sect_classes) {
+        def_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
+        idx <- which(sect_classes == "NitroRandomSectorialSearch")
+        if (method@sectorial_search[[idx]]@min_size == 0) {
+          method@sectorial_search[[idx]]@min_size <- def_size
         }
-        if (method@sectorial_search@max_size == 0) {
-          method@sectorial_search@max_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
+        if (method@sectorial_search[[idx]]@max_size == 0) {
+          method@sectorial_search[[idx]]@max_size <-def_size
         }
       }
     }
