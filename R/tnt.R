@@ -184,6 +184,8 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
   }
 
   tnt_output <- strsplit(tnt_output$stdout, "[\n\r]+")[[1]]
+
   trees <- tnt_output_parse(tnt_output, rownames(tnt_matrix))
-  return(trees)
+  obj@results <- new("NitroResults", trees = trees)
+  return(obj)
 }
