@@ -78,7 +78,7 @@ check_NitroBranchBreak <- function (object) {
     return("swapper must be either 1 or 2")
   }
   if (object@cluster_size < 0) {
-    return("cluster must be a positive integer")
+    return("cluster must be an integer >= 0")
   }
 }
 
