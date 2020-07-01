@@ -328,4 +328,4 @@ setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
 #' @param n an object that inherits from class \code{NitroTreeSearch}.
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd
-setGeneric("tnt_cmd", function (n) standardGeneric("tnt_cmd"))
+setGeneric("tnt_cmd", function (n, ...) standardGeneric("tnt_cmd"))

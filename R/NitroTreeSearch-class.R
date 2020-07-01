@@ -11,6 +11,7 @@
 #' @include NitroConstraintsBase-class.R
 #' @include NitroMethodsBase-class.R
 #' @include NitroWeightsBase-class.R
+#' @include NitroResults-class.R
 setClass("NitroTreeSearch",
   slots = c(
     matrix = "matrix",
@@ -21,7 +22,8 @@ setClass("NitroTreeSearch",
     collapse = "integer",
     constraints = "NitroConstraintsBase",
     method = "NitroMethodsBase",
-    weights = "NitroWeightsBase"
+    weights = "NitroWeightsBase",
+    results = "NitroResults"
 ))
 
 setValidity("NitroTreeSearch", check_NitroTreeSearch)
