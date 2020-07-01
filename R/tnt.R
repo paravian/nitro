@@ -17,7 +17,7 @@
 #'   used in the analysis, and a \code{multiPhylo} containing the trees foundas()
 #'   during the search.
 #' @export
-tnt <- function (obj, tnt_path, hold, max_ram = 16) {
+tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
   if (!inherits(obj, "NitroTreeSearch")) {
     stop("'obj' must inherit class NitroTreeSearch")
   }
@@ -75,6 +75,10 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16) {
 
   if (length(obj@constraints)) {
     tnt_block <- c(tnt_block, tnt_cmd(obj@constraints))
+  }
+
+  if (read_trees) {
+    tnt_block <- c(tnt_block, tnt_cmd(obj@results, obj@matrix))
   }
 
   tnt_block <- c(tnt_block, tnt_cmd(obj@method), "condense;", "tplot *;", "length;",
