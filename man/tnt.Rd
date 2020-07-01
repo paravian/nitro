@@ -4,11 +4,10 @@
 \alias{tnt}
 \title{Executes TNT commands}
 \usage{
-tnt(obj, tnt_path, hold, max_ram = 16)
+tnt(obj, tnt_path, hold, max_ram = 16, read_trees = FALSE)
 }
 \arguments{
-\item{obj}{an object that inherits from \code{NitroBase} (i.e.,
-\code{IterativeEnum}, \code{BranchSwap}, \code{Ratchet} or \code{Driven}.}
+\item{obj}{an object that inherits \code{NitroTreeSearch}.}
 
 \item{tnt_path}{the location of the TNT command line binary.}
 
@@ -17,11 +16,13 @@ buffer.}
 
 \item{max_ram}{a numeric indicating the number of (binary) megabytes to
 allocate for use by TNT.}
+
+\item{read_trees}{a logical value indicating whether to read in trees from
+a \code{\link{NitroResults}} object prior to analysis.}
 }
 \value{
-An object containing the TNT parameters and the \code{phyDat} matrix
-  used in the analysis, and a \code{multiPhylo} containing the trees foundas()
-  during the search.
+the original \code{NitroTreeSearch} object containing a
+  \code{NitroResults} object containing the trees found during the search.
 }
 \description{
 Executes commands on a supplied phylogenetic matrix in the TNT

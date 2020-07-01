@@ -16,7 +16,7 @@ outgroup(n) <- value
 \S4method{outgroup}{NitroTreeSearch,character}(n) <- value
 }
 \arguments{
-\item{n}{an object that inherits \code{NitroTreeSearch}.}
+\item{n}{a \code{NitroTreeSearch} object.}
 
 \item{value}{a single character vector indicating the taxon to be the outgroup.}
 }

@@ -140,7 +140,7 @@ setMethod("initialize", "NitroTreeSearch",
 #'
 #' Function to return or set the rule used for collapsing of zero-length
 #' branches.
-#' @param n an object that inherits \code{NitroTreeSearch}.
+#' @param n a \code{NitroTreeSearch} object.
 #' @return a numeric vector indicating the rule used for collapsing of
 #' zero-length branches.
 #' @export
@@ -171,7 +171,7 @@ setMethod("collapse<-", signature("NitroTreeSearch", "numeric"), function (n, va
 #' Outgroup
 #'
 #' Function to return or set the outgroup taxon.
-#' @param n an object that inherits \code{NitroTreeSearch}.
+#' @param n a \code{NitroTreeSearch} object.
 #' @return a character vector indicating the name of the outgroup taxon.
 #' @export
 #' @include NitroTreeSearch-class.R
@@ -203,7 +203,7 @@ setMethod("outgroup<-", signature("NitroTreeSearch", "character"),
 #'
 #' Function to return or set indexes of characters as ordered.
 #' @title Character modification functions
-#' @param n an object that inherits \code{NitroTreeSearch}.
+#' @param n a \code{NitroTreeSearch} object.
 #' @return a numeric vector indicating the characters defined as ordered.
 #' @export
 #' @include NitroTreeSearch-class.R
@@ -244,7 +244,7 @@ setMethod("ordered_characters<-", signature("NitroTreeSearch", "NULL"),
 #'
 #' Function that returns the indexes of characters defined as inactive.
 #' @title Character modification functions
-#' @param n an object that inherits \code{NitroTreeSearch}.
+#' @param n a \code{NitroTreeSearch} object.
 #' @return a numeric vector indicating the characters defined as inactive.
 #' @export
 #' @include NitroTreeSearch-class.R
@@ -283,7 +283,7 @@ setMethod("inactive_characters<-", signature("NitroTreeSearch", "NULL"),
 #' List inactive taxa
 #'
 #' Function that returns the names of taxa defined as inactive.
-#' @param n an object that inherits \code{NitroTreeSearch}.
+#' @param n a \code{NitroTreeSearch} object
 #' @return a character vector indicating the taxa defined as inactive.
 #' @export
 #' @include NitroTreeSearch-class.R

@@ -6,16 +6,16 @@
 #' @importFrom utils tail
 #' @description Executes commands on a supplied phylogenetic matrix in the TNT
 #'   command line binary.
-#' @param obj an object that inherits from \code{NitroBase} (i.e.,
-#'   \code{IterativeEnum}, \code{BranchSwap}, \code{Ratchet} or \code{Driven}.
+#' @param obj an object that inherits \code{NitroTreeSearch}.
 #' @param tnt_path the location of the TNT command line binary.
 #' @param hold an integer indicating the number of trees to hold in TNTs tree
 #'   buffer.
 #' @param max_ram a numeric indicating the number of (binary) megabytes to
 #'   allocate for use by TNT.
-#' @return An object containing the TNT parameters and the \code{phyDat} matrix
-#'   used in the analysis, and a \code{multiPhylo} containing the trees foundas()
-#'   during the search.
+#' @param read_trees a logical value indicating whether to read in trees from
+#'   a \code{\link{NitroResults}} object prior to analysis.
+#' @return the original \code{NitroTreeSearch} object containing a
+#'   \code{NitroResults} object containing the trees found during the search.
 #' @export
 tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
   if (!inherits(obj, "NitroTreeSearch")) {

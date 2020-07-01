@@ -19,7 +19,7 @@ inactive_taxa(n) <- value
 \S4method{inactive_taxa}{NitroTreeSearch,`NULL`}(n) <- value
 }
 \arguments{
-\item{n}{an object that inherits \code{NitroTreeSearch}.}
+\item{n}{a \code{NitroTreeSearch} object}
 
 \item{value}{a character vector indicating the taxa to be marked as inactive.}
 }

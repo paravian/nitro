@@ -34,7 +34,7 @@ inactive_characters(n) <- value
 \S4method{inactive_characters}{NitroTreeSearch,`NULL`}(n) <- value
 }
 \arguments{
-\item{n}{an object that inherits \code{NitroTreeSearch}.}
+\item{n}{a \code{NitroTreeSearch} object.}
 
 \item{value}{a numeric vector indicating the characters to be marked as inactive.}
 }

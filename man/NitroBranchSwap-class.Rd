@@ -10,7 +10,8 @@ required to perform a branch swapping ('traditional', in TNTs terminology)
 phylogenetic analysis in \code{nitro}.
 }
 \seealso{
-The S4 classes \code{ImplicitEnum}, \code{BranchSwap}, \code{Ratchet}
-and \code{Driven}.
+The S4 classes \code{\link{NitroImplicitEnum}},
+  \code{\link{NitroBranchSwap}}, \code{\link{NitroRatchet}} and
+  \code{\link{NitroDriven}}.
 }
 \keyword{classes}

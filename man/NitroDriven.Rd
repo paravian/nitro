@@ -37,7 +37,7 @@ initial starting trees for each of starting points.}
 \item{multiply}{a logical value indicating whether to find additional trees
 by fusing suboptimal trees with optimal trees.}
 
-\item{sectorial_search}{an object of class
+\item{sectorial_search}{a list of objects of inheriting class
 \code{\link{NitroSectorialSearch}}.}
 
 \item{tree_fuse}{an object of class \code{\link{NitroTreeFuse}}.}
