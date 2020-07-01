@@ -321,6 +321,25 @@ setMethod("inactive_taxa<-", signature("NitroTreeSearch", "character"),
 setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
           .inactive_taxa_body)
 
+#' Return search method
+#'
+#' A function that returns and sets the current search method
+#' @param n a \code{\link{NitroTreeSearch}} object.
+#' @export
+setGeneric("search_method", function (n) standardGeneric("search_method"))
+
+setMethod("search_method", "NitroTreeSearch", function (n) n@method)
+
+#' @param method an object that inherits from \code{\link{NitroMethodsBase}}.
+#' @export
+setGeneric("search_method<-", function (n, value) standardGeneric("search_method<-"))
+
+setMethod("search_method<-", "NitroTreeSearch", function (n, value) {
+  n@method <- value
+  validObject(n)
+  n
+})
+
 #' Return TNT command
 #'
 #' A function that returns the command to perform the phylogenetic analysis for
