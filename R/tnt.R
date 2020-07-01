@@ -114,6 +114,10 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
     pb_setup$score <- 1L
     pb_setup$total <- 30L
     pb_setup$format <- "Implicit enumeration: [:bar] | Best score :score"
+  } else if (class(obj@method) == "NitroBranchBreak") {
+    pb_setup$re <- "\\r-+ +[A-Z]+ +([0-9]+) of ([0-9]+) +(?:[0-9\\.]+|-+) +([0-9\\.]+|-+) +[0-9:]+ +[0-9,]+"
+    pb_setup$format <- "Branch breaking | Trees found: :current | Best score: :score"
+    pb_setup$total <- .Machine$integer.max
   }
 
   pb <- progress_bar$new(format = pb_setup$format, total = pb_setup$total)
