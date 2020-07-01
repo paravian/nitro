@@ -76,9 +76,10 @@ setMethod("iterations<-", signature("NitroRatchet", "numeric"), .iterations_body
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroRatchet", function (n) {
-  env <- parent.frame()
   ratchet_cmd <- c()
-  if (is(env$n)[[1]] %in% c("NitroBranchSwap", "NitroDriven")) {
+  set_only <- any(sapply(sys.frames(),
+                         function (f) inherits(f$n, c("NitroDriven", "NitroRatchet"))))
+  if (set_only) {
     cmd_suffix = ":"
   } else {
     cmd_suffix = "="

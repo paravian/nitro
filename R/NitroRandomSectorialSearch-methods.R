@@ -55,7 +55,8 @@ setMethod("initialize", "NitroRandomSectorialSearch",
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroRandomSectorialSearch", function (n) {
-  env <- sys.frame(-4)
+  set_only <- any(sapply(sys.frames(),
+                         function (f) class(f$n) == "NitroDriven"))
   sect_cmd <- c(" minsize ", n@min_size,
                 " maxsize ", n@max_size,
                 " selfact ", n@selection_factor,
@@ -63,7 +64,7 @@ setMethod("tnt_cmd", "NitroRandomSectorialSearch", function (n) {
                 " starts ", n@small_starts,
                 " slack ", n@slack,
                 paste0(ifelse(n@buffer, " ", " no"), "xbuf"))
-  if (is(env$n)[[1]] %in% c("NitroDriven")) {
+  if (set_only) {
     sect_cmd <- paste(c("sectsch: rss", sect_cmd, ";"), collapse = "")
   } else {
     sect_cmd <- paste(c("sectsch= rss", sect_cmd, ";"), collapse = "")

@@ -43,9 +43,9 @@ setMethod("initialize", "NitroTreeDrift",
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroTreeDrift", function (n) {
-  env <- parent.frame()
-  fuse_cmd <- c()
-  if (is(env$n)[[1]] == c("NitroDriven")) {
+  set_only <- any(sapply(sys.frames(),
+                         function (f) inherits(f$n, "NitroDriven")))
+  if (set_only) {
     cmd_suffix = ":"
   } else {
     cmd_suffix = "="
