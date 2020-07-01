@@ -41,13 +41,14 @@ setMethod("initialize", "NitroConstraintSectorialSearch",
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroConstraintSectorialSearch", function (n) {
-  env <- parent.frame()
+  set_only <- any(sapply(sys.frames(),
+                         function (f) inherits(f$n, "NitroDriven")))
   sect_cmd <- c(" minfork ", n@min_fork,
                 " maxfork ", n@max_fork,
                 " rounds ", n@rounds,
                 " slack ", n@slack,
                 paste0(ifelse(n@buffer, " ", " no"), "xbuf"))
-  if (is(env$n)[[1]] %in% c("NitroDriven")) {
+  if (set_only) {
     sect_cmd <- paste(c("sectsch: css", sect_cmd, ";"), collapse = "")
   } else {
     sect_cmd <- paste(c("sectsch= css", sect_cmd, ";"), collapse = "")
