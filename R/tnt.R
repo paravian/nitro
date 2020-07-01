@@ -34,10 +34,8 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
                    format = "standard")
 
   # Prepare command line arguments for the TNT binary
-  platform <- .Platform$OS.type
-  tnt_arg <- c(paste0("mxram", max_ram / 1000 * 1024 ),
-               paste0("proc ", tnt_tempfile,
-                      ifelse(platform == "windows", ":", ",")))
+  tnt_arg <- c(paste("mxram", max_ram / 1000 * 1024),
+               paste("proc", tnt_tempfile))
 
   tnt_block <- c("BEGIN TNT;", "log stdout;", "tables =;")
 
