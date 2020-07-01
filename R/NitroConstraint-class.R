@@ -1,8 +1,8 @@
 #' Define constrained tree search
 #'
-#' \code{NitroConstraintGroup} is an S4 class that defines a constrainted
-#' tree search.
-#' @name NitroConstraintGroup-class
+#' \code{NitroConstraint} is an S4 class that defines a constrainted tree
+#' search.
+#' @name NitroConstraint-class
 #' @docType class
 #' @seealso The inheriting S4 class \code{\link{NitroConstraintsBase}} and
 #' \code{\link{NitroUnconstrainedSearch}}.

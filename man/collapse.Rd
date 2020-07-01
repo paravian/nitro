@@ -16,7 +16,7 @@ collapse(n) <- value
 \S4method{collapse}{NitroTreeSearch,numeric}(n) <- value
 }
 \arguments{
-\item{n}{an object that inherits \code{NitroTreeSearch}.}
+\item{n}{a \code{NitroTreeSearch} object.}
 
 \item{value}{an integer indicating the rule for collapsing of zero length branches. The options are:
 \itemize{
