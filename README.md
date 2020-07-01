@@ -38,8 +38,9 @@ either directly from Nexus or TNT files using `ReadAsPhyDat` or
 tnt_path <- "~/tnt64/tnt
 
 matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
-branch_swap <- nitro::NitroBranchSwap(matrix, replications = 10, hold_rep = 10)
-mpts <- nitro::tnt(branch_swap, tnt_path, hold = 100)
+branch_swap <- nitro::NitroBranchSwap(replications = 100, hold_rep = 10)
+tree_search <- nitro::newTreeSearch(matrix, search_method)
+mpts <- nitro::tnt(tree_search, tnt_path, hold = 100)
 cons <- ape::consensus(mpts)
 plot(cons)
 ```
@@ -51,10 +52,11 @@ variables and results in more readable code.
 ```
 library(magrittr)
 
-TreeTools::ReadAsPhyDat("matrix.nex") %>%
-  nitro::NitroBranchSwap(replications = 10, hold_rep = 10) %>%
-  nitro::tnt(tnt_path, hold = 100) %>%
-  ape::consensus() %>%
+results <- TreeTools::ReadAsPhyDat("matrix.nex") %>%
+  nitro::newTreeSearch(NitroBranchSwap(replications = 100, hold_rep = 10)) %>%
+  nitro::tnt(tnt_path, hold = 100)
+
+ape::consensus(results@trees) %>%
   plot()
 ```
 
@@ -81,7 +83,7 @@ inclusion:
 * ~~Running (extended) implied weighting analyses~~
 * Calculation of support statistics (e.g., bootstrap, jackknife, symmetric
   resampling, Bremer support)
-* Specifying constraints on monophyly
+* ~~Specifying constraints on monophyly~~
 
 ## Citing
 
@@ -101,3 +103,5 @@ Goloboff, P.A., Catalano, S.A., 2016. TNT version 1.5, including a full
 implementation of phylogenetic morphometrics. Cladistics 32, 221–238.
 https://doi.org/10.1111/cla.12160
 
+TNT is made available thanks to a subsidy from the
+[Willi Hennig Society](https://cladistics.org/).
