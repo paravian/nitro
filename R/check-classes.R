@@ -40,6 +40,10 @@ check_NitroTreeSearch <- function (object) {
   return(TRUE)
 }
 
+#' Validate Nitro S4 objects
+#'
+#' @param object a prospective object that inherits \code{NitroBranchSwap}.
+#' @return a validated object.
 check_NitroBranchSwap <- function (object) {
   if (object@replications < 1) {
     return("replications must be an integer > 0")
@@ -50,9 +54,13 @@ check_NitroBranchSwap <- function (object) {
   return(TRUE)
 }
 
+#' Validate Nitro S4 objects
+#'
+#' @param object a prospective object that inherits \code{NitroRatchet}.
+#' @return a validated object.
 check_NitroRatchet <- function (object) {
-  if (object@iterations < 1) {
-    return("iterations must be an integer > 0")
+  if (object@iterations < 0) {
+    return("iterations must be an integer >= 0")
   }
   if (object@replacements < 1) {
     return("replacements must be an integer > 0")
@@ -65,6 +73,82 @@ check_NitroRatchet <- function (object) {
   }
 }
 
+check_NitroBranchBreak <- function (object) {
+  if (object@swapper < 1 | object@swapper > 2) {
+    return("swapper must be either 1 or 2")
+  }
+  if (object@cluster_size < 0) {
+    return("cluster must be a positive integer")
+  }
+}
+
+check_NitroSectorialSearch <- function (object) {
+  if (object@slack < 0) {
+    return("slack must be an integer >= 0")
+  }
+}
+
+check_NitroRandomSectorialSearch <- function (object) {
+  if (object@min_size < 5) {
+    return("min_size must be an integer 5 or greater")
+  }
+  if (object@max_size < 5) {
+    return("max_size must be an integer 5 or greater")
+  }
+  if (object@max_size < object@min_size) {
+    return("max_size must be equal to or larger than min_size")
+  }
+}
+
+check_NitroConstraintSectorialSearch <- function (object) {
+  if (object@rounds < 0) {
+    return("rounds must be an integer >= 0")
+  }
+  if (object@max_fork < object@min_fork) {
+    return("max_fork must be equal to or larger than min_fork")
+  }
+}
+
+check_NitroTreeFuse <- function (object) {
+  if (object@rounds < 0 | object@rounds > 100) {
+    return("rounds must be an integer between 0 and 100")
+  }
+}
+
+check_NitroTreeHybridize <- function (object) {
+  if (object@rounds < 0) {
+    return("rounds must be an integer >= 0")
+  }
+  if (object@sample_factor < 0) {
+    return("sample_factor must be an integer >= 0")
+  }
+}
+
+check_NitroTreeDrift <- function (object) {
+  if (object@iterations < 0) {
+    return("iterations must be an integer >= 0")
+  }
+  if (object@substitutions < 1) {
+    return("substitutions must be an integer > 0")
+  }
+  if (object@max_abs_fit_diff < 0) {
+    return("max_abs_fit_diff must be a number > 0")
+  }
+  if (object@max_rel_fit_diff < 0) {
+    return("max_rel_fit_diff must be a number > 0")
+  }
+  if (object@reject_factor < 0) {
+    return("reject_factor must be a number > 0")
+  }
+  if (object@autoconstrain_cycles < 0) {
+    return("autoconstrain_cycles must be an integer >= 0")
+  }
+}
+
+#' Validate Nitro S4 objects
+#'
+#' @param object a prospective object that inherits \code{NitroDriven}.
+#' @return a validated object.
 check_NitroDriven <- function (object) {
   if (object@hits < 1 ) {
     return("hits must be an integer > 0")
@@ -72,17 +156,14 @@ check_NitroDriven <- function (object) {
   if (object@replications < 1 ) {
     return("replications must be an integer > 0")
   }
-  if (object@ratchet_cycles < 0 ) {
-    return("ratchet_cycles must be zero or a positive integer")
-  }
-  if (object@drifting_cycles < 0 ) {
-    return("drifting cycles must be zero or a positive integer")
-  }
-  if (object@fusing_rounds < 0 ) {
-    return("fusing_rounds must be zero or a positive integer")
-  }
   if (object@consense_times < 0 ) {
     return("consense_times must be zero or a positive integer")
+  }
+  if (any(!sapply(object@sectorial_search, inherits, "NitroSectorialSearch"))) {
+    return("sectorial_search must contain objects inheriting class NitroSectorialSearch")
+  }
+  if (any(duplicated(sapply(object@sectorial_search, class)))) {
+    return("sectorial_search must not contain duplicated search classes")
   }
 }
 
@@ -124,5 +205,11 @@ check_NitroConstraint <- function (object) {
   }
   if (any(object@fixed & object@floating)) {
     return("A constraint in floating cannot also be fixed")
+  }
+}
+
+check_NitroResults <- function (object) {
+  if (class(object@trees) != "multiPhylo") {
+    return("trees must be of class multiPhylo")
   }
 }
