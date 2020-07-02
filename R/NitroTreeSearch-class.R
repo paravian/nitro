@@ -5,7 +5,7 @@
 #' @name NitroTreeSearch-class
 #' @docType class
 #' @seealso The S4 classes \code{\link{NitroConstraintsBase}},
-#' \link{\code{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
+#' \code{\link{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
 #' @keywords classes
 #' @include check-classes.R
 #' @include NitroConstraintsBase-class.R

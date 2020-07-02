@@ -31,6 +31,6 @@ The inheriting S4 classes \code{\link{NitroUnconstrainedSearch}}
 and \code{\link{NitroConstrainedSearch}}.
 
 The S4 classes \code{\link{NitroConstraintsBase}},
-\link{\code{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
+\code{\link{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
 }
 \keyword{classes}
