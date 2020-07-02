@@ -6,7 +6,7 @@
 \usage{
 NitroBranchBreak(
   swapper = c("tbr", "spr"),
-  cluster_size = 15,
+  cluster_size = 0,
   safe_unclip = FALSE,
   fill_only = FALSE,
   save_multiple = TRUE,
@@ -20,7 +20,8 @@ to use. Options are either '\code{tbr}' (the default) or '\code{spr}'.}
 \item{cluster_size}{an integer value indicating the number of nodes
 (clusters) to use during swapping. Applied only when \code{swapper} is
 set to \code{tbr}. Larger clusters will result in faster swapping as
-matrix size increases.}
+matrix size increases. If left as 0 (the default), cluster size will be
+automatically determined.}
 
 \item{safe_unclip}{a logical value indicating whether to use a safer but
 slower method for updating buffers when clipping to find a better tree.
