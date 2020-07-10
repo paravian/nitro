@@ -1,10 +1,13 @@
 #' Add new constraint
 #'
 #' Function to add a new constraint to a constraint group.
-#' @param group an object of type \code{\link{NitroConstraint}}
+#' @param tree_search an object inheriting
+#'   \code{"\linkS4class{NitroTreeSearch}"}
 #' @param fixed_taxa a character vector of taxa to set as fixed constraints
 #' @param floating_taxa a character vector of taxa to set as floating
-#' constraints
+#'   constraints
+#' @param type a character vector indicating whether the constraint will be
+#'   '\code{positive}' or '\code{negative}'
 #' @export
 #' @rdname addConstraint
 addConstraint <- function(tree_search, fixed_taxa, floating_taxa = character(), type = c("positive", "negative")) {
@@ -22,10 +25,21 @@ addConstraint <- function(tree_search, fixed_taxa, floating_taxa = character(), 
   tree_search
 }
 
+#' Number of constraints
+#'
+#' Function that returns the number of constraints, in the form of
+#' \code{"\linkS4class{NitroConstraint}"} objects, contained in a
+#' \code{"\linkS4class{NitroConstraintsBase}"} object.
+#' @param x a \code{"\linkS4class{NitroConstraintsBase}"} object
+#' @return an integer indicating the number of
+#'   \code{"\linkS4class{NitroConstraint}"} objects.
+#' @rdname length
+#' @export
 setMethod("length", "NitroConstraintsBase", function (x) {
   return(length(x@constraints))
 })
 
+#' @importFrom methods slot
 setMethod("show", "NitroConstraintsBase", function (object) {
   cat("\nConstraints on monophyly:\n\n")
   is_pos <- sapply(object@constraints, slot, "is_positive")
@@ -37,6 +51,7 @@ setMethod("show", "NitroConstraintsBase", function (object) {
   }
 })
 
+#' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroConstraintsBase", function (n) {
   return(c(paste("force ", sapply(n@constraints, tnt_cmd), ";", sep = ""),
            "constrain =;"))
@@ -44,9 +59,11 @@ setMethod("tnt_cmd", "NitroConstraintsBase", function (n) {
 
 #' Add constraint
 #'
-#' Function to add a new \code{\link{NitroConstraint}} to a
-#' \code{\link{NitroConstraintBase}} object.
-#' @param value an object that inherits from \code{\link{NitroConstraint}}
+#' Function to add a new \code{"\linkS4class{NitroConstraint}"} to a
+#' \code{"\linkS4class{NitroConstraintsBase}"} object.
+#' @param n an object of class \code{"\linkS4class{NitroConstraintsBase}"}
+#' @param value an object that inherits from
+#'   \code{"\linkS4class{NitroConstraint}"}
 #' @export
 #' @rdname newConstraint
 setGeneric("newConstraint<-", function (n, value) standardGeneric("newConstraint<-"))

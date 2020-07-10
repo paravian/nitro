@@ -1,4 +1,4 @@
-#' @importFrom methods callNextMethod
+#' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroSectorialSearch",
   function (.Object, buffer = buffer, slack = slack) {
     if (class(slack) == "numeric") {

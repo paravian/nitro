@@ -8,6 +8,7 @@ setMethod("initialize", "NitroImpliedWeights",
   .Object
 })
 
+#' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroImpliedWeights", function (n) {
   cmds <- c(paste0("piwe =", n@k))
   if (n@multi_k) {

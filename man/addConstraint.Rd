@@ -12,12 +12,16 @@ addConstraint(
 )
 }
 \arguments{
+\item{tree_search}{an object inheriting
+\code{"\linkS4class{NitroTreeSearch}"}}
+
 \item{fixed_taxa}{a character vector of taxa to set as fixed constraints}
 
 \item{floating_taxa}{a character vector of taxa to set as floating
 constraints}
 
-\item{group}{an object of type \code{\link{NitroConstraint}}}
+\item{type}{a character vector indicating whether the constraint will be
+'\code{positive}' or '\code{negative}'}
 }
 \description{
 Function to add a new constraint to a constraint group.

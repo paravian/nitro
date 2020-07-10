@@ -2,12 +2,26 @@
 % Please edit documentation in R/NitroTreeSearch-methods.R
 \name{search_method}
 \alias{search_method}
+\alias{search_method,NitroTreeSearch-method}
+\alias{search_method<-}
+\alias{search_method<-,NitroTreeSearch-method}
 \title{Return search method}
 \usage{
 search_method(n)
+
+\S4method{search_method}{NitroTreeSearch}(n)
+
+search_method(n) <- value
+
+\S4method{search_method}{NitroTreeSearch}(n) <- value
 }
 \arguments{
-\item{n}{a \code{\link{NitroTreeSearch}} object.}
+\item{n}{a \code{"\linkS4class{NitroTreeSearch}"} object.}
+
+\item{value}{an object inheriting from \code{"\linkS4class{NitroMethodsBase}"}.}
+}
+\value{
+an object inheriting \code{"\linkS4class{NitroMethodsBase}"}.
 }
 \description{
 A function that returns and sets the current search method

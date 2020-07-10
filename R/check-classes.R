@@ -1,7 +1,7 @@
 #' Validate Nitro S4 objects
 #'
 #' @param object a prospective object that inherits
-#' \code{\link{NitroTreeSearch}}.
+#' \code{"\linkS4class{NitroTreeSearch}"}.
 #' @return a validated object.
 check_NitroTreeSearch <- function (object) {
   if (nrow(object@matrix) < 5) {

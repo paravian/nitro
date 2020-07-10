@@ -4,9 +4,10 @@
 #' required to perform a branch swapping ('traditional', in TNTs terminology)
 #' phylogenetic analysis in \code{nitro}.
 #' @name NitroBranchSwap-class
-#' @seealso The S4 classes \code{\link{NitroImplicitEnum}},
-#'   \code{\link{NitroBranchSwap}}, \code{\link{NitroRatchet}} and
-#'   \code{\link{NitroDriven}}.
+#' @seealso The S4 classes \code{"\linkS4class{NitroImplicitEnum}"},
+#'   \code{"\linkS4class{NitroBranchSwap}"},
+#'   \code{"\linkS4class{NitroRatchet}"} and
+#'   \code{"\linkS4class{NitroDriven}"}.
 #' @keywords classes
 #' @include check-classes.R
 #' @include NitroMethodsBase-class.R
