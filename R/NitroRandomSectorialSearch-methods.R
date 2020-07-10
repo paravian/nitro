@@ -21,9 +21,8 @@
 NitroRandomSectorialSearch <- function (min_size = 0, max_size = 0,
   selection_factor = 50, increase = 100, small_starts = 3, buffer = TRUE,
   slack = 0) {
-  new("NitroRandomSectorialSearch", min_size = min_size, max_size = max_size,
-      selection_factor = selection_factor, increase = increase,
-      small_starts = small_starts, buffer = buffer, slack = slack)
+  new("NitroRandomSectorialSearch", min_size, max_size, selection_factor,
+      increase, small_starts, buffer, slack)
 }
 
 #' @importFrom methods callNextMethod slot<-

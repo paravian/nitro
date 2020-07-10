@@ -15,8 +15,8 @@
 NitroConstraintSectorialSearch <- function (min_fork = 10, max_fork = 10,
                                             rounds = 3, buffer = TRUE,
                                             slack = 0) {
-  new("NitroConstraintSectorialSearch", min_fork = min_fork,
-      max_fork = max_fork, rounds = rounds, buffer = buffer, slack = slack)
+  new("NitroConstraintSectorialSearch", min_fork, max_fork, rounds, buffer,
+      slack)
 }
 
 #' @importFrom methods callNextMethod slot<-

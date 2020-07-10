@@ -8,8 +8,7 @@
 #'   trees from each replication regardless of length.
 #' @export
 NitroBranchSwap <- function (replications, hold_rep, keep_all = FALSE) {
-  new("NitroBranchSwap", replications = replications, hold_rep = hold_rep,
-      keep_all = keep_all)
+  new("NitroBranchSwap", replications, hold_rep, keep_all)
 }
 
 #' @importFrom methods callNextMethod
@@ -21,8 +20,11 @@ setMethod("initialize", "NitroBranchSwap",
     if (class(hold_rep) == "numeric") {
        hold_rep <- as.integer(hold_rep)
     }
-    .Object <- callNextMethod(.Object, replications = replications,
-                              hold_rep = hold_rep, keep_all = keep_all)
+    objs <- ls()
+    for (obj in objs) {
+      slot(.Object, obj) <- get(obj)
+    }
+    .Object <- callNextMethod(.Object)
     .Object
 })
 

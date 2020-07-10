@@ -34,10 +34,11 @@ setMethod("initialize", "NitroTreeDrift",
   if (class(autoconstrain_cycles) == "numeric") {
     autoconstrain_cycles <- as.integer(autoconstrain_cycles)
   }
-  .Object <- callNextMethod(.Object, iterations = iterations,
-    substitutions = substitutions, max_abs_fit_diff = max_abs_fit_diff,
-    max_rel_fit_diff = max_rel_fit_diff, reject_factor = reject_factor,
-    autoconstrain_cycles = autoconstrain_cycles)
+  objs <- ls()
+  for (obj in objs) {
+    slot(.Object, obj) <- get(obj)
+  }
+  .Object <- callNextMethod(.Object)
   .Object
 })
 

@@ -43,11 +43,9 @@ newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
                        max_ratio)
   }
   constraints_obj <- new("NitroConstraintsBase")
-  tree_search <- new("NitroTreeSearch", matrix = matrix,
-    ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
-    inactive_characters = inactive_characters, collapse = collapse,
-    outgroup = outgroup, constraints = constraints_obj, method = method,
-    weights = weights_obj)
+  tree_search <- new("NitroTreeSearch", matrix, ordered_characters,
+                     inactive_taxa, inactive_characters, collapse,
+                     outgroup, constraints_obj, method, weights_obj)
 }
 
 #' @importFrom methods show
@@ -83,6 +81,7 @@ setMethod("initialize", "NitroTreeSearch",
   function (.Object, matrix, ordered_characters, inactive_taxa,
             inactive_characters, collapse, outgroup, constraints,
             method, weights) {
+    objs <- ls()
     if (class(collapse) == "numeric") {
       collapse <- as.integer(collapse)
     }
@@ -133,11 +132,11 @@ setMethod("initialize", "NitroTreeSearch",
         }
       }
     }
-    .Object <- callNextMethod(.Object, matrix = matrix,
-      ordered_characters = ordered_characters, inactive_taxa = inactive_taxa,
-      inactive_characters = inactive_characters, collapse = collapse,
-      outgroup = outgroup, constraints = constraints, method = method,
-      weights = weights)
+
+    for (obj in objs) {
+      slot(.Object, obj) <- get(obj)
+    }
+    .Object <- callNextMethod(.Object)
     .Object
   })
 
