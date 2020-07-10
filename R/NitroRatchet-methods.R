@@ -12,8 +12,7 @@
 #' @export
 NitroRatchet <- function (iterations = 50, replacements = 40, prob_up = 4,
                           prob_down = 4) {
-  new("NitroRatchet", iterations = iterations, replacements = replacements,
-    prob_up = prob_up, prob_down = prob_down)
+  new("NitroRatchet", iterations, replacements, prob_up, prob_down)
 }
 
 #' @importFrom methods callNextMethod
@@ -31,9 +30,11 @@ setMethod("initialize", "NitroRatchet",
     if (class(prob_down) == "numeric") {
       prob_down <- as.integer(prob_down)
     }
-    .Object <- callNextMethod(.Object, iterations = iterations,
-                              replacements = replacements,
-                              prob_up = prob_up, prob_down = prob_down)
+    objs <- ls()
+    for (obj in objs) {
+      slot(.Object, obj) <- get(obj)
+    }
+    .Object <- callNextMethod(.Object)
     .Object
   })
 

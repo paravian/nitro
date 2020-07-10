@@ -22,9 +22,8 @@ NitroBranchBreak <- function (swapper = c("tbr", "spr"), cluster_size = 0,
                               safe_unclip = FALSE, fill_only = FALSE,
                               save_multiple = TRUE, random_clip = FALSE) {
   swapper <- which(match.arg(swapper) == c("tbr", "spr"))
-  new("NitroBranchBreak", swapper = swapper, cluster_size = cluster_size,
-      safe_unclip = safe_unclip, fill_only = fill_only,
-      save_multiple = save_multiple, random_clip = random_clip)
+  new("NitroBranchBreak", swapper, cluster_size, safe_unclip, fill_only,
+      save_multiple, random_clip)
 }
 
 #' @importFrom methods callNextMethod
@@ -34,10 +33,11 @@ setMethod("initialize", "NitroBranchBreak",
   if (class(cluster_size) == "numeric") {
     cluster_size <- as.integer(cluster_size)
   }
-  .Object <- callNextMethod(.Object, swapper = swapper,
-    cluster_size = cluster_size, safe_unclip = safe_unclip,
-    fill_only = fill_only, save_multiple = save_multiple,
-    random_clip = random_clip)
+  objs <- ls()
+  for (obj in objs) {
+    slot(.Object, obj) <- get(obj)
+  }
+  .Object <- callNextMethod(.Object)
   .Object
 })
 

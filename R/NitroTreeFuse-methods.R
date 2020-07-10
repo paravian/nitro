@@ -17,9 +17,8 @@
 NitroTreeFuse <- function (rounds = 5, exchange_equal = FALSE,
                            start_best = TRUE, keep_all = TRUE,
                            accept_all = TRUE, swap = TRUE) {
-  new("NitroTreeFuse", rounds = rounds, exchange_equal = exchange_equal,
-      start_best = start_best, keep_all = keep_all, accept_all = accept_all,
-      swap = swap)
+  new("NitroTreeFuse", rounds, exchange_equal, start_best, keep_all,
+      accept_all, swap)
 }
 
 #' @importFrom methods callNextMethod
@@ -29,9 +28,11 @@ setMethod("initialize", "NitroTreeFuse",
     if (class(rounds) == "numeric") {
       rounds <- as.integer(rounds)
     }
-    .Object <- callNextMethod(.Object, rounds = rounds,
-      exchange_equal = exchange_equal, start_best = start_best,
-      keep_all = keep_all, accept_all = accept_all, swap = swap)
+    objs <- ls()
+    for (obj in objs) {
+      slot(.Object, obj) <- get(obj)
+    }
+    .Object <- callNextMethod(.Object)
     .Object
   })
 

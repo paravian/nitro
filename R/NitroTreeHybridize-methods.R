@@ -16,9 +16,8 @@
 NitroTreeHybridize <- function (rounds = 1, hybridizations = 1000,
                                 best_trees = 50, replace = TRUE,
                                 sample_factor = 15) {
-  new("NitroTreeHybridize", rounds = rounds, hybridizations = hybridizations,
-      best_trees = best_trees, replace = replace,
-      sample_factor = sample_factor)
+  new("NitroTreeHybridize", rounds, hybridizations, best_trees, replace,
+      sample_factor)
 }
 
 #' @importFrom methods callNextMethod
@@ -37,9 +36,11 @@ setMethod("initialize", "NitroTreeHybridize",
   if (class(sample_factor) == "numeric") {
     sample_factor <- as.integer(sample_factor)
   }
-  .Object <- callNextMethod(.Object, rounds = rounds,
-    hybridizations = hybridizations, best_trees = best_trees,
-    replace = replace, sample_factor = sample_factor)
+  objs <- ls()
+  for (obj in objs) {
+    slot(.Object, obj) <- get(obj)
+  }
+  .Object <- callNextMethod(.Object)
   .Object
 })
 

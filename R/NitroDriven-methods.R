@@ -48,11 +48,8 @@ NitroDriven <- function (replications, hits = 1, consense_times = 0,
   if (is.null(ratchet)) {
     ratchet <- NitroRatchet(iterations = 0)
   }
-  new("NitroDriven", replications = replications, hits = hits,
-    consense_times = consense_times, keep_all = keep_all, multiply = multiply,
-    sectorial_search = sectorial_search, tree_fuse = tree_fuse,
-    tree_hybridize = tree_hybridize, tree_drift = tree_drift,
-    ratchet = ratchet)
+  new("NitroDriven", replications, hits, consense_times, keep_all, multiply,
+    sectorial_search, tree_fuse, tree_hybridize, tree_drift, ratchet)
 }
 
 #' @importFrom methods callNextMethod
@@ -68,12 +65,11 @@ setMethod("initialize", "NitroDriven",
     if (class(consense_times) == "numeric") {
       consense_times <- as.integer(consense_times)
     }
-    .Object <- callNextMethod(.Object, replications = replications,
-      hits = hits, consense_times = consense_times,
-      keep_all = keep_all, multiply = multiply,
-      sectorial_search = sectorial_search, tree_fuse = tree_fuse,
-      tree_hybridize = tree_hybridize, tree_drift = tree_drift,
-      ratchet = ratchet)
+    objs <- ls()
+    for (obj in objs) {
+      slot(.Object, obj) <- get(obj)
+    }
+    .Object <- callNextMethod(.Object)
     .Object
   })
 
