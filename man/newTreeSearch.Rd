@@ -23,7 +23,8 @@ newTreeSearch(
 \arguments{
 \item{matrix}{a \code{phyDat} object representing a character-taxon matrix}
 
-\item{method}{an object that inherits from class \code{\link{NitroMethodsBase}}}
+\item{method}{an object that inherits from class
+\code{"\linkS4class{NitroMethodsBase}"}}
 
 \item{ordered_characters}{a numeric vector indicating the characters to be treated as ordered.}
 
@@ -52,7 +53,12 @@ newTreeSearch(
 
 \item{multi_k}{a logical value indicating whether each character will be given an independent concavity constant based on the value of \code{k} during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.}
 
-\item{proportion}{a numeric value indicating the maximum acceptable ratio between two k values when multiple concavity constants are used (i.e., when \code{multi_k} is \code{TRUE}). A maximum ratio of 1 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.}
+\item{proportion}{an numeric value indicating the proportion of homoplasy missing values are assumed to have under implied weighting. This parameter is only valid when \code{weighting} is set to \code{implied} and \code{multi_k} is \code{TRUE}. A proportion of 0 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.}
+
+\item{max_ratio}{a numeric value indicating the maximum acceptable ratio between two k values when multiple concavity constants are used (i.e., when \code{multi_k} is \code{TRUE}). A maximum ratio of 1 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.}
+}
+\value{
+an object of class \code{"\linkS4class{NitroTreeSearch}"}.
 }
 \description{
 Define tree search parameters

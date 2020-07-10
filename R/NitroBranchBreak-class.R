@@ -3,9 +3,10 @@
 #' \code{NitroBranchBreak} is an S4 class that defines the set of parameters
 #' required to perform branch breaking.
 #' @name NitroBranchBreak-class
-#' @seealso The S4 classes  \code{\link{NitroImplicitEnum}},
-#'   \code{\link{NitroBranchSwap}}, \code{\link{NitroRatchet}} and
-#'   \code{\link{NitroDriven}}.
+#' @seealso The S4 classes \code{"\linkS4class{NitroImplicitEnum}"},
+#'   \code{"\linkS4class{NitroBranchSwap}"},
+#'   \code{"\linkS4class{NitroRatchet}"} and
+#'   \code{"\linkS4class{NitroDriven}"}.
 #' @keywords classes
 #' @include check-classes.R
 #' @include NitroMethodsBase-class.R

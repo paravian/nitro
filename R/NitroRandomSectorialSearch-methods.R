@@ -26,7 +26,7 @@ NitroRandomSectorialSearch <- function (min_size = 0, max_size = 0,
       small_starts = small_starts, buffer = buffer, slack = slack)
 }
 
-#' @importFrom methods callNextMethod
+#' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroRandomSectorialSearch",
   function (.Object, min_size, max_size, selection_factor,
             increase, small_starts, ...) {

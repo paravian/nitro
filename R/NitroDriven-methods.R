@@ -15,12 +15,12 @@
 #'   initial starting trees for each of starting points.
 #' @param multiply a logical value indicating whether to find additional trees
 #'   by fusing suboptimal trees with optimal trees.
-#' @param sectorial_search a list of objects of inheriting class
-#'   \code{\link{NitroSectorialSearch}}.
-#' @param tree_fuse an object of class \code{\link{NitroTreeFuse}}.
-#' @param tree_hybridize an object of class \code{\link{NitroTreeHybridize}}.
-#' @param tree_drift an object of class \code{\link{NitroTreeDrift}}.
-#' @param ratchet an object of class \code{\link{NitroRatchet}}.
+#' @param sectorial_search a list of objects of inheriting
+#'   \code{"\linkS4class{NitroSectorialSearch}"}.
+#' @param tree_fuse an object of class \code{"\linkS4class{NitroTreeFuse}"}.
+#' @param tree_hybridize an object of class \code{"\linkS4class{NitroTreeHybridize}"}.
+#' @param tree_drift an object of class \code{"\linkS4class{NitroTreeDrift}"}.
+#' @param ratchet an object of class \code{"\linkS4class{NitroRatchet}"}.
 #' @include NitroSectorialSearch-class.R
 #' @include NitroTreeFuse-class.R
 #' @include NitroTreeHybridize-class.R

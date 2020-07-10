@@ -2,8 +2,10 @@
 % Please edit documentation in R/NitroTreeSearch-methods.R,
 %   R/NitroBranchBreak-methods.R, R/NitroBranchSwap-methods.R,
 %   R/NitroConstraint-methods.R, R/NitroConstraintSectorialSearch-methods.R,
-%   R/NitroDriven-methods.R, R/NitroImplicitEnum-methods.R,
-%   R/NitroRandomSectorialSearch-methods.R, R/NitroRatchet-methods.R,
+%   R/NitroConstraintsBase-methods.R, R/NitroDriven-methods.R,
+%   R/NitroImplicitEnum-methods.R, R/NitroImpliedWeights-methods.R,
+%   R/NitroJacknife-methods.R, R/NitroRandomSectorialSearch-methods.R,
+%   R/NitroRatchet-methods.R, R/NitroResults-methods.R,
 %   R/NitroTreeDrift-methods.R, R/NitroTreeFuse-methods.R,
 %   R/NitroTreeHybridize-methods.R
 \name{tnt_cmd}
@@ -12,10 +14,14 @@
 \alias{tnt_cmd,NitroBranchSwap-method}
 \alias{tnt_cmd,NitroConstraint-method}
 \alias{tnt_cmd,NitroConstraintSectorialSearch-method}
+\alias{tnt_cmd,NitroConstraintsBase-method}
 \alias{tnt_cmd,NitroDriven-method}
 \alias{tnt_cmd,NitroImplicitEnum-method}
+\alias{tnt_cmd,NitroImpliedWeights-method}
+\alias{tnt_cmd,NitroJacknife-method}
 \alias{tnt_cmd,NitroRandomSectorialSearch-method}
 \alias{tnt_cmd,NitroRatchet-method}
+\alias{tnt_cmd,NitroResults-method}
 \alias{tnt_cmd,NitroTreeDrift-method}
 \alias{tnt_cmd,NitroTreeFuse-method}
 \alias{tnt_cmd,NitroTreeHybridize-method}
@@ -31,13 +37,21 @@ tnt_cmd(n, ...)
 
 \S4method{tnt_cmd}{NitroConstraintSectorialSearch}(n)
 
+\S4method{tnt_cmd}{NitroConstraintsBase}(n)
+
 \S4method{tnt_cmd}{NitroDriven}(n)
 
 \S4method{tnt_cmd}{NitroImplicitEnum}(n)
 
+\S4method{tnt_cmd}{NitroImpliedWeights}(n)
+
+\S4method{tnt_cmd}{NitroJacknife}(n)
+
 \S4method{tnt_cmd}{NitroRandomSectorialSearch}(n)
 
 \S4method{tnt_cmd}{NitroRatchet}(n)
+
+\S4method{tnt_cmd}{NitroResults}(n, matrix)
 
 \S4method{tnt_cmd}{NitroTreeDrift}(n)
 
@@ -46,7 +60,11 @@ tnt_cmd(n, ...)
 \S4method{tnt_cmd}{NitroTreeHybridize}(n)
 }
 \arguments{
-\item{n}{an object that inherits from class \code{NitroTreeSearch}.}
+\item{n}{an object inheriting from \code{"\linkS4class{NitroTreeSearch}"}.}
+
+\item{...}{other arguments}
+
+\item{matrix}{an object of class \code{phyDat}.}
 }
 \value{
 a character vector of the TNT command.

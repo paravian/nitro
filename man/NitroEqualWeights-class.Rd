@@ -9,7 +9,7 @@
 that define parameters for equal weights phylogenetic analyses.
 }
 \seealso{
-The inheriting S4 class \code{\link{NitroWeightsBase}}
-and \code{\link{NitroImpliedWeights}}.
+The inheriting S4 class \code{"\linkS4class{NitroWeightsBase}"}
+and \code{"\linkS4class{NitroImpliedWeights}"}.
 }
 \keyword{classes}

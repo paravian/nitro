@@ -3,9 +3,9 @@
 #' \code{NitroConstraintSectorialSearch} is an S4 class that defines the set of
 #' parameters required to perform sectorial searching analyses in
 #' \code{nitro}.
-#' @name NitroRatchet-class
-#' @seealso The S4 classes \code{\link{NitroImplicitEnum}},
-#' \code{\link{NitroRatchet}} and \code{\link{NitroDriven}}.
+#' @name NitroConstraintSectorialSearch-class
+#' @seealso The S4 classes \code{"\linkS4class{NitroImplicitEnum}"},
+#' \code{"\linkS4class{NitroRatchet}"} and \code{"\linkS4class{NitroDriven}"}.
 #' @keywords classes
 #' @include check-classes.R
 #' @include NitroSectorialSearch-class.R

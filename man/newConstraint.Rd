@@ -10,9 +10,12 @@ newConstraint(n) <- value
 \S4method{newConstraint}{NitroConstraintsBase,NitroConstraint}(n) <- value
 }
 \arguments{
-\item{value}{an object that inherits from \code{\link{NitroConstraint}}}
+\item{n}{an object of class \code{"\linkS4class{NitroConstraintsBase}"}}
+
+\item{value}{an object that inherits from
+\code{"\linkS4class{NitroConstraint}"}}
 }
 \description{
-Function to add a new \code{\link{NitroConstraint}} to a
-\code{\link{NitroConstraintBase}} object.
+Function to add a new \code{"\linkS4class{NitroConstraint}"} to a
+\code{"\linkS4class{NitroConstraintsBase}"} object.
 }

@@ -5,11 +5,10 @@
 \alias{NitroConstraint-class}
 \title{Define constrained tree search}
 \description{
-\code{NitroConstraint} is an S4 class that defines a constrainted tree
+\code{NitroConstraint} is an S4 class that defines a constrained tree
 search.
 }
 \seealso{
-The inheriting S4 class \code{\link{NitroConstraintsBase}} and
-\code{\link{NitroUnconstrainedSearch}}.
+The inheriting S4 class \code{"\linkS4class{NitroConstraintsBase}"}.
 }
 \keyword{classes}

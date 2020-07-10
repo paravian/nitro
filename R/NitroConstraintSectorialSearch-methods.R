@@ -19,7 +19,7 @@ NitroConstraintSectorialSearch <- function (min_fork = 10, max_fork = 10,
       max_fork = max_fork, rounds = rounds, buffer = buffer, slack = slack)
 }
 
-#' @importFrom methods callNextMethod
+#' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroConstraintSectorialSearch",
   function (.Object, min_fork, max_fork, rounds, ...) {
   if (class(min_fork) == "numeric") {

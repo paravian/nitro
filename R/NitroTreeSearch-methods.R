@@ -1,9 +1,13 @@
+#' @include NitroTreeSearch-class.R
+NULL
+
 #' Define tree search parameters
 #'
 #' @importFrom methods new
 #' @importFrom TreeTools PhyDatToMatrix
 #' @param matrix a \code{phyDat} object representing a character-taxon matrix
-#' @param method an object that inherits from class \code{\link{NitroMethodsBase}}
+#' @param method an object that inherits from class
+#'   \code{"\linkS4class{NitroMethodsBase}"}
 #' @templateVar isgeneric FALSE
 #' @template ordered_characters-template
 #' @template inactive_taxa-template
@@ -16,6 +20,7 @@
 #' @template multi_k-template
 #' @template proportion-template
 #' @template max_ratio-template
+#' @return an object of class \code{"\linkS4class{NitroTreeSearch}"}.
 #' @export
 newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
                            inactive_taxa = character(),
@@ -140,11 +145,10 @@ setMethod("initialize", "NitroTreeSearch",
 #'
 #' Function to return or set the rule used for collapsing of zero-length
 #' branches.
-#' @param n a \code{NitroTreeSearch} object.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
 #' @return a numeric vector indicating the rule used for collapsing of
 #' zero-length branches.
 #' @export
-#' @include NitroTreeSearch-class.R
 #' @rdname collapse
 setGeneric("collapse", function (n) standardGeneric("collapse"))
 
@@ -171,10 +175,9 @@ setMethod("collapse<-", signature("NitroTreeSearch", "numeric"), function (n, va
 #' Outgroup
 #'
 #' Function to return or set the outgroup taxon.
-#' @param n a \code{NitroTreeSearch} object.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
 #' @return a character vector indicating the name of the outgroup taxon.
 #' @export
-#' @include NitroTreeSearch-class.R
 #' @rdname outgroup
 setGeneric("outgroup", function (n) standardGeneric("outgroup"))
 
@@ -203,10 +206,9 @@ setMethod("outgroup<-", signature("NitroTreeSearch", "character"),
 #'
 #' Function to return or set indexes of characters as ordered.
 #' @title Character modification functions
-#' @param n a \code{NitroTreeSearch} object.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
 #' @return a numeric vector indicating the characters defined as ordered.
 #' @export
-#' @include NitroTreeSearch-class.R
 #' @rdname character-methods
 setGeneric("ordered_characters", function (n)
   standardGeneric("ordered_characters"))
@@ -244,10 +246,9 @@ setMethod("ordered_characters<-", signature("NitroTreeSearch", "NULL"),
 #'
 #' Function that returns the indexes of characters defined as inactive.
 #' @title Character modification functions
-#' @param n a \code{NitroTreeSearch} object.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
 #' @return a numeric vector indicating the characters defined as inactive.
 #' @export
-#' @include NitroTreeSearch-class.R
 #' @rdname character-methods
 setGeneric("inactive_characters", function (n)
   standardGeneric("inactive_characters"))
@@ -283,10 +284,9 @@ setMethod("inactive_characters<-", signature("NitroTreeSearch", "NULL"),
 #' List inactive taxa
 #'
 #' Function that returns the names of taxa defined as inactive.
-#' @param n a \code{NitroTreeSearch} object
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object
 #' @return a character vector indicating the taxa defined as inactive.
 #' @export
-#' @include NitroTreeSearch-class.R
 #' @rdname taxa-methods
 setGeneric("inactive_taxa", function (n)
   standardGeneric("inactive_taxa"))
@@ -327,16 +327,22 @@ setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
 #' Return search method
 #'
 #' A function that returns and sets the current search method
-#' @param n a \code{\link{NitroTreeSearch}} object.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
+#' @return an object inheriting \code{"\linkS4class{NitroMethodsBase}"}.
+#' @rdname search_method
 #' @export
 setGeneric("search_method", function (n) standardGeneric("search_method"))
 
+#' @rdname search_method
 setMethod("search_method", "NitroTreeSearch", function (n) n@method)
 
-#' @param method an object that inherits from \code{\link{NitroMethodsBase}}.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
+#' @param value an object inheriting from \code{"\linkS4class{NitroMethodsBase}"}.
+#' @rdname search_method
 #' @export
 setGeneric("search_method<-", function (n, value) standardGeneric("search_method<-"))
 
+#' @rdname search_method
 setMethod("search_method<-", "NitroTreeSearch", function (n, value) {
   n@method <- value
   validObject(n)
@@ -347,7 +353,8 @@ setMethod("search_method<-", "NitroTreeSearch", function (n, value) {
 #'
 #' A function that returns the command to perform the phylogenetic analysis for
 #' a branch swapping analysis.
-#' @param n an object that inherits from class \code{NitroTreeSearch}.
+#' @param n an object inheriting from \code{"\linkS4class{NitroTreeSearch}"}.
+#' @param ... other arguments
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd
 setGeneric("tnt_cmd", function (n, ...) standardGeneric("tnt_cmd"))

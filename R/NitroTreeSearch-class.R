@@ -4,8 +4,9 @@
 #' tree search method, character weighting scheme and constraints on monophyly.
 #' @name NitroTreeSearch-class
 #' @docType class
-#' @seealso The S4 classes \code{\link{NitroConstraintsBase}},
-#' \code{\link{NitroMethodsBase}} and \code{\link{NitroWeightsBase}}.
+#' @seealso The S4 classes \code{"\linkS4class{NitroConstraintsBase}"},
+#' \code{"\linkS4class{NitroMethodsBase}"} and
+#' \code{"\linkS4class{NitroWeightsBase}"}.
 #' @keywords classes
 #' @include check-classes.R
 #' @include NitroConstraintsBase-class.R

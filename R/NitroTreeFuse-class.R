@@ -2,9 +2,9 @@
 #'
 #' \code{NitroTreeFuse} is an S4 class that defines the set of parameters
 #' required for performing tree fusing operations in \code{nitro}.
-#' @name NitroRatchet-class
-#' @seealso The S4 classes \code{\link{NitroImplicitEnum}},
-#' \code{\link{NitroRatchet}} and \code{\link{NitroDriven}}.
+#' @name NitroTreeFuse-class
+#' @seealso The S4 classes \code{"\linkS4class{NitroImplicitEnum}"},
+#' \code{"\linkS4class{NitroRatchet}"} and \code{"\linkS4class{NitroDriven}"}.
 #' @keywords classes
 #' @include check-classes.R
 setClass("NitroTreeFuse",

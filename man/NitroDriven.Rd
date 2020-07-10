@@ -37,16 +37,16 @@ initial starting trees for each of starting points.}
 \item{multiply}{a logical value indicating whether to find additional trees
 by fusing suboptimal trees with optimal trees.}
 
-\item{sectorial_search}{a list of objects of inheriting class
-\code{\link{NitroSectorialSearch}}.}
+\item{sectorial_search}{a list of objects of inheriting
+\code{"\linkS4class{NitroSectorialSearch}"}.}
 
-\item{tree_fuse}{an object of class \code{\link{NitroTreeFuse}}.}
+\item{tree_fuse}{an object of class \code{"\linkS4class{NitroTreeFuse}"}.}
 
-\item{tree_hybridize}{an object of class \code{\link{NitroTreeHybridize}}.}
+\item{tree_hybridize}{an object of class \code{"\linkS4class{NitroTreeHybridize}"}.}
 
-\item{tree_drift}{an object of class \code{\link{NitroTreeDrift}}.}
+\item{tree_drift}{an object of class \code{"\linkS4class{NitroTreeDrift}"}.}
 
-\item{ratchet}{an object of class \code{\link{NitroRatchet}}.}
+\item{ratchet}{an object of class \code{"\linkS4class{NitroRatchet}"}.}
 }
 \description{
 Definte parameters for a driven analysis

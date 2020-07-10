@@ -8,7 +8,7 @@ check_NitroTreeSearch(object)
 }
 \arguments{
 \item{object}{a prospective object that inherits
-\code{\link{NitroTreeSearch}}.}
+\code{"\linkS4class{NitroTreeSearch}"}.}
 }
 \value{
 a validated object.
