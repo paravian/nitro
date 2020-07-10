@@ -39,9 +39,9 @@ tnt_path <- "~/tnt64/tnt
 
 matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
 branch_swap <- nitro::NitroBranchSwap(replications = 100, hold_rep = 10)
-tree_search <- nitro::newTreeSearch(matrix, search_method)
-mpts <- nitro::tnt(tree_search, tnt_path, hold = 100)
-cons <- ape::consensus(mpts)
+tree_search <- nitro::newTreeSearch(matrix, branch_swap)
+analysis <- nitro::tnt(tree_search, tnt_path, hold = 100)
+cons <- ape::consensus(analysis@results@trees)
 plot(cons)
 ```
   
@@ -52,11 +52,11 @@ variables and results in more readable code.
 ```
 library(magrittr)
 
-results <- TreeTools::ReadAsPhyDat("matrix.nex") %>%
+analysis <- TreeTools::ReadAsPhyDat("matrix.nex") %>%
   nitro::newTreeSearch(NitroBranchSwap(replications = 100, hold_rep = 10)) %>%
   nitro::tnt(tnt_path, hold = 100)
 
-ape::consensus(results@trees) %>%
+ape::consensus(analysis@results@trees) %>%
   plot()
 ```
 
