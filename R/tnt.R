@@ -71,9 +71,22 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
   } else if (hold < 0 | hold %% 1 != 0) {
     stop("'hold must be an integer greater than zero")
   }
+
+  # Remove inactive taxa and characters from matrix, if required
+  tnt_matrix <- obj@matrix
+  ord_chars <- c()
+  if (any(obj@inactive_characters)) {
+    if (any(obj@ordered_characters)) {
+      ord_chars <- which(obj@ordered_characters[!obj@inactive_characters])
+    }
+    tnt_matrix <- tnt_matrix[,!obj@inactive_characters]
+  }
+  if (any(obj@inactive_taxa)) {
+    tnt_matrix <- tnt_matrix[!obj@inactive_taxa,]
+  }
+
   # Read matrix; convert NAs to "?" and write to temporary minimal nexus file
   tnt_tempfile <- tempfile("nitro", fileext = ".tnt")
-  tnt_matrix <- obj@matrix
   tnt_matrix[is.na(tnt_matrix)] <- "?"
   write.nexus.data(tnt_matrix, file=tnt_tempfile, interleaved = FALSE,
                    format = "standard")
@@ -92,28 +105,21 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
     }
   }
 
+  if (inherits(obj@method, "NitroResampleBase")) {
+    obj@results <- new("NitroResults", trees = c(obj@method@phy))
+    read_trees <- TRUE
+  }
+
   tnt_block <- c(tnt_block,
     paste0("collapse ", collapse(obj), ";"),
     paste0("hold ", as.integer(hold), ";"),
     paste0("outgroup ", obj@outgroup - 1, ";")
   )
 
-  char_codes <- c()
-  if (any(obj@ordered_characters)) {
-    char_codes <- c(char_codes, "+",
-                    which(obj@ordered_characters) - 1)
-  }
-  if (any(obj@inactive_characters)) {
-    char_codes <- c(char_codes, "]",
-                    which(obj@inactive_characters) - 1)
-  }
-  if (length(char_codes)) {
-    tnt_block <- c(tnt_block, paste(c("ccode", char_codes, ";"), collapse=" "))
-  }
-  if (any(obj@inactive_taxa)) {
+  if (length(ord_chars) > 0) {
     tnt_block <- c(tnt_block,
-                   paste(c("taxcode -",
-                           which(obj@inactive_taxa) - 1, ";"), collapse=" "))
+                   paste(c("ccode +", ord_chars - 1, ";"),
+                         collapse = " "))
   }
 
   if (length(obj@constraints)) {
@@ -121,7 +127,7 @@ tnt <- function (obj, tnt_path, hold, max_ram = 16, read_trees = FALSE) {
   }
 
   if (read_trees) {
-    tnt_block <- c(tnt_block, tnt_cmd(obj@results, obj@matrix))
+    tnt_block <- c(tnt_block, tnt_cmd(obj@results, tnt_matrix))
   }
 
   tnt_block <- c(tnt_block, tnt_cmd(obj@method), "condense;", "tplot *;", "length;",
