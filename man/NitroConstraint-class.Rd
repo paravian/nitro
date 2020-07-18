@@ -9,6 +9,7 @@
 search.
 }
 \seealso{
-The inheriting S4 class \code{"\linkS4class{NitroConstraintsBase}"}.
+The inheriting S4 class
+\code{"\linkS4class{NitroConstraintsBase}"}.
 }
 \keyword{classes}
