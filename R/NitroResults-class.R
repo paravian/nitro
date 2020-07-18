@@ -2,15 +2,18 @@ setOldClass("multiPhylo")
 
 #' Define analysis results
 #'
-#' \code{NitroResults} is an S4 class that contains the results of an analysis
-#' performed using \code{nitro}.
-#' @name NitroResults-class
+#' \code{NitroTrees} is an S4 class that contains the
+#' \code{"\linkS4class{NitroTreeSearch}"} defining the parameters for an
+#' analysis the set of trees that the analysis returned.
+#' @name NitroTrees-class
 #' @keywords classes
 #' @include check-classes.R
-setClass("NitroResults",
+#' @include NitroTreeSearch-class.R
+setClass("NitroTrees",
   slots = c(
+    tree_search = "NitroTreeSearch",
     trees = "multiPhylo"
   )
 )
 
-setValidity("NitroResults", check_NitroResults)
+setValidity("NitroTrees", check_NitroTrees)
