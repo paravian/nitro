@@ -4,74 +4,28 @@
 \alias{tnt}
 \title{Execute a TNT search}
 \usage{
-tnt(obj, tnt_path, hold, max_ram = 16, read_trees = FALSE)
+tnt(obj, tnt_path, read_trees = FALSE)
 }
 \arguments{
 \item{obj}{an object that inherits \code{"\linkS4class{NitroTreeSearch}"}.}
 
 \item{tnt_path}{the location of the TNT command line binary.}
 
-\item{hold}{an integer indicating the number of trees to hold in TNTs tree
-buffer.}
-
-\item{max_ram}{a numeric indicating the number of (binary) megabytes to
-allocate for use by TNT.}
-
 \item{read_trees}{a logical value indicating whether to read in trees from
-a \code{"\linkS4class{NitroResults}"} object prior to analysis.}
+the \code{start_trees} slot of \code{obj} prior to analysis.}
 }
 \value{
-the original \code{"\linkS4class{NitroTreeSearch}"} object containing a
-  \code{"\linkS4class{NitroResults}"} object containing the trees
-  found during the search.
+a \code{"\linkS4class{NitroTrees}"} object containing the original
+  \code{"\linkS4class{NitroTreeSearch}"} object and a \code{multiPhylo} of
+  the trees found during the search.
 }
 \description{
 Executes commands on a supplied phylogenetic matrix in the TNT
   command line binary.
 }
 \details{
-This function generates the commands required to conduct a tree search
-using the matrix and parameters specified within a
-\code{"\linkS4class{NitroTreeSearch}"} object.
-
-The function goes through the following stages, in order:
-
-\enumerate{
-\item A temporary TNT-compatible nexus file is created from the input
-  matrix.
-\item A TNT block is appended to this file containing a script that will
-  execute in order each step required to perform the phylogenetic analysis
-  and return the set of most parsimonious trees generated.
-
-  The script generation step itself involves the following steps (not all of
-  which will necessarily be present depending on the specifications of the
-  given analysis):
-
-  \enumerate{
-  \item set implied weighting constants and parameters;
-  \item set zero-length branch collapse rule;
-  \item set maximum number of trees to hold in TNT's buffer;
-  \item set the outgroup taxon;
-  \item defining ordered and inactive characters;
-  \item defining inactive taxa;
-  \item defining and setting constraints on monophyly;
-  \item reading in starting trees;
-  \item setting parameters for and executing tree searches;
-  \item condensing trees according to current collapse rule;
-  \item retrieving trees as character strings; and
-  \item retrieving tree lengths/scores and minimum-maximum scores.
-  }
-\item This file will then be executed by a subprocess of TNT created using
-  \code{processx}, and the output generated from the \code{stdout} stream
-  of this process is captured.
-\item Tree strings and metrics are parsed from the output stream and
-  converted into a \code{multiPhylo} object. During this step, the ensemble
-  consistency, retention and rescaled consistency indices (CI, RI, RC) are
-  calculated from the output. These values, together with the tree
-  lengths/scores, are saved with each \code{phylo} tree.
-\item The \code{multiPhylo} object is saved in the
-  \code{"\linkS4class{NitroResults}"} slot of the original
-  \code{"\linkS4class{NitroTreeSearch}"} object, which is then
-  returned to the user.
-}
+This function uses \code{\link{writeTNTNexus}} to generate a nexus file
+containing the commands required to conduct a tree search using the matrix
+and parameters specified within a \code{"\linkS4class{NitroTreeSearch}"}
+object.
 }
