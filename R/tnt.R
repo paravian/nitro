@@ -136,7 +136,8 @@ tnt <- function (obj, tnt_path, read_trees = FALSE) {
 
   tnt_output <- strsplit(tnt_output$stdout, "[\n\r]+")[[1]]
 
-  trees <- tnt_output_parse(tnt_output, rownames(tnt_matrix))
-  obj@results <- new("NitroResults", trees = trees)
-  return(obj)
+  tax_names <- rownames(obj@matrix)[!obj@inactive_taxa]
+  trees <- tnt_output_parse(tnt_output, tax_names)
+  res <- new("NitroTrees", tree_search = obj, trees = trees)
+  return(res)
 }
