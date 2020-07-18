@@ -208,7 +208,7 @@ check_NitroConstraint <- function (object) {
   }
 }
 
-check_NitroResults <- function (object) {
+check_NitroTrees <- function (object) {
   if (class(object@trees) != "multiPhylo") {
     return("trees must be of class multiPhylo")
   }
