@@ -84,10 +84,8 @@ setMethod("tnt_cmd", "NitroRatchet", function (n) {
     cmd_suffix = ":"
   } else {
     cmd_suffix = "="
-    ratchet_cmd <- c("mult= wagner replic 10;")
   }
-  ratchet_cmd <- c(ratchet_cmd,
-                   paste0("ratchet", cmd_suffix, " iter ", n@iterations,
+  ratchet_cmd <- c(paste0("ratchet", cmd_suffix, " iter ", n@iterations,
                           " numsubs ", n@replacements,
                           " upfactor ", n@prob_up,
                           " downfact ", n@prob_down, ";"))
