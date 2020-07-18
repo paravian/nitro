@@ -3,8 +3,10 @@
 # })
 
 #' @importFrom TreeTools as.Newick
-setMethod("tnt_cmd", "NitroResults", function (n, matrix) {
-  mtx_tips <- rownames(matrix)
+#' @rdname tnt_cmd
+#' @export
+setMethod("tnt_cmd", "NitroTrees", function (n) {
+  mtx_tips <- rownames(n@tree_search@matrix)
 
   tnt_trees <- sapply(n@trees, function (phy) {
     res_tips <- phy$tip.label
@@ -22,15 +24,14 @@ setMethod("tnt_cmd", "NitroResults", function (n, matrix) {
   return(c("tread", tnt_trees))
 })
 
+#' Get trees
+#'
+#' A function to return the trees from a \code{"\linkS4class{NitroTrees}"}
+#' object.
+#' @param n a \code{NitroTrees} object
+#' @rdname trees
+#' @export
 setGeneric("trees", function (n) standardGeneric("trees"))
 
-setMethod("trees", "NitroResults", function (n) n@trees)
-
-setGeneric("trees<-", function (n, phy) standardGeneric("trees<-"))
-
-#' @importFrom methods validObject
-setMethod("trees<-", "NitroResults", function (n, phy) {
-  n@trees <- phy
-  validObject(n)
-  n
-})
+#' @rdname trees
+setMethod("trees", "NitroTrees", function (n) n@trees)
