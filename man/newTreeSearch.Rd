@@ -51,7 +51,13 @@ start the analysis with. Required for analyses using
 \code{"\linkS4class{NitroRatchet}"}.}
 
 \item{combine}{a logical indicating whether to merge any start trees from
-\code{obj} with the trees obtained from the analysis.}
+\code{obj} with the trees obtained from the analysis, removing any
+duplicates. This option is useful when a large number of trees, or any
+number of trees with a large number of tips, from two separate analyses
+(i.e., such as when a set of most parsimonious trees are further explored
+with branch breaking) are to be combined, excluding duplicates. TNT's
+method for identifying duplicate trees is significantly more efficient
+than current R implementations (e.g., \code{\link{unique.phylo}}).}
 
 \item{hold}{an integer indicating the number of trees to hold in TNTs tree
 buffer.}

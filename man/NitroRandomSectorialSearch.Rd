@@ -16,10 +16,16 @@ NitroRandomSectorialSearch(
 }
 \arguments{
 \item{min_size}{an integer value indicating the minimum size of random
-selections.}
+selections. If left at 0 (the default), this value will be automatically
+set according to the number of taxa in the matrix when a new
+\code{"\linkS4class{NitroTreeSearch}"} object is created by
+\code{"\link{newTreeSearch}"}.}
 
 \item{max_size}{an integer value indicating the maximum size of random
-selections.}
+selections. If left at 0 (the default), this value will be automatically
+set according to the number of taxa in the matrix when a new
+\code{"\linkS4class{NitroTreeSearch}"} object is created by
+\code{"\link{newTreeSearch}"}.}
 
 \item{selection_factor}{an integer value indicating the maximum number of
 random selections for the currently active taxa.}
