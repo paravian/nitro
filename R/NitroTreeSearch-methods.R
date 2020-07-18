@@ -14,20 +14,30 @@ NULL
 #' @template inactive_characters-template
 #' @template outgroup-template
 #' @template collapse-template
-#' @template weighting-template
-#' @template k-template
-#' @template weights-template
-#' @template multi_k-template
-#' @template proportion-template
-#' @template max_ratio-template
+#' @param weights an object inheriting class
+#' @param start_trees an list of class \code{multiPhylo} containing trees to
+#'   start the analysis with. Required for analyses using
+#'   \code{"\linkS4class{NitroRatchet}"}.
+#' @param combine a logical indicating whether to merge any start trees from
+#'   \code{obj} with the trees obtained from the analysis, removing any
+#'   duplicates. This option is useful when a large number of trees, or any
+#'   number of trees with a large number of tips, from two separate analyses
+#'   (i.e., such as when a set of most parsimonious trees are further explored
+#'   with branch breaking) are to be combined, excluding duplicates. TNT's
+#'   method for identifying duplicate trees is significantly more efficient
+#'   than current R implementations (e.g., \code{\link{unique.phylo}}).
+#' @param hold an integer indicating the number of trees to hold in TNTs tree
+#'   buffer.
+#' @param max_ram a numeric indicating the number of (binary) megabytes to
+#'   allocate for use by TNT.
+#'   \code{"\linkS4class{NitroWeightsBase}"}.
 #' @return an object of class \code{"\linkS4class{NitroTreeSearch}"}.
 #' @export
 newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
                            inactive_taxa = character(),
                            inactive_characters = numeric(), outgroup = NULL,
-                           collapse = 3, weighting = c("equal", "implied"),
-                           k = 3, weights = numeric(), multi_k = FALSE,
-                           proportion = 0.5, max_ratio = 5) {
+                           collapse = 3, weights = NULL, start_trees = NULL,
+                           combine = FALSE, hold = 100, max_ram = 16) {
   if (class(matrix) != "phyDat") {
     stop("matrix must be of class phyDat")
   }
@@ -35,17 +45,18 @@ newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
     stop("method must inherit from class NitroMethodsBase")
   }
   matrix <- PhyDatToMatrix(matrix)
-  weighting <- match.arg(weighting)
-  if (weighting == "equal") {
-    weights_obj <- new("NitroEqualWeights")
-  } else {
-    weights_obj <- new("NitroImpliedWeights", k, weights, multi_k, proportion,
-                       max_ratio)
+  if (is.null(weights)) {
+    weights <- new("NitroEqualWeights")
+  }
+  if (is.null(start_trees)) {
+    start_trees <- list()
+    class(start_trees) <- "multiPhylo"
   }
   constraints_obj <- new("NitroConstraintsBase")
   tree_search <- new("NitroTreeSearch", matrix, ordered_characters,
                      inactive_taxa, inactive_characters, collapse,
-                     outgroup, constraints_obj, method, weights_obj)
+                     outgroup, constraints_obj, method, weights,
+                     start_trees, combine, hold, max_ram)
 }
 
 #' @importFrom methods show
@@ -80,7 +91,7 @@ setMethod("show", "NitroTreeSearch", function (object) {
 setMethod("initialize", "NitroTreeSearch",
   function (.Object, matrix, ordered_characters, inactive_taxa,
             inactive_characters, collapse, outgroup, constraints,
-            method, weights) {
+            method, weights, start_trees, combine, hold, max_ram) {
     objs <- ls()
     if (class(collapse) == "numeric") {
       collapse <- as.integer(collapse)
@@ -119,18 +130,34 @@ setMethod("initialize", "NitroTreeSearch",
         inactive_characters <- rep(FALSE, ncol(matrix))
       }
     }
-    if (class(method) == "NitroDriven") {
-      sect_classes <- sapply(method@sectorial_search, class)
+
+    set_sel_size <- function (driven_class) {
+      sect_classes <- sapply(driven_class@sectorial_search, class)
       if ("NitroRandomSectorialSearch" %in% sect_classes) {
         def_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
         idx <- which(sect_classes == "NitroRandomSectorialSearch")
-        if (method@sectorial_search[[idx]]@min_size == 0) {
-          method@sectorial_search[[idx]]@min_size <- def_size
+        if (driven_class@sectorial_search[[idx]]@min_size == 0) {
+          slot(driven_class@sectorial_search[[idx]], "min_size") <- def_size
         }
-        if (method@sectorial_search[[idx]]@max_size == 0) {
-          method@sectorial_search[[idx]]@max_size <-def_size
+        if (driven_class@sectorial_search[[idx]]@max_size == 0) {
+          slot(driven_class@sectorial_search[[idx]], "max_size") <- def_size
         }
       }
+      driven_class
+    }
+
+    if (class(method) == "NitroDriven") {
+      method <- set_sel_size(method)
+    }
+
+    if (inherits(method, "NitroResampleBase")) {
+      if (class(method@tree_search) == "NitroDriven") {
+        method@tree_search <- set_sel_size(method@tree_search)
+      }
+    }
+
+    if (class(hold) == "numeric") {
+      hold <- as.integer(hold)
     }
 
     for (obj in objs) {
@@ -333,7 +360,7 @@ setMethod("inactive_taxa<-", signature("NitroTreeSearch", "NULL"),
 setGeneric("search_method", function (n) standardGeneric("search_method"))
 
 #' @rdname search_method
-setMethod("search_method", "NitroTreeSearch", function (n) n@method)
+setMethod("search_method", signature("NitroTreeSearch"), function (n) n@method)
 
 #' @param n a \code{"\linkS4class{NitroTreeSearch}"} object.
 #' @param value an object inheriting from \code{"\linkS4class{NitroMethodsBase}"}.
@@ -342,8 +369,62 @@ setMethod("search_method", "NitroTreeSearch", function (n) n@method)
 setGeneric("search_method<-", function (n, value) standardGeneric("search_method<-"))
 
 #' @rdname search_method
-setMethod("search_method<-", "NitroTreeSearch", function (n, value) {
+setMethod("search_method<-", signature("NitroTreeSearch"), function (n, value) {
   n@method <- value
+  validObject(n)
+  n
+})
+
+#' Starting trees
+#'
+#' A function that returns or sets the starting trees.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object
+#' @return a \code{multiPhylo} list.
+#' @rdname start_trees
+#' @export
+setGeneric("start_trees", function (n) standardGeneric("start_trees"))
+
+#' @rdname start_trees
+setMethod("start_trees", signature("NitroTreeSearch"), function (n) n@start_trees)
+
+#' @param value a \code{multiPhylo} list.
+#' @rdname start_trees
+#' @export
+setGeneric("start_trees<-", function (n, value) standardGeneric("start_trees<-"))
+
+#' @rdname start_trees
+setMethod("start_trees<-", signature("NitroTreeSearch"), function (n, value) {
+  n@start_trees <- value
+  validObject(n)
+  n
+})
+
+#' Hold trees
+#'
+#' A function that returns or sets the maximum number of trees to hold in TNT's
+#' tree buffer.
+#' @param n a \code{"\linkS4class{NitroTreeSearch}"} object
+#' @return a numeric or integer indicating the number of trees to hold in TNT's
+#' tree buffer.
+#' @rdname hold
+#' @export
+setGeneric("hold", function (n) standardGeneric("hold"))
+
+#' @rdname hold
+setMethod("hold", signature("NitroTreeSearch"), function (n) n@hold)
+
+#' @param value a numeric or integer indicating the number of trees to hold in
+#'   TNT's tree buffer.
+#' @rdname hold
+#' @export
+setGeneric("hold<-", function (n, value) standardGeneric("hold<-"))
+
+#' @rdname hold
+setMethod("hold<-", signature("NitroTreeSearch"), function (n, value) {
+  if (is.numeric(value)) {
+    value <- as.integer(value)
+  }
+  n@start_trees <- value
   validObject(n)
   n
 })
@@ -353,7 +434,6 @@ setMethod("search_method<-", "NitroTreeSearch", function (n, value) {
 #' A function that returns the command to perform the phylogenetic analysis for
 #' a branch swapping analysis.
 #' @param n an object inheriting from \code{"\linkS4class{NitroTreeSearch}"}.
-#' @param ... other arguments
 #' @return a character vector of the TNT command.
 #' @rdname tnt_cmd
-setGeneric("tnt_cmd", function (n, ...) standardGeneric("tnt_cmd"))
+setGeneric("tnt_cmd", function (n) standardGeneric("tnt_cmd"))

@@ -12,12 +12,11 @@ newTreeSearch(
   inactive_characters = numeric(),
   outgroup = NULL,
   collapse = 3,
-  weighting = c("equal", "implied"),
-  k = 3,
-  weights = numeric(),
-  multi_k = FALSE,
-  proportion = 0.5,
-  max_ratio = 5
+  weights = NULL,
+  start_trees = NULL,
+  combine = FALSE,
+  hold = 100,
+  max_ram = 16
 )
 }
 \arguments{
@@ -45,17 +44,21 @@ newTreeSearch(
 \item \code{4}: discard all trees that must contain a zero length branch
 }}
 
-\item{weighting}{a character value indicating the type of character weighting to use during the analysis. The available options are \code{equal} (the default) or \code{implied}.}
+\item{weights}{an object inheriting class}
 
-\item{k}{an numeric value indicating the concavity constant to apply during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}. When \code{multi_k} is \code{TRUE}, \code{k} represents the concavity for a character with no missing entries and serves as the basis for calculating per-site concavity constants.}
+\item{start_trees}{an list of class \code{multiPhylo} containing trees to
+start the analysis with. Required for analyses using
+\code{"\linkS4class{NitroRatchet}"}.}
 
-\item{weights}{numeric}
+\item{combine}{a logical indicating whether to merge any start trees from
+\code{obj} with the trees obtained from the analysis.}
 
-\item{multi_k}{a logical value indicating whether each character will be given an independent concavity constant based on the value of \code{k} during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.}
+\item{hold}{an integer indicating the number of trees to hold in TNTs tree
+buffer.}
 
-\item{proportion}{an numeric value indicating the proportion of homoplasy missing values are assumed to have under implied weighting. This parameter is only valid when \code{weighting} is set to \code{implied} and \code{multi_k} is \code{TRUE}. A proportion of 0 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.}
-
-\item{max_ratio}{a numeric value indicating the maximum acceptable ratio between two k values when multiple concavity constants are used (i.e., when \code{multi_k} is \code{TRUE}). A maximum ratio of 1 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.}
+\item{max_ram}{a numeric indicating the number of (binary) megabytes to
+allocate for use by TNT.
+\code{"\linkS4class{NitroWeightsBase}"}.}
 }
 \value{
 an object of class \code{"\linkS4class{NitroTreeSearch}"}.
