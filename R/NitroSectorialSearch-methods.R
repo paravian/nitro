@@ -1,13 +1,14 @@
 #' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroSectorialSearch",
-  function (.Object, buffer = buffer, slack = slack) {
-    if (class(slack) == "numeric") {
-      slack <- as.integer(slack)
-    }
-    objs <- ls()
-    for (obj in objs) {
-      slot(.Object, obj) <- get(obj)
-    }
-    .Object <- callNextMethod(.Object)
-    .Object
+  function (.Object, ..., buffer = TRUE, slack = 0) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$slack) == "numeric") {
+    args$slack <- as.integer(args$slack)
+  }
+  do.call("callNextMethod", args)
 })

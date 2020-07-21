@@ -17,24 +17,26 @@
 NitroTreeFuse <- function (rounds = 5, exchange_equal = FALSE,
                            start_best = TRUE, keep_all = TRUE,
                            accept_all = TRUE, swap = TRUE) {
-  new("NitroTreeFuse", rounds, exchange_equal, start_best, keep_all,
-      accept_all, swap)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroTreeFuse", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroTreeFuse",
-  function (.Object, rounds, exchange_equal, start_best, keep_all,
-            accept_all, swap) {
-    if (class(rounds) == "numeric") {
-      rounds <- as.integer(rounds)
-    }
-    objs <- ls()
-    for (obj in objs) {
-      slot(.Object, obj) <- get(obj)
-    }
-    .Object <- callNextMethod(.Object)
-    .Object
-  })
+  function (.Object, rounds = 5, exchange_equal = FALSE, start_best = TRUE,
+            keep_all = TRUE, accept_all = TRUE, swap = TRUE) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$rounds) == "numeric") {
+    args$rounds <- as.integer(args$rounds)
+  }
+  do.call("callNextMethod", args)
+})
 
 #' @rdname tnt_cmd
 setMethod("tnt_cmd", "NitroTreeFuse", function (n) {

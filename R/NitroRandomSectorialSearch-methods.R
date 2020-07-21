@@ -27,35 +27,37 @@
 NitroRandomSectorialSearch <- function (min_size = 0, max_size = 0,
   selection_factor = 50, increase = 100, small_starts = 3, buffer = TRUE,
   slack = 0) {
-  new("NitroRandomSectorialSearch", min_size, max_size, selection_factor,
-      increase, small_starts, buffer, slack)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroRandomSectorialSearch", args))
 }
 
 #' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroRandomSectorialSearch",
-  function (.Object, min_size, max_size, selection_factor,
-            increase, small_starts, ...) {
-  if (class(min_size) == "numeric") {
-    min_size <- as.integer(min_size)
-  }
-  if (class(max_size) == "numeric") {
-    max_size <- as.integer(max_size)
-  }
-  if (class(selection_factor) == "numeric") {
-    selection_factor <- as.integer(selection_factor)
-  }
-  if (class(increase) == "numeric") {
-    increase <- as.integer(increase)
-  }
-  if (class(small_starts) == "numeric") {
-    small_starts <- as.integer(small_starts)
-  }
+  function (.Object, min_size = 0, max_size = 0, selection_factor = 50,
+            increase = 100, small_starts = 3, buffer = TRUE, slack = 0) {
   objs <- ls()
-  for (obj in objs) {
-    slot(.Object, obj) <- get(obj)
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$min_size) == "numeric") {
+    .Object@min_size <- as.integer(args$min_size)
   }
-  .Object <- callNextMethod(.Object, ...)
-  .Object
+  if (class(args$max_size) == "numeric") {
+    .Object@max_size <- as.integer(args$max_size)
+  }
+  if (class(args$selection_factor) == "numeric") {
+    .Object@selection_factor <- as.integer(args$selection_factor)
+  }
+  if (class(args$increase) == "numeric") {
+    .Object@increase <- as.integer(args$increase)
+  }
+  if (class(args$small_starts) == "numeric") {
+    .Object@small_starts <- as.integer(args$small_starts)
+  }
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

@@ -4,7 +4,7 @@
 \alias{NitroBranchSwap}
 \title{Define parameters for a branch swapping analysis}
 \usage{
-NitroBranchSwap(replications, hold_rep, keep_all = FALSE)
+NitroBranchSwap(replications = 10, hold_rep = 10, keep_all = FALSE)
 }
 \arguments{
 \item{replications}{an integer value indicating the number of replications.}

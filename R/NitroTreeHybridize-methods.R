@@ -16,32 +16,34 @@
 NitroTreeHybridize <- function (rounds = 1, hybridizations = 1000,
                                 best_trees = 50, replace = TRUE,
                                 sample_factor = 15) {
-  new("NitroTreeHybridize", rounds, hybridizations, best_trees, replace,
-      sample_factor)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroTreeHybridize", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroTreeHybridize",
-  function (.Object, rounds, hybridizations, best_trees, replace,
-            sample_factor) {
-  if (class(rounds) == "numeric") {
-    rounds <- as.integer(rounds)
-  }
-  if (class(hybridizations) == "numeric") {
-    hybridizations <- as.integer(hybridizations)
-  }
-  if (class(best_trees) == "numeric") {
-    best_trees <- as.integer(best_trees)
-  }
-  if (class(sample_factor) == "numeric") {
-    sample_factor <- as.integer(sample_factor)
-  }
+  function (.Object, rounds = 1, hybridizations = 100, best_trees = 50,
+            replace = TRUE, sample_factor = 15) {
   objs <- ls()
-  for (obj in objs) {
-    slot(.Object, obj) <- get(obj)
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$rounds) == "numeric") {
+    args$rounds <- as.integer(args$rounds)
   }
-  .Object <- callNextMethod(.Object)
-  .Object
+  if (class(args$hybridizations) == "numeric") {
+    args$hybridizations <- as.integer(args$hybridizations)
+  }
+  if (class(args$best_trees) == "numeric") {
+    args$best_trees <- as.integer(args$best_trees)
+  }
+  if (class(args$sample_factor) == "numeric") {
+    args$sample_factor <- as.integer(args$sample_factor)
+  }
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

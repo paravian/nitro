@@ -22,23 +22,25 @@ NitroBranchBreak <- function (swapper = c("tbr", "spr"), cluster_size = 0,
                               safe_unclip = FALSE, fill_only = FALSE,
                               save_multiple = TRUE, random_clip = FALSE) {
   swapper <- which(match.arg(swapper) == c("tbr", "spr"))
-  new("NitroBranchBreak", swapper, cluster_size, safe_unclip, fill_only,
-      save_multiple, random_clip)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroBranchBreak", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroBranchBreak",
-  function (.Object, swapper, cluster_size, safe_unclip, fill_only,
-            save_multiple, random_clip) {
-  if (class(cluster_size) == "numeric") {
-    cluster_size <- as.integer(cluster_size)
-  }
+  function (.Object, swapper = "tbr", cluster_size = 0, safe_unclip = FALSE,
+            fill_only = FALSE, save_multiple = TRUE, random_clip = FALSE) {
   objs <- ls()
-  for (obj in objs) {
-    slot(.Object, obj) <- get(obj)
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$cluster_size) == "numeric") {
+    args$cluster_size <- as.integer(args$cluster_size)
   }
-  .Object <- callNextMethod(.Object)
-  .Object
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

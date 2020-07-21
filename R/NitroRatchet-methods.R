@@ -12,31 +12,36 @@
 #' @export
 NitroRatchet <- function (iterations = 50, replacements = 40, prob_up = 4,
                           prob_down = 4) {
-  new("NitroRatchet", iterations, replacements, prob_up, prob_down)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroRatchet", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroRatchet",
-  function (.Object, iterations, replacements, prob_up, prob_down) {
-    if (class(iterations) == "numeric") {
-      iterations <- as.integer(iterations)
-    }
-    if (class(replacements) == "numeric") {
-      replacements <- as.integer(replacements)
-    }
-    if (class(prob_up) == "numeric") {
-      prob_up <- as.integer(prob_up)
-    }
-    if (class(prob_down) == "numeric") {
-      prob_down <- as.integer(prob_down)
-    }
-    objs <- ls()
-    for (obj in objs) {
-      slot(.Object, obj) <- get(obj)
-    }
-    .Object <- callNextMethod(.Object)
-    .Object
-  })
+  function (.Object, iterations = 50, replacements = 40, prob_up = 4,
+            prob_down = 4) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+
+  if (class(args$iterations) == "numeric") {
+    args$iterations <- as.integer(args$iterations)
+  }
+  if (class(args$replacements) == "numeric") {
+    args$replacements <- as.integer(args$replacements)
+  }
+  if (class(args$prob_up) == "numeric") {
+    args$prob_up <- as.integer(args$prob_up)
+  }
+  if (class(args$prob_down) == "numeric") {
+    args$prob_down <- as.integer(args$prob_down)
+  }
+  do.call("callNextMethod", args)
+})
 
 setMethod("show", "NitroRatchet", function (object) {
   cat("Parameters for parsimony ratchet:\n\n")

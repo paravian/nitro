@@ -37,6 +37,12 @@ check_NitroTreeSearch <- function (object) {
   if (!inherits(object@weights, "NitroWeightsBase")) {
     return("tree_search must be an object of class NitroTreeSearch")
   }
+  if (object@hold < 0) {
+    return("hold must be an integer greater than 0")
+  }
+  if (object@max_ram < 0) {
+    return("max_ram must be a number greater than 0")
+  }
   return(TRUE)
 }
 
@@ -89,14 +95,20 @@ check_NitroSectorialSearch <- function (object) {
 }
 
 check_NitroRandomSectorialSearch <- function (object) {
-  if (object@min_size < 5) {
+  if (object@min_size < 5 & object@min_size != 0) {
     return("min_size must be an integer 5 or greater")
   }
-  if (object@max_size < 5) {
+  if (object@max_size < 5 & object@min_size != 0) {
     return("max_size must be an integer 5 or greater")
   }
   if (object@max_size < object@min_size) {
     return("max_size must be equal to or larger than min_size")
+  }
+  if (object@selection_factor < 0) {
+    return("selection_factor must be an integer >= 0")
+  }
+  if (object@increase < 0) {
+    return("increase must be an integer >= 0")
   }
 }
 
@@ -184,7 +196,6 @@ check_NitroImpliedWeights <- function (object) {
 }
 
 check_NitroConstrainedSearch <- function (object) {
-  print("Validating constraints")
   for (constraint in c(object@positive, object@negative)) {
     c_names <- names(constraint) == c("fixed", "floating")
     if (!all(c_names) | !length(c_names)) {
@@ -205,6 +216,22 @@ check_NitroConstraint <- function (object) {
   }
   if (any(object@fixed & object@floating)) {
     return("A constraint in floating cannot also be fixed")
+  }
+}
+
+check_NitroResampleBase <- function (object) {
+  message("Check NitroResampleBase")
+  if (object@replications < 0) {
+    return("replications must be an integer greater than zero")
+  }
+  if (inherits(object@tree_search, "NitroResampleBase")) {
+    return("tree_search cannot be an object that inherits NitroResampleBase")
+  }
+}
+
+check_NitroJacknife <- function (object) {
+  if (object@probability < 0 | object@probability > 99) {
+    return("probability must be an integer between 0 and 99")
   }
 }
 
