@@ -1,11 +1,39 @@
+#' Define implied weights parameters
+#'
+#' @param k n numeric value indicating the concavity constant to apply during
+#'   an implied weights analysis. When \code{multi_k} is \code{TRUE}, \code{k}
+#'   represents the concavity for a character with no missing entries and
+#'   serves as the basis for calculating per-site concavity constants.
+#' @param multi_k a logical value indicating whether each character will be
+#'   given an independent concavity constant based on the value of \code{k}
+#'   during an implied weights analysis.
+#' @param proportion an numeric value indicating the proportion of homoplasy
+#'   missing values are assumed to have under implied weighting. This parameter
+#'   is only valid when \code{multi_k} is \code{TRUE}. A proportion of 0 is
+#'   equivalent to standard implied weighting, with \code{multi_k} set as
+#'   \code{FALSE}.
+#' @param max_ratio a numeric value indicating the maximum acceptable ratio
+#'   between two k values when multiple concavity constants are used (i.e.,
+#'   when \code{multi_k} is \code{TRUE}). A maximum ratio of 1 is equivalent
+#'   to standard implied weighting, with \code{multi_k} set as \code{FALSE}.
+#' @export
+NitroImpliedWeights <- function (k = 3, multi_k = FALSE, proportion = 0.5,
+                                 max_ratio = 5) {
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroImpliedWeights", args))
+}
+
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroImpliedWeights",
-          function (.Object, k, weights, multi_k, proportion, max_ratio) {
-  .Object <- callNextMethod(.Object, k = k, weights = weights,
-                            multi_k = multi_k, proportion = proportion,
-                            max_ratio = max_ratio)
-  validObject(.Object)
-  .Object
+  function (.Object, k = 3, multi_k = FALSE, proportion = 0.5, max_ratio = 5) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

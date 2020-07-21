@@ -35,8 +35,8 @@ NULL
 #' @export
 newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
                            inactive_taxa = character(),
-                           inactive_characters = numeric(), outgroup = NULL,
-                           collapse = 3, weights = NULL, start_trees = NULL,
+                           inactive_characters = numeric(), collapse = 3,
+                           outgroup = NULL, weights = NULL, start_trees = NULL,
                            combine = FALSE, hold = 100, max_ram = 16) {
   if (class(matrix) != "phyDat") {
     stop("matrix must be of class phyDat")
@@ -52,11 +52,10 @@ newTreeSearch <- function (matrix, method, ordered_characters = numeric(),
     start_trees <- list()
     class(start_trees) <- "multiPhylo"
   }
-  constraints_obj <- new("NitroConstraintsBase")
-  tree_search <- new("NitroTreeSearch", matrix, ordered_characters,
-                     inactive_taxa, inactive_characters, collapse,
-                     outgroup, constraints_obj, method, weights,
-                     start_trees, combine, hold, max_ram)
+  constraints <- new("NitroConstraintsBase")
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroTreeSearch", args))
 }
 
 #' @importFrom methods show

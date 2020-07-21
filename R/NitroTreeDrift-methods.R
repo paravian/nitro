@@ -17,29 +17,32 @@
 NitroTreeDrift <- function (iterations = 30, substitutions = 60,
                             max_abs_fit_diff = 1, max_rel_fit_diff = 0.2,
                             reject_factor = 3, autoconstrain_cycles = 0) {
-  new("NitroTreeDrift", iterations, substitutions, max_abs_fit_diff,
-      max_rel_fit_diff, reject_factor, autoconstrain_cycles)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroTreeDrift", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroTreeDrift",
-  function (.Object, iterations, substitutions, max_abs_fit_diff,
-            max_rel_fit_diff, reject_factor, autoconstrain_cycles) {
-  if (class(iterations) == "numeric") {
-    iterations <- as.integer(iterations)
+  function (.Object, iterations = 30, substitutions = 40, max_abs_fit_diff = 1,
+            max_rel_fit_diff = 0.2, reject_factor = 3,
+            autoconstrain_cycles = 0) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$iterations) == "numeric") {
+    args$iterations <- as.integer(args$iterations)
   }
   if (class(substitutions) == "numeric") {
-    substitutions <- as.integer(substitutions)
+    args$substitutions <- as.integer(args$substitutions)
   }
   if (class(autoconstrain_cycles) == "numeric") {
-    autoconstrain_cycles <- as.integer(autoconstrain_cycles)
+    args$autoconstrain_cycles <- as.integer(args$autoconstrain_cycles)
   }
-  objs <- ls()
-  for (obj in objs) {
-    slot(.Object, obj) <- get(obj)
-  }
-  .Object <- callNextMethod(.Object)
-  .Object
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

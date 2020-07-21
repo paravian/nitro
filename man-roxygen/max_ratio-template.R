@@ -1,1 +1,0 @@
-#' @param <%= ifelse(isgeneric, "value", "max_ratio") %> a numeric value indicating the maximum acceptable ratio between two k values when multiple concavity constants are used (i.e., when \code{multi_k} is \code{TRUE}). A maximum ratio of 1 is equivalent to standard implied weighting, with \code{multi_k} set as \code{FALSE}.

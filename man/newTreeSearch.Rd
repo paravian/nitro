@@ -10,8 +10,8 @@ newTreeSearch(
   ordered_characters = numeric(),
   inactive_taxa = character(),
   inactive_characters = numeric(),
-  outgroup = NULL,
   collapse = 3,
+  outgroup = NULL,
   weights = NULL,
   start_trees = NULL,
   combine = FALSE,
@@ -31,8 +31,6 @@ newTreeSearch(
 
 \item{inactive_characters}{a numeric vector indicating the characters to be marked as inactive.}
 
-\item{outgroup}{a single character vector indicating the taxon to be the outgroup.}
-
 \item{collapse}{an integer indicating the rule for collapsing of zero length branches. The options are:
 \itemize{
 \item \code{1}: collapse an interior branch of the maximum possible length
@@ -43,6 +41,8 @@ newTreeSearch(
   of the branch is zero (the default)
 \item \code{4}: discard all trees that must contain a zero length branch
 }}
+
+\item{outgroup}{a single character vector indicating the taxon to be the outgroup.}
 
 \item{weights}{an object inheriting class}
 

@@ -27,7 +27,7 @@
 #' @include NitroTreeDrift-class.R
 #' @include NitroRatchet-class.R
 #' @export
-NitroDriven <- function (replications, hits = 1, consense_times = 0,
+NitroDriven <- function (replications = 4, hits = 1, consense_times = 0,
                          keep_all = FALSE, multiply = TRUE,
                          sectorial_search = NULL,  tree_fuse = NULL,
                          tree_hybridize = NULL, tree_drift = NULL,
@@ -48,30 +48,34 @@ NitroDriven <- function (replications, hits = 1, consense_times = 0,
   if (is.null(ratchet)) {
     ratchet <- NitroRatchet(iterations = 0)
   }
-  new("NitroDriven", replications, hits, consense_times, keep_all, multiply,
-    sectorial_search, tree_fuse, tree_hybridize, tree_drift, ratchet)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroDriven", args))
 }
 
 #' @importFrom methods callNextMethod
 setMethod("initialize", "NitroDriven",
-  function (.Object, replications, hits, consense_times, keep_all, multiply,
-            sectorial_search, tree_fuse, tree_hybridize, tree_drift, ratchet) {
-    if (class(hits) == "numeric") {
-      hits <- as.integer(hits)
-    }
-    if (class(replications) == "numeric") {
-      replications <- as.integer(replications)
-    }
-    if (class(consense_times) == "numeric") {
-      consense_times <- as.integer(consense_times)
-    }
-    objs <- ls()
-    for (obj in objs) {
-      slot(.Object, obj) <- get(obj)
-    }
-    .Object <- callNextMethod(.Object)
-    .Object
-  })
+  function (.Object, replications = 4, hits = 1, consense_times = 0,
+            keep_all = FALSE, multiply = TRUE, sectorial_search = NULL,
+            tree_fuse = NULL, tree_hybridize = NULL, tree_drift = NULL,
+            ratchet = NULL) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$hits) == "numeric") {
+    args$hits <- as.integer(args$hits)
+  }
+  if (class(args$replications) == "numeric") {
+    args$replications <- as.integer(args$replications)
+  }
+  if (class(args$consense_times) == "numeric") {
+    args$consense_times <- as.integer(args$consense_times)
+  }
+  do.call("callNextMethod", args)
+})
 
 setMethod("show", "NitroDriven", function (object) {
   cat("Parameters for driven analysis:\n\n")

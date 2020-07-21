@@ -12,7 +12,6 @@ setClass("NitroImpliedWeights",
   contains = "NitroWeightsBase",
   slots = c(
     k = "numeric",
-    weights = "numeric",
     multi_k = "logical",
     proportion = "numeric",
     max_ratio = "numeric"

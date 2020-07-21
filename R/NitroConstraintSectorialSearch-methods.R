@@ -15,28 +15,31 @@
 NitroConstraintSectorialSearch <- function (min_fork = 10, max_fork = 10,
                                             rounds = 3, buffer = TRUE,
                                             slack = 0) {
-  new("NitroConstraintSectorialSearch", min_fork, max_fork, rounds, buffer,
-      slack)
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroConstraintSectorialSearch", args))
 }
 
 #' @importFrom methods callNextMethod slot<-
 setMethod("initialize", "NitroConstraintSectorialSearch",
-  function (.Object, min_fork, max_fork, rounds, ...) {
-  if (class(min_fork) == "numeric") {
-    min_fork <- as.integer(min_fork)
-  }
-  if (class(max_fork) == "numeric") {
-    max_fork <- as.integer(max_fork)
-  }
-  if (class(rounds) == "numeric") {
-    rounds <- as.integer(rounds)
-  }
+  function (.Object, min_fork = 10, max_fork = 10, rounds = 3, buffer = TRUE,
+            slack = 0) {
   objs <- ls()
-  for (obj in objs) {
-    slot(.Object, obj) <- get(obj)
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (is.numeric(args$min_fork)) {
+    .Object@min_fork <- as.integer(args$min_fork)
   }
-  .Object <- callNextMethod(.Object, ...)
-  .Object
+  if (is.numeric(args$max_fork)) {
+    .Object@max_fork <- as.integer(args$max_fork)
+  }
+  if (is.numeric(args$rounds)) {
+    .Object@rounds <- as.integer(args$rounds)
+  }
+  do.call("callNextMethod", args)
 })
 
 #' @rdname tnt_cmd

@@ -1,1 +1,0 @@
-#' @param <%= ifelse(isgeneric, "value", "multi_k") %> a logical value indicating whether each character will be given an independent concavity constant based on the value of \code{k} during an implied weights analysis. This parameter is only valid when \code{weighting} is set to \code{implied}.

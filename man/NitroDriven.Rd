@@ -5,7 +5,7 @@
 \title{Definte parameters for a driven analysis}
 \usage{
 NitroDriven(
-  replications,
+  replications = 4,
   hits = 1,
   consense_times = 0,
   keep_all = FALSE,

@@ -7,25 +7,30 @@
 #' @param keep_all a logical value indicating whether to retain all generated
 #'   trees from each replication regardless of length.
 #' @export
-NitroBranchSwap <- function (replications, hold_rep, keep_all = FALSE) {
-  new("NitroBranchSwap", replications, hold_rep, keep_all)
+NitroBranchSwap <- function (replications = 10, hold_rep = 10,
+                             keep_all = FALSE) {
+  objs <- ls()
+  args <- as.list(environment())[objs]
+  do.call("new", c("NitroBranchSwap", args))
 }
 
 #' @importFrom methods callNextMethod
-setMethod("initialize", "NitroBranchSwap",
-  function (.Object, replications, hold_rep, keep_all) {
-    if (class(replications) == "numeric") {
-       replications <- as.integer(replications)
-    }
-    if (class(hold_rep) == "numeric") {
-       hold_rep <- as.integer(hold_rep)
-    }
-    objs <- ls()
-    for (obj in objs) {
-      slot(.Object, obj) <- get(obj)
-    }
-    .Object <- callNextMethod(.Object)
-    .Object
+setMethod("initialize", "NitroBranchSwap", function (.Object, replications = 10,
+                                                     hold_rep = 10,
+                                                     keep_all = FALSE) {
+  objs <- ls()
+  mf <- match.call()
+  m <- match(c(".Object", objs), names(mf), 0L)
+  mf <- mf[m]
+
+  args <- as.list(mf)
+  if (class(args$replications) == "numeric") {
+     args$replications <- as.integer(args$replications)
+  }
+  if (class(args$hold_rep) == "numeric") {
+     args$hold_rep <- as.integer(args$hold_rep)
+  }
+  do.call("callNextMethod", args)
 })
 
 #' Replications
