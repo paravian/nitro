@@ -50,21 +50,10 @@
 #'   the \code{start_trees} slot of \code{obj} prior to analysis.
 #' @rdname writeTNTNexus
 #' @export
-writeTNTNexus <- function (obj, filename, read_trees = FALSE) {
-  # Remove inactive taxa and characters from matrix, if required
-  tnt_matrix <- obj@matrix
-  ord_chars <- which(obj@ordered_characters)
-  if (any(obj@inactive_characters)) {
-    if (any(obj@ordered_characters)) {
-      ord_chars <- which(obj@ordered_characters[!obj@inactive_characters])
-    }
-    tnt_matrix <- tnt_matrix[,!obj@inactive_characters]
-  }
-  if (any(obj@inactive_taxa)) {
-    tnt_matrix <- tnt_matrix[!obj@inactive_taxa,]
-  }
-
+writeTNTNexus <- function (obj, filename, read_trees = FALSE,
+                           character_fits = FALSE) {
   # Read matrix; convert NAs to "?" and write to minimal nexus file
+  tnt_matrix <- obj@matrix
   tnt_matrix[is.na(tnt_matrix)] <- "?"
   write.nexus.data(tnt_matrix, file=filename, interleaved = FALSE,
                    format = "standard")
@@ -80,7 +69,12 @@ writeTNTNexus <- function (obj, filename, read_trees = FALSE) {
   }
 
   if (inherits(obj@method, c("NitroRatchet", "NitroResampleBase"))) {
-    read_trees <- TRUE
+    if (!read_trees) {
+      read_trees <- TRUE
+    }
+    if (inherits(obj@method, "NitroResampleBase")) {
+      obj@start_trees <- c(obj@method@phy)
+    }
   }
 
   tnt_block <- c(tnt_block,
@@ -89,10 +83,22 @@ writeTNTNexus <- function (obj, filename, read_trees = FALSE) {
                  paste0("outgroup ", obj@outgroup - 1, ";")
   )
 
-  if (length(ord_chars) > 0) {
+  char_codes <- c()
+  if (any(obj@ordered_characters)) {
+    char_codes <- c(char_codes, "+",
+                    which(obj@ordered_characters) - 1)
+  }
+  if (any(obj@inactive_characters)) {
+    char_codes <- c(char_codes, "]",
+                    which(obj@inactive_characters) - 1)
+  }
+  if (length(char_codes)) {
+    tnt_block <- c(tnt_block, paste(c("ccode", char_codes, ";"), collapse=" "))
+  }
+  if (any(obj@inactive_taxa)) {
     tnt_block <- c(tnt_block,
-                   paste(c("ccode +", ord_chars - 1, ";"),
-                         collapse = " "))
+                   paste(c("taxcode -",
+                           which(obj@inactive_taxa) - 1, ";"), collapse=" "))
   }
 
   if (length(obj@constraints)) {

@@ -136,8 +136,35 @@ tnt <- function (obj, tnt_path, read_trees = FALSE) {
 
   tnt_output <- strsplit(tnt_output$stdout, "[\n\r]+")[[1]]
 
-  tax_names <- rownames(obj@matrix)[!obj@inactive_taxa]
-  trees <- tnt_output_parse(tnt_output, tax_names)
+  trees <- tnt_output_parse(tnt_output, rownames(obj@matrix))
+
+  if (inherits(obj@method, "NitroResampleBase")) {
+    rstree_file <- sub("(\\..+|$)", ".tre", temp_filename)
+    rstree_tnt <- readLines(rstree_file)[2] %>%
+      gsub("=(/ )*", "", .)
+    rstree_phy <- list()
+    attr_names <- c("length", "weighted_score", "score", "CI", "RI", "RC",
+                    "char_scores", "minsteps", "maxsteps")
+    rstree_tnt <- gsub("\\[([0-9]+)\\]", "-\\1", rstree_tnt)
+    rstree_phy[[1]] <- gsub("(\\)[0-9]+)\\/[0-9]+", "\\1", rstree_tnt)
+    rstree_phy[[2]] <- gsub("\\)[0-9]+\\/([0-9]+)", ")\\1", rstree_tnt)
+
+    tree_attrs <- names(attributes(trees[[1]]))
+    tree_attrs <- attr_names[match(tree_attrs, attr_names, 0L)]
+
+    rstree_phy <- lapply(rstree_phy, function (p) {
+      phy <- TNTText2Tree(p)
+      phy$tip.label <- trees[[1]]$tip.label
+      for (tree_attr in tree_attrs) {
+        attr(phy, tree_attr) <- attr(trees[[1]], tree_attr)
+      }
+      phy
+    })
+    attr(rstree_phy[[1]], "resampling_freqs") <- "absolute"
+    attr(rstree_phy[[2]], "resampling.freqs") <- "group present/contradicted"
+
+    trees <- .compressTipLabel(rstree_phy)
+  }
   res <- new("NitroTrees", tree_search = obj, trees = trees)
   return(res)
 }
