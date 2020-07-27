@@ -48,6 +48,9 @@
 #' @param filename a character vector indicating the name for the new file.
 #' @param read_trees a logical value indicating whether to read in trees from
 #'   the \code{start_trees} slot of \code{obj} prior to analysis.
+#' @param character_fits a logical value indicating whether to return scores
+#'   for individual characters and minimum and maximum possible character
+#'   lengths required for calculation of character fit indices.
 #' @rdname writeTNTNexus
 #' @export
 writeTNTNexus <- function (obj, filename, read_trees = FALSE,
@@ -117,14 +120,24 @@ writeTNTNexus <- function (obj, filename, read_trees = FALSE,
     tnt_block <- c(tnt_block, tnt_cmd(res))
   }
 
-  tnt_block <- c(tnt_block, tnt_cmd(obj@method), "condense;")
-
-  if (obj@combine) {
-    res <- new("NitroTrees", tree_search = obj, trees = obj@start_trees)
-    tnt_block <- c(tnt_block, tnt_cmd(res), "unique;")
+  if (inherits(obj@method, "NitroResampleBase")) {
+    rstree_file <- sub("(\\..+|$)", ".tre", filename)
+    tnt_block <- c(tnt_block, "ttags =;", tnt_cmd(obj@method), "ttags );",
+                   paste("tsave *", rstree_file, sep = ""), "save *;",
+                   "tsave /;")
+  } else {
+    tnt_block <- c(tnt_block, tnt_cmd(obj@method), "condense;")
+    if (obj@combine) {
+      res <- new("NitroTrees", tree_search = obj, trees = obj@start_trees)
+      tnt_block <- c(tnt_block, tnt_cmd(res), "unique;")
+    }
   }
 
   tnt_block <- c(tnt_block, "tplot *;", "length;", "minmax;")
+
+  if (character_fits) {
+    tnt_block <- c(tnt_block, "cscores;")
+  }
 
   if (inherits(obj, "NitroImpliedWeights")) {
     tnt_block <- c(tnt_block, "score;")

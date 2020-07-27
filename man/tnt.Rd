@@ -4,7 +4,7 @@
 \alias{tnt}
 \title{Execute a TNT search}
 \usage{
-tnt(obj, tnt_path, read_trees = FALSE)
+tnt(obj, tnt_path, read_trees = FALSE, character_fits = FALSE)
 }
 \arguments{
 \item{obj}{an object that inherits \code{"\linkS4class{NitroTreeSearch}"}.}
@@ -13,6 +13,10 @@ tnt(obj, tnt_path, read_trees = FALSE)
 
 \item{read_trees}{a logical value indicating whether to read in trees from
 the \code{start_trees} slot of \code{obj} prior to analysis.}
+
+\item{character_fits}{a logical value indicating whether to return scores
+for individual characters and minimum and maximum possible character
+lengths required for calculation of character fit indices.}
 }
 \value{
 a \code{"\linkS4class{NitroTrees}"} object containing the original

@@ -4,7 +4,7 @@
 \alias{writeTNTNexus}
 \title{Write a TNT-compatible nexus file}
 \usage{
-writeTNTNexus(obj, filename, read_trees = FALSE)
+writeTNTNexus(obj, filename, read_trees = FALSE, character_fits = FALSE)
 }
 \arguments{
 \item{obj}{an object that inherits \code{"\linkS4class{NitroTreeSearch}"}.}
@@ -13,6 +13,10 @@ writeTNTNexus(obj, filename, read_trees = FALSE)
 
 \item{read_trees}{a logical value indicating whether to read in trees from
 the \code{start_trees} slot of \code{obj} prior to analysis.}
+
+\item{character_fits}{a logical value indicating whether to return scores
+for individual characters and minimum and maximum possible character
+lengths required for calculation of character fit indices.}
 }
 \description{
 Function to write a nexus file from a \code{"\linkS4class{NitroTreeSearch}"}

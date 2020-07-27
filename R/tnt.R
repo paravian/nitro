@@ -13,17 +13,20 @@
 #' @param tnt_path the location of the TNT command line binary.
 #' @param read_trees a logical value indicating whether to read in trees from
 #'   the \code{start_trees} slot of \code{obj} prior to analysis.
+#' @param character_fits a logical value indicating whether to return scores
+#'   for individual characters and minimum and maximum possible character
+#'   lengths required for calculation of character fit indices.
 #' @return a \code{"\linkS4class{NitroTrees}"} object containing the original
 #'   \code{"\linkS4class{NitroTreeSearch}"} object and a \code{multiPhylo} of
 #'   the trees found during the search.
 #' @export
-tnt <- function (obj, tnt_path, read_trees = FALSE) {
+tnt <- function (obj, tnt_path, read_trees = FALSE, character_fits = FALSE) {
   if (!inherits(obj, "NitroTreeSearch")) {
     stop("'obj' must inherit class NitroTreeSearch")
   }
 
   temp_filename <- tempfile("nitro", fileext = ".tnt")
-  writeTNTNexus(obj, temp_filename, read_trees)
+  writeTNTNexus(obj, temp_filename, read_trees, character_fits)
 
   # Prepare command line arguments for the TNT binary
   tnt_arg <- c(paste("mxram", obj@max_ram / 1000 * 1024),
@@ -116,8 +119,8 @@ tnt <- function (obj, tnt_path, read_trees = FALSE) {
   # Check if insufficient RAM for tree buffer size
   ram_re <- sapply(regmatches(err_out, regexec("Cannot make tree space", err_out)), length)
   if (any(ram_re)) {
-    stop(paste("Tree buffer cannot hold", as.integer(obj@hold),
-               "trees; consider increasing 'max_ram' value"))
+    warning(paste("Tree buffer cannot hold", as.integer(obj@hold),
+                  "trees; consider increasing 'max_ram' value"))
   }
 
   # Check for overflowed replications in branch swap analyses
