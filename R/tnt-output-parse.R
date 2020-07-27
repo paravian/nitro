@@ -32,6 +32,9 @@ tnt_output_parse <- function (tnt_output, tip_labels) {
                          tnt_output)
   maxsteps_match <- grep("Maximum possible steps \\(total = ([0-9]+)\\) ",
                          tnt_output)
+  cscores_match <- grep(paste("Tree [0-9]+, total length [0-9]+ "),
+                        tnt_output)
+
   minsteps <- as.numeric(gsub(".* ([0-9]+)\\) ", "\\1",
                               tnt_output[minsteps_match]))
   maxsteps <- as.numeric(gsub(".* ([0-9]+)\\) ", "\\1",
@@ -49,6 +52,22 @@ tnt_output_parse <- function (tnt_output, tip_labels) {
   tree_attrs$lengths <- as.numeric(tableParse(
     tnt_output[(lengths_match+3):(minsteps_match-3)]))
 
+  if (length(cscores_match)) {
+    minsteps <- as.numeric(tableParse(
+      tnt_output[(minsteps_match+3):(maxsteps_match-3)]))
+
+    maxsteps <- as.numeric(tableParse(
+      tnt_output[(maxsteps_match+3):(cscores_match[1]-3)]))
+
+    tree_attrs$cscores <- lapply(1:length(cscores_match), function (t) {
+      if (t < length(cscores_match)) {
+        return(as.numeric(tableParse(
+          tnt_output[(cscores_match[t]+3):(cscores_match[t+1]-3)])))
+      }
+      return(as.numeric(tableParse(
+          tnt_output[(cscores_match[t]+3):length(tnt_output)])))
+    })
+  }
 
   scores <- NULL
   if (length(scores_match)) {
@@ -71,6 +90,10 @@ tnt_output_parse <- function (tnt_output, tip_labels) {
     attr(tree, "RI") <- (sum_maxsteps - tree_data["lengths"]) /
       (sum_maxsteps - sum_minsteps)
     attr(tree, "RC") <- attr(tree, "CI") * attr(tree, "RI")
+    if (length(cscores_match)) {
+      attr(tree, "char_scores") <- tree_data["cscores"]
+      attr(tree, "minsteps") <- minsteps
+      attr(tree, "maxsteps") <- maxsteps
     }
     return(tree)
   })
