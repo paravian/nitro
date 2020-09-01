@@ -52,5 +52,5 @@ setMethod("tnt_cmd", signature("NitroJacknife"), function (n) {
         " probability ", n@probability,
         " cut ", n@cutoff,
         " gc frequency [ ", paste(tnt_cmd(jack@tree_search), collapse = " "),
-        " ]", sep = "")
+        " ];", sep = "")
 })
