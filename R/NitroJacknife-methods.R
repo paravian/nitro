@@ -51,5 +51,6 @@ setMethod("tnt_cmd", signature("NitroJacknife"), function (n) {
   paste("resample= jak from 0 replications ", n@replications,
         " probability ", n@probability,
         " cut ", n@cutoff,
-        " gc frequency;", sep = "")
+        " gc frequency [ ", paste(tnt_cmd(jack@tree_search), collapse = " "),
+        " ]", sep = "")
 })
