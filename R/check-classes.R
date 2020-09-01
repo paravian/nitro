@@ -220,7 +220,6 @@ check_NitroConstraint <- function (object) {
 }
 
 check_NitroResampleBase <- function (object) {
-  message("Check NitroResampleBase")
   if (object@replications < 0) {
     return("replications must be an integer greater than zero")
   }

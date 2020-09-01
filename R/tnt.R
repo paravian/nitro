@@ -63,6 +63,14 @@ tnt <- function (obj, tnt_path, read_trees = FALSE, character_fits = FALSE) {
     pb_setup$re <- "-+ +[A-Z]+ +([0-9]+) of ([0-9]+) +(?:[0-9\\.]+|-+) +([0-9\\.]+|-+) +[0-9:]+ +[0-9,]+"
     pb_setup$format <- "Branch breaking | Trees found: :current | Best score: :score"
     pb_setup$total <- .Machine$integer.max
+  } else if (inherits(obj@method, "NitroResampleBase")) {
+    # Jacknifing (rep. 6 of 100) X=============================
+    # Bootstrapping (rep. 1 of 100) ==============================
+    # Resampling (rep. 1 of 100) ==============================
+    pb_setup$re <- "([A-Za-z]+) \\(rep\\. ([0-9]+) of ([0-9]+)\\) X*=+"
+    pb_setup$format <- "[:bar] :current/:total reps"
+    pb_setup$total <- replications(obj@method)
+    pb_setup$ratio_num <- 2L
   }
 
   pb <- progress_bar$new(format = pb_setup$format, total = pb_setup$total)
