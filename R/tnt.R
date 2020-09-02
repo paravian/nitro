@@ -157,8 +157,8 @@ tnt <- function (obj, tnt_path, read_trees = FALSE, character_fits = FALSE) {
     attr_names <- c("length", "weighted_score", "score", "CI", "RI", "RC",
                     "char_scores", "minsteps", "maxsteps")
     rstree_tnt <- gsub("\\[([0-9]+)\\]", "-\\1", rstree_tnt)
-    rstree_phy[[1]] <- gsub("(\\)[0-9]+)\\/[0-9]+", "\\1", rstree_tnt)
-    rstree_phy[[2]] <- gsub("\\)[0-9]+\\/([0-9]+)", ")\\1", rstree_tnt)
+    rstree_phy[[1]] <- gsub("(\\)[0-9-]+)\\/[0-9-]+", "\\1", rstree_tnt)
+    rstree_phy[[2]] <- gsub("\\)[0-9-]+\\/([0-9-]+)", ")\\1", rstree_tnt)
 
     tree_attrs <- names(attributes(trees[[1]]))
     tree_attrs <- attr_names[match(tree_attrs, attr_names, 0L)]
