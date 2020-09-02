@@ -232,6 +232,11 @@ check_NitroJacknife <- function (object) {
   if (object@probability < 0 | object@probability > 99) {
     return("probability must be an integer between 0 and 99")
   }
+  if (object@cutoff < 0 | object@cutoff > 99) {
+    return("cutoff must be an integer between 0 and 99")
+  }
+}
+
 check_NitroBootstrap <- function (object) {
   if (object@cutoff < 0 | object@cutoff > 99) {
     return("cutoff must be an integer between 0 and 99")
