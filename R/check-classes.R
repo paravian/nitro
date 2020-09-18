@@ -228,7 +228,7 @@ check_NitroResampleBase <- function (object) {
   }
 }
 
-check_NitroJacknife <- function (object) {
+check_NitroJackknife <- function (object) {
   if (object@probability < 0 | object@probability > 99) {
     return("probability must be an integer between 0 and 99")
   }

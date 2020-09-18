@@ -1,4 +1,4 @@
-#' Perform jacknife resampling
+#' Perform jackknife resampling
 #'
 #' @param probability an integer value indicating the change probability.
 #' @param cutoff an integer value indicating the cutoff value for
@@ -10,14 +10,14 @@
 #' @param replications an integer value indicating the number of resampling
 #'   replications to perform.
 #' @export
-NitroJacknife <- function (probability = 36, cutoff = 0, tree_search = NULL,
+NitroJackknife <- function (probability = 36, cutoff = 0, tree_search = NULL,
                            phy = NULL, replications = 100) {
   objs <- ls()
   args <- as.list(environment())[objs]
-  do.call("new", c("NitroJacknife", args))
+  do.call("new", c("NitroJackknife", args))
 }
 
-setMethod("initialize", signature("NitroJacknife"),
+setMethod("initialize", signature("NitroJackknife"),
   function (.Object, probability, cutoff, tree_search, phy, replications,
             abs_freq_summary, freq_diff_summary, freq_slope_summary) {
     objs <- ls()
@@ -38,8 +38,8 @@ setMethod("initialize", signature("NitroJacknife"),
     do.call("callNextMethod", args)
 })
 
-setMethod("show", signature("NitroJacknife"), function (object) {
-  cat("Parameters for jacknife resampling:\n\n")
+setMethod("show", signature("NitroJackknife"), function (object) {
+  cat("Parameters for jackknife resampling:\n\n")
   cat(paste("Removal probability:        ", object@probability, "\n"))
   cat(paste("Frequency cutoff:           ", object@cutoff, "\n"))
   cat(paste("Replications:               ", object@replications, "\n"))
@@ -47,7 +47,7 @@ setMethod("show", signature("NitroJacknife"), function (object) {
 
 #' @rdname tnt_cmd
 #' @export
-setMethod("tnt_cmd", signature("NitroJacknife"), function (n) {
+setMethod("tnt_cmd", signature("NitroJackknife"), function (n) {
   paste("resample= jak from 0 replications ", n@replications,
         " probability ", n@probability,
         " cut ", n@cutoff,

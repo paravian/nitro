@@ -5,7 +5,7 @@
 %   R/NitroConstraintSectorialSearch-methods.R,
 %   R/NitroConstraintsBase-methods.R, R/NitroDriven-methods.R,
 %   R/NitroImplicitEnum-methods.R, R/NitroImpliedWeights-methods.R,
-%   R/NitroJacknife-methods.R, R/NitroRandomSectorialSearch-methods.R,
+%   R/NitroJackknife-methods.R, R/NitroRandomSectorialSearch-methods.R,
 %   R/NitroRatchet-methods.R, R/NitroSymmetrisResample-methods.R,
 %   R/NitroTreeDrift-methods.R, R/NitroTreeFuse-methods.R,
 %   R/NitroTreeHybridize-methods.R, R/NitroTrees-methods.R
@@ -20,7 +20,7 @@
 \alias{tnt_cmd,NitroDriven-method}
 \alias{tnt_cmd,NitroImplicitEnum-method}
 \alias{tnt_cmd,NitroImpliedWeights-method}
-\alias{tnt_cmd,NitroJacknife-method}
+\alias{tnt_cmd,NitroJackknife-method}
 \alias{tnt_cmd,NitroRandomSectorialSearch-method}
 \alias{tnt_cmd,NitroRatchet-method}
 \alias{tnt_cmd,NitroSymmetricResample-method}
@@ -50,7 +50,7 @@ tnt_cmd(n)
 
 \S4method{tnt_cmd}{NitroImpliedWeights}(n)
 
-\S4method{tnt_cmd}{NitroJacknife}(n)
+\S4method{tnt_cmd}{NitroJackknife}(n)
 
 \S4method{tnt_cmd}{NitroRandomSectorialSearch}(n)
 

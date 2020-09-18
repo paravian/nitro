@@ -16,4 +16,4 @@ setClass("NitroSymmetricResample",
     cutoff = "numeric"
 ))
 
-setValidity("NitroSymmetricResample", check_NitroJacknife)
+setValidity("NitroSymmetricResample", check_NitroJackknife)
