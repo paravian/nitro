@@ -17,16 +17,17 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports: 
     ape,
+    checkmate,
     magrittr,
     methods,
     processx,
     progress,
+    R6,
     TreeTools
 Collate: 
     'check-classes.R'
     'NitroMethodsBase-class.R'
     'NitroResampleBase-class.R'
-    'NitroBootstrap-class.R'
     'NitroWeightsBase-class.R'
     'NitroConstraintsBase-class.R'
     'NitroTreeSearch-class.R'
