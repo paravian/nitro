@@ -35,7 +35,6 @@ Collate:
     'NitroBootstrap-methods.R'
     'NitroBranchBreak-class.R'
     'NitroBranchSwap-class.R'
-    'NitroBranchSwap-methods.R'
     'NitroConstraint-class.R'
     'NitroConstraint-methods.R'
     'NitroSectorialSearch-class.R'
