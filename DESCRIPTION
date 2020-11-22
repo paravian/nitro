@@ -43,7 +43,6 @@ Collate:
     'NitroTreeHybridize-class.R'
     'NitroTreeFuse-class.R'
     'NitroDriven-class.R'
-    'NitroDriven-methods.R'
     'NitroEqualWeights-class.R'
     'NitroImplicitEnum-class.R'
     'NitroImplicitEnum-methods.R'
