@@ -1,11 +1,20 @@
 #' Define an implicit enumeration analysis
 #'
-#' \code{NitroImplicitEnum} is an S4 class that defines an implicit enumeration
+#' @description
+#' \code{NitroImplicitEnum} is an R6 class that defines an implicit enumeration
 #' analysis in \code{nitro}.
-#' @name NitroImplicitEnum-class
-#' @seealso The inheriting S4 class \code{"\linkS4class{NitroMethodsBase}"} and
-#' \code{"\linkS4class{NitroBranchSwap}"}, \code{"\linkS4class{NitroRatchet}"} and
-#' \code{"\linkS4class{NitroDriven}"}.
-#' @keywords classes
-#' @include check-classes.R
-setClass("NitroImplicitEnum", contains = "NitroMethodsBase")
+#' @importFrom R6 R6Class
+#' @export
+NitroImplicitEnum <- R6Class("NitroImplicitEnum",
+  inherit = NitroMethodsBase,
+  public = list(
+    #' @param ... Ignored.
+    print = function (...) {
+      cat("<NitroImplicitEnum>")
+    },
+    #' @param ... Ignored.
+    tnt_cmd = function (...) {
+      "ienum;"
+    }
+  )
+)
