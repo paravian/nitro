@@ -45,7 +45,6 @@ Collate:
     'NitroDriven-class.R'
     'NitroEqualWeights-class.R'
     'NitroImplicitEnum-class.R'
-    'NitroImplicitEnum-methods.R'
     'NitroImpliedWeights-class.R'
     'NitroImpliedWeights-methods.R'
     'NitroJackknife-class.R'
