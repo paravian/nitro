@@ -37,7 +37,6 @@ Collate:
     'NitroConstraint-class.R'
     'NitroSectorialSearch-class.R'
     'NitroConstraintSectorialSearch-class.R'
-    'NitroConstraintSectorialSearch-methods.R'
     'NitroConstraintsBase-methods.R'
     'NitroRatchet-class.R'
     'NitroTreeDrift-class.R'
