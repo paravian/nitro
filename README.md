@@ -27,21 +27,28 @@ using `nitro`.
 
 The following example shows the generation of a set of most parsimonious trees
 using TNT's traditional branch swapping method and the calculation and
-visualisation of a strict consensus tree. All tree search commands expect
-`phyDat` representations of phylogenetic matrices. These can be created easily
-using [`TreeTools`](https://cran.r-project.org/package=TreeTools) functions,
+visualisation of a strict consensus tree. `nitro` represents tree search,
+resampling and constraint information as instances of
+[`R6`](https://r6.r-lib.org/) classes which provides a simple yet flexible
+framework for defining phylogenetic analyses. Tree searches accept `phyDat`
+representations of phylogenetic matrices which can be created easily using
+functions from [`TreeTools`](https://cran.r-project.org/package=TreeTools),
 either directly from Nexus or TNT files using `ReadAsPhyDat` or
-`ReadTntAsPhyDat`, or directly from a `matrix` object using `MatrixToPhyDat`.
+`ReadTntAsPhyDat` respectively, or directly from a `matrix` object using
+`MatrixToPhyDat`.
 
 ```
+library(nitro)
+library(TreeTools)
+
 # The location of the TNT command line executable file
 tnt_path <- "~/tnt64/tnt
 
-matrix <- TreeTools::ReadAsPhyDat("matrix.nex")
-branch_swap <- nitro::NitroBranchSwap(replications = 100, hold_rep = 10)
-tree_search <- nitro::newTreeSearch(matrix, branch_swap, hold = 100)
-analysis <- nitro::tnt(tree_search, tnt_path)
-cons <- ape::consensus(analysis@results@trees)
+matrix <- ReadAsPhyDat("matrix.nex")
+branch_swap <- NitroBranchSwap$new(replications = 100, hold_rep = 10)
+tree_search <- NitroTreeSearch$new(matrix, branch_swap, hold = 100)
+analysis <- tnt(tree_search, tnt_path)
+cons <- consensus(analysis@results@trees)
 plot(cons)
 ```
   
@@ -52,11 +59,13 @@ variables and results in more readable code.
 ```
 library(magrittr)
 
-analysis <- TreeTools::ReadAsPhyDat("matrix.nex") %>%
-  nitro::newTreeSearch(NitroBranchSwap(replications = 100, hold_rep = 10), hold = 100) %>%
-  nitro::tnt(tnt_path)
+analysis <- ReadAsPhyDat("matrix.nex") %>%
+  NitroTreeSearch$new(
+    method = NitroBranchSwap$new(replications = 100, hold_rep = 10),
+    hold = 100) %>%
+  tnt(tnt_path)
 
-ape::consensus(analysis@results@trees) %>%
+consensus(analysis$trees) %>%
   plot()
 ```
 
@@ -81,8 +90,8 @@ inclusion:
 * ~~Exclusion of taxa/characters~~
 * ~~Specifying additive (ordered) characters~~
 * ~~Running (extended) implied weighting analyses~~
-* Calculation of support statistics (e.g., bootstrap, jackknife, symmetric
-  resampling, Bremer support)
+* Calculation of support statistics (e.g., ~~bootstrap~~, ~~jackknife~~, ~~symmetric
+  resampling~~, Bremer support)
 * ~~Specifying constraints on monophyly~~
 
 ## Citing
