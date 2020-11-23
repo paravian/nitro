@@ -7,20 +7,20 @@
 tnt(obj, tnt_path, read_trees = FALSE, character_fits = FALSE)
 }
 \arguments{
-\item{obj}{an object that inherits \code{"\linkS4class{NitroTreeSearch}"}.}
+\item{obj}{An object that inherits \code{"\link{NitroTreeSearch}"}.}
 
-\item{tnt_path}{the location of the TNT command line binary.}
+\item{tnt_path}{The location of the TNT command line binary.}
 
-\item{read_trees}{a logical value indicating whether to read in trees from
+\item{read_trees}{A logical value indicating whether to read in trees from
 the \code{start_trees} slot of \code{obj} prior to analysis.}
 
-\item{character_fits}{a logical value indicating whether to return scores
+\item{character_fits}{A logical value indicating whether to return scores
 for individual characters and minimum and maximum possible character
 lengths required for calculation of character fit indices.}
 }
 \value{
-a \code{"\linkS4class{NitroTrees}"} object containing the original
-  \code{"\linkS4class{NitroTreeSearch}"} object and a \code{multiPhylo} of
+A \code{"\link{NitroTrees}"} object containing the original
+  \code{"\link{NitroTreeSearch}"} object and a \code{multiPhylo} of
   the trees found during the search.
 }
 \description{
@@ -28,8 +28,8 @@ Executes commands on a supplied phylogenetic matrix in the TNT
   command line binary.
 }
 \details{
-This function uses \code{\link{writeTNTNexus}} to generate a nexus file
+This function uses \code{\link{write_tnt_nexus}} to generate a nexus file
 containing the commands required to conduct a tree search using the matrix
-and parameters specified within a \code{"\linkS4class{NitroTreeSearch}"}
+and parameters specified within a \code{"\link{NitroTreeSearch}"}
 object.
 }
