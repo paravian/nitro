@@ -49,7 +49,6 @@ Collate:
     'NitroRandomSectorialSearch-class.R'
     'NitroSymmetricResample-class.R'
     'NitroTrees-class.R'
-    'NitroTrees-methods.R'
     'tnt-output-parse.R'
     'tnt.R'
     'writeTNTNexus.R'
