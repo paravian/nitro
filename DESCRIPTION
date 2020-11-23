@@ -24,28 +24,3 @@ Imports:
     progress,
     R6,
     TreeTools
-Collate: 
-    'NitroMethodsBase-class.R'
-    'NitroResampleBase-class.R'
-    'NitroWeightsBase-class.R'
-    'NitroTreeSearch-class.R'
-    'NitroBranchBreak-class.R'
-    'NitroBranchSwap-class.R'
-    'NitroConstraint-class.R'
-    'NitroSectorialSearch-class.R'
-    'NitroConstraintSectorialSearch-class.R'
-    'NitroRatchet-class.R'
-    'NitroTreeDrift-class.R'
-    'NitroTreeHybridize-class.R'
-    'NitroTreeFuse-class.R'
-    'NitroDriven-class.R'
-    'NitroEqualWeights-class.R'
-    'NitroImplicitEnum-class.R'
-    'NitroImpliedWeights-class.R'
-    'NitroJackknife-class.R'
-    'NitroRandomSectorialSearch-class.R'
-    'NitroSymmetricResample-class.R'
-    'NitroTrees-class.R'
-    'tnt-output-parse.R'
-    'tnt.R'
-    'writeTNTNexus.R'
