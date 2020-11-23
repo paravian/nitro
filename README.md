@@ -48,7 +48,7 @@ matrix <- ReadAsPhyDat("matrix.nex")
 branch_swap <- NitroBranchSwap$new(replications = 100, hold_rep = 10)
 tree_search <- NitroTreeSearch$new(matrix, branch_swap, hold = 100)
 analysis <- tnt(tree_search, tnt_path)
-cons <- consensus(analysis@results@trees)
+cons <- consensus(analysis$trees)
 plot(cons)
 ```
   
