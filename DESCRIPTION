@@ -48,7 +48,6 @@ Collate:
     'NitroImpliedWeights-class.R'
     'NitroJackknife-class.R'
     'NitroRandomSectorialSearch-class.R'
-    'NitroResampleBase-methods.R'
     'NitroSectorialSearch-methods.R'
     'NitroSymmetricResample-class.R'
     'NitroSymmetrisResample-methods.R'
