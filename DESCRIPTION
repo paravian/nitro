@@ -25,7 +25,6 @@ Imports:
     R6,
     TreeTools
 Collate: 
-    'check-classes.R'
     'NitroMethodsBase-class.R'
     'NitroResampleBase-class.R'
     'NitroWeightsBase-class.R'
