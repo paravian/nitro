@@ -47,7 +47,6 @@ Collate:
     'NitroImplicitEnum-class.R'
     'NitroImpliedWeights-class.R'
     'NitroJackknife-class.R'
-    'NitroJackknife-methods.R'
     'NitroRandomSectorialSearch-class.R'
     'NitroRandomSectorialSearch-methods.R'
     'NitroRatchet-methods.R'
