@@ -30,7 +30,6 @@ Collate:
     'NitroResampleBase-class.R'
     'NitroWeightsBase-class.R'
     'NitroTreeSearch-class.R'
-    'NitroTreeSearch-methods.R'
     'NitroBootstrap-methods.R'
     'NitroBranchBreak-class.R'
     'NitroBranchSwap-class.R'
