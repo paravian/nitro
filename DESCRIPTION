@@ -49,7 +49,6 @@ Collate:
     'NitroJackknife-class.R'
     'NitroRandomSectorialSearch-class.R'
     'NitroSymmetricResample-class.R'
-    'NitroSymmetrisResample-methods.R'
     'NitroTreeDrift-methods.R'
     'NitroTreeFuse-methods.R'
     'NitroTreeHybridize-methods.R'
