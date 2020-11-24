@@ -5,6 +5,7 @@
 #' @importFrom checkmate asInt assert assertCharacter assertClass
 #'   assertInt assertLogical assertNumber assertSubset checkNull checkCharacter
 #'   checkNumeric checkSubset
+#' @importFrom magrittr and
 #' @importFrom R6 R6Class
 #' @export
 NitroTreeSearch <- R6Class("NitroTreeSearch",
