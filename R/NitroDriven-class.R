@@ -211,7 +211,7 @@ NitroDriven <- R6Class("NitroDriven",
      driven_cmd <- c()
      if (length(private$.sectorial_search)) {
        driven_cmd <- c(driven_cmd,
-                       sapply(driven$sectorial_search,
+                       sapply(private$.sectorial_search,
                               function (s) s$tnt_cmd(set_only = TRUE)))
      }
      if (private$.tree_fuse$rounds > 0) {
