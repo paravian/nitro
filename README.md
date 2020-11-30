@@ -45,7 +45,7 @@ library(TreeTools)
 tnt_path <- "~/tnt64/tnt
 
 matrix <- ReadAsPhyDat("matrix.nex")
-branch_swap <- NitroBranchSwap$new(replications = 100, hold_rep = 10)
+branch_swap <- schmd("BranchSwap", replications = 100, hold_rep = 10)
 tree_search <- NitroTreeSearch$new(matrix, branch_swap, hold = 100)
 analysis <- tnt(tree_search, tnt_path)
 cons <- consensus(analysis$trees)
@@ -61,7 +61,7 @@ library(magrittr)
 
 analysis <- ReadAsPhyDat("matrix.nex") %>%
   NitroTreeSearch$new(
-    method = NitroBranchSwap$new(replications = 100, hold_rep = 10),
+    method = schmd("BranchSwap", replications = 100, hold_rep = 10),
     hold = 100) %>%
   tnt(tnt_path)
 
