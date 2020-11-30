@@ -7,6 +7,7 @@
 #'   checkNumeric checkSubset
 #' @importFrom magrittr and
 #' @importFrom R6 R6Class
+#' @importFrom TreeTools PhyDatToMatrix
 #' @export
 NitroTreeSearch <- R6Class("NitroTreeSearch",
   private = list(
