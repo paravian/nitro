@@ -88,13 +88,11 @@ write_tnt_nexus <- function (obj, filename, read_trees = FALSE,
   )
 
   char_codes <- c()
-  if (any(obj$ordered_characters)) {
-    char_codes <- c(char_codes, "+",
-                    which(obj$ordered_characters) - 1)
+  if (length(obj$ordered_characters)) {
+    char_codes <- c(char_codes, "+", obj$ordered_characters - 1)
   }
-  if (any(obj$inactive_characters)) {
-    char_codes <- c(char_codes, "]",
-                    which(obj$inactive_characters) - 1)
+  if (length(obj$inactive_characters)) {
+    char_codes <- c(char_codes, "]", obj$inactive_characters - 1)
   }
   if (length(char_codes)) {
     tnt_block <- c(tnt_block, paste(c("ccode", char_codes, ";"), collapse=" "))

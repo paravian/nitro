@@ -120,7 +120,7 @@ NitroTreeSearch <- R6Class("NitroTreeSearch",
     #'   be inactivated.
     inactive_characters = function (value) {
       if (missing(value)) {
-        private$.inactive_characters
+        which(private$.inactive_characters)
       } else {
         assert(
           checkNull(value),
