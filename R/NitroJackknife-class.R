@@ -62,7 +62,7 @@ NitroJackknife <- R6Class("NitroJackknife",
       paste("resample= jak from 0 replications ", private$.replications,
             " probability ", private$.probability,
             " cut ", private$.cutoff,
-            " gc frequency [ ", paste(private$.tree_search$tnt_cmd, collapse = " "),
+            " gc frequency [ ", paste(private$.search_method$tnt_cmd(), collapse = " "),
             " ];", sep = "")
     }
   )
