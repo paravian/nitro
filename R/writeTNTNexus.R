@@ -141,7 +141,7 @@ write_tnt_nexus <- function (obj, filename, read_trees = FALSE,
     tnt_block <- c(tnt_block, "cscores;")
   }
 
-  if (inherits(obj, "NitroImpliedWeights")) {
+  if (inherits(obj$weights, "NitroImpliedWeights")) {
     tnt_block <- c(tnt_block, "score;")
   }
 

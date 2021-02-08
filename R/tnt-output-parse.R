@@ -82,12 +82,12 @@ tnt_output_parse <- function (tnt_output, tip_labels) {
     tree_data <- tree_attrs[tree_row,]
     tree <- TNTText2Tree(tree_data["trees"])
     tree$tip.label <- tip_labels[as.numeric(tree$tip.label) + 1]
-    attr(tree, "length") <- tree_data["lengths"]
+    attr(tree, "length") <- tree_data[["lengths"]]
     if (length(scores_match)) {
-      attr(tree, "weighted_score") <- as.numeric(tree_data["scores"])
+      attr(tree, "weighted_score") <- as.numeric(tree_data[["scores"]])
     }
-    attr(tree, "CI") <- sum_minsteps / tree_data["lengths"]
-    attr(tree, "RI") <- (sum_maxsteps - tree_data["lengths"]) /
+    attr(tree, "CI") <- sum_minsteps / tree_data[["lengths"]]
+    attr(tree, "RI") <- (sum_maxsteps - tree_data[["lengths"]]) /
       (sum_maxsteps - sum_minsteps)
     attr(tree, "RC") <- attr(tree, "CI") * attr(tree, "RI")
     if (length(cscores_match)) {
