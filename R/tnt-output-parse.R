@@ -72,7 +72,7 @@ tnt_output_parse <- function (tnt_output, tip_labels) {
   scores <- NULL
   if (length(scores_match)) {
     tree_attrs$scores <- as.numeric(tableParse(
-      tnt_output[(scores_match+3):length(tnt_output)]))
+      tnt_output[(scores_match+3):(length(tnt_output)-3)]))
   }
 
   # Create phylo objects from newick trees; calculate statistics
