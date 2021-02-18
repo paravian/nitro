@@ -145,7 +145,7 @@ write_tnt_nexus <- function (obj, filename, read_trees = FALSE,
     tnt_block <- c(tnt_block, "score;")
   }
 
-  tnt_block <- c(tnt_block, "END;")
+  tnt_block <- c(tnt_block, "quit;", "END;")
 
   write(tnt_block, file=filename, append=TRUE)
 }
