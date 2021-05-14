@@ -117,16 +117,20 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
       cmd_flag <- ifelse(set_only, ":", "=")
 
       fuse_cmd <- c()
-      if (set_only) {
+      if (!set_only) {
         fuse_cmd <- c("mult= wagner replic 10;")
       }
-      fuse_cmd <- c(fuse_cmd, paste("drift", cmd_flag,
-        " iterations ", private$.iterations, " numsubs ", private$.substitutions,
-        " fitdiff ", private$.max_abs_fit_diff, " rfitdiff ", private$.max_rel_fit_diff,
-        " xfactor ", private$.reject_factor,
-        ifelse(private$.autoconstrain_cycles == 0, " noautoconst",
-          paste(" autoconst", private$.autoconstrain_cycles)),
-        ";", sep = ""))
+      fuse_cmd <- c(fuse_cmd,
+                    paste("drift", cmd_flag,
+                          " iterations ", private$.iterations,
+                          " numsubs ", private$.substitutions,
+                          " fitdiff ", private$.max_abs_fit_diff,
+                          " rfitdiff ", private$.max_rel_fit_diff,
+                          " xfactor ", private$.reject_factor,
+                          ifelse(private$.autoconstrain_cycles == 0,
+                                 " noautoconst",
+                                 paste(" autoconst", private$.autoconstrain_cycles)),
+                          ";", sep = ""))
       fuse_cmd
     }
   )
