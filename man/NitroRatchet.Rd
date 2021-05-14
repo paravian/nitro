@@ -103,7 +103,7 @@ downweighting a character.}
 \describe{
 \item{\code{set_only}}{A logical indicating whether to instruct the command to
 execute immediately (\code{TRUE}) or set the variables for future
-execution \code{FALSE}.}
+execution (\code{FALSE}).}
 }
 \if{html}{\out{</div>}}
 }

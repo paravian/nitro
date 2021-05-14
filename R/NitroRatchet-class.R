@@ -82,12 +82,16 @@ NitroRatchet <- R6Class("NitroRatchet",
     },
     #' @param set_only A logical indicating whether to instruct the command to
     #'   execute immediately (\code{TRUE}) or set the variables for future
-    #'   execution \code{FALSE}.
+    #'   execution (\code{FALSE}).
     tnt_cmd = function (set_only = FALSE) {
       assertLogical(set_only, len = 1)
       ratchet_cmd <- c()
       cmd_flag <- ifelse(set_only, ":", "=")
-      ratchet_cmd <- c(paste0("ratchet", cmd_flag, " iter ", private$.iterations,
+      if (!set_only) {
+        ratchet_cmd <- c("mult= wagner replic 10;")
+      }
+      ratchet_cmd <- c(ratchet_cmd,
+                       paste0("ratchet", cmd_flag, " iter ", private$.iterations,
                               " numsubs ", private$.replacements,
                               " upfactor ", private$.prob_up,
                               " downfact ", private$.prob_down, ";", sep = ""))
