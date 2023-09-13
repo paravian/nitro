@@ -3,7 +3,7 @@
 #' @description
 #' \code{TreeFusingOptions} is an R6 class that defines the set of parameters
 #' required for performing tree fusing operations in \code{nitro}.
-#' @importFrom checkmate asInt check_int check_flag
+#' @importFrom checkmate asInt check_int check_flag test_true
 #' @importFrom cli cli_abort cli_text
 #' @importFrom dplyr if_else
 #' @importFrom R6 R6Class
@@ -25,7 +25,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.rounds
       } else {
         val_check <- check_int(value, lower = 0, upper = 100)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg rounds} must be an integer.",
                       "x" = val_check))
         }
@@ -40,7 +40,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.exchange_equal
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg iterations} must be a logical.",
                       "x" = val_check))
         }
@@ -54,7 +54,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.start_best
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg start_best} must be a logical.",
                       "x" = val_check))
         }
@@ -68,7 +68,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.keep_all
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg keep_all} must be a logical.",
                       "x" = val_check))
         }
@@ -82,7 +82,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.accept_all
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg accept_all} must be a logical.",
                       "x" = val_check))
         }
@@ -96,7 +96,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
         private$.swap
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg swap} must be a logical.",
                       "x" = val_check))
         }
