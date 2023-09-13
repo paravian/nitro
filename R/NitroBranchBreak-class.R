@@ -1,13 +1,14 @@
-#' Define parameters for branch breaking
+#' Set options for branch breaking
 #'
 #' @description
-#' \code{NitroBranchBreak} is an R6 class that defines the set of parameters
+#' \code{BranchBreakingOptions} is an R6 class that defines the set of optiopns
 #' required to perform branch breaking.
-#' @importFrom checkmate asInt assertChoice assertInt assertLogical
+#' @importFrom checkmate asInt check_choice check_flag check_int test_true
+#' @importFrom cli cli_abort cli_text
+#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export
-NitroBranchBreak <- R6Class("NitroBranchBreak",
-  inherit = NitroMethodsBase,
+BranchBreakingOptions <- R6Class("BranchBreakingOptions",
   private = list(
     .swapper = NULL,
     .cluster_size = NULL,
@@ -21,9 +22,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   to use. Options are either '\code{tbr}' (the default) or '\code{spr}'.
     swapper = function (value) {
       if (missing(value)) {
-        private$.swapper
+        return(private$.swapper)
       } else {
-        assertChoice(value, c("spr", "tbr"))
+        val_check <- check_choice(value, c("spr", "tbr"))
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg swapper} must be a valid option.",
+                      "x" = val_check))
+        }
         private$.swapper <- value
       }
     },
@@ -34,9 +39,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   automatically determined.
     cluster_size = function (value) {
       if (missing(value)) {
-        private$.cluster_size
+        return(private$.cluster_size)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg cluster_size} must be an integer.",
+                      "x" = "val_check"))
+        }
         value <- asInt(value)
         private$.cluster_size <- value
       }
@@ -46,9 +55,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   Applied only when \code{swapper} is set to \code{tbr}.
     safe_unclip = function (value) {
       if (missing(value)) {
-        private$.safe_unclip
+        return(private$.safe_unclip)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg safe_unclip} must be a logical.",
+                      "x" = val_check))
+        }
         private$.safe_unclip <- value
       }
     },
@@ -56,9 +69,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   the tree buffer is full.
     fill_only = function (value) {
       if (missing(value)) {
-        private$.fill_only
+        return(private$.fill_only)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg fill_only} must be a logical.",
+                      "x" = val_check))
+        }
         private$.fill_only <- value
       }
     },
@@ -66,9 +83,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   trees during swapping.
     save_multiple = function (value) {
       if (missing(value)) {
-        private$.save_multiple
+        return(private$.save_multiple)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg save_multiple} must be a logical.",
+                      "x" = val_check))
+        }
         private$.save_multiple <- value
       }
     },
@@ -76,9 +97,13 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     #'   tree clipping sequence.
     random_clip = function (value) {
       if (missing(value)) {
-        private$.random_clip
+        return(private$.random_clip)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg random_clip} must be a logical.",
+                      "x" = val_check))
+        }
         private$.random_clip <- value
       }
     }
@@ -110,36 +135,43 @@ NitroBranchBreak <- R6Class("NitroBranchBreak",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroBranchBreak>\n")
-      cat(paste("* Swapper type:", toupper(private$.swapper), "\n"))
+      cli_text("{col_grey(\"# A TNT branch breaking configuration\")}")
+
+      options <- c("Swapper type:" = toupper(private$.swapper))
       if (private$.swapper == "tbr") {
-        cat(paste("* Number of nodes to swap:",
-                  ifelse(private$.cluster_size, private$.cluster_size, "auto"), "\n"))
+        options <- c(
+          options,
+          "Number of nodes to swap:" = ifelse(private$.cluster_size, private$.cluster_size, "auto"))
       }
-      cat(paste("* Use safe unclipping:",
-                ifelse(private$.safe_unclip, "yes", "no"), "\n"))
-      cat(paste("* Stop when tree buffer full:",
-                ifelse(private$.fill_only, "yes", "no"), "\n"))
-      cat(paste("* Save multiple trees:",
-                ifelse(private$.save_multiple, "yes", "no"), "\n"))
-      cat(paste("* Randomize node clips:",
-                ifelse(private$.random_clip, "yes", "no"), "\n"))
+      options <- c(
+        options,
+        "Use safe unclipping:" = ifelse(private$.safe_unclip, "yes", "no"),
+        "Stop when tree buffer full:" = ifelse(private$.fill_only, "yes", "no"),
+        "Save multiple trees:" = ifelse(private$.save_multiple, "yes", "no"),
+        "Randomize node clips:" = ifelse(private$.random_clip, "yes", "no")
+      ) %>%
+        data.frame()
+
+      names(options) <- NULL
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
+    queue = function (...) {
+      queue <- CommandQueue$new()
+
       bbreak_cmd <- c()
       if (private$.cluster_size > 0) {
-        bbreak_cmd <- c(bbreak_cmd,
-                        paste("bbreak: clusters ", private$.cluster_size, ";", sep = ""))
+        bb_clust_args <- glue("clusters {self$cluster_size}")
+        queue$add("bbreak", bb_clust_args)
       }
-      bbreak_cmd <- c(bbreak_cmd,
-                      paste("bbreak= ", private$.swapper,
-                            ifelse(private$.safe_unclip, " safe", " nosafe"),
-                            ifelse(private$.fill_only, " fillonly", " nofillonly"),
-                            ifelse(private$.save_multiple, " mulpars", " nomulpars"),
-                            ifelse(private$.random_clip, " randclip", " norandclip"),
-                            ";", sep = ""))
-      bbreak_cmd
+
+      bbreak_args <- glue("= {self$swapper} {s}safe {f}fillonly {m}mulpars {r}randclip",
+                          s = ifelse(self$safe_unclip, "", "no"),
+                          f = ifelse(self$fill_only, "", "no"),
+                          m = ifelse(self$save_multiple, "", "no"),
+                          r = ifelse(self$random_clip, "", "no"))
+      queue$add("bbreak", bbreak_args)
+      return(queue)
     }
   )
 )
