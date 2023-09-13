@@ -1,39 +1,30 @@
-#' Define a bootstrap resampling analysis
+#' Set options for bootstrap resampling
 #'
 #' @description
-#' \code{NitroBootstrap} is an R6 class that defines parameters for
-#' bootstrap resampling analyses.
+#' \code{BootstrapOptions} is an R6 class that defines options for bootstrap
+#'   resampling analyses.
+#' @importFrom cli cli_abort cli_text
+#' @importFrom glue glue
 #' @importFrom R6 R6Class
-#' @importFrom checkmate assertInt
 #' @export
-NitroBootstrap <- R6Class("NitroBootstrap",
-  inherit = NitroResampleBase,
-  private = list(
-    .cutoff = NULL
-  ),
-  #' @field cutoff An integer value indicating the cutoff value for
-  #'   frequencies.
-  active = list(
-    cutoff = function (value) {
-      if (missing(value)) {
-        private$.cutoff
-      } else {
-        assertInt(value, lower = 0, upper = 99)
-        private$.cutoff <- asInt(value)
-        self
-      }
-    }),
+BootstrapOptions <- R6Class("BootstrapOptions",
+  inherit = ResampleBaseOptions,
   public = list(
-    #' @param cutoff An integer value indicating the cutoff value for
-    #'   frequencies.
-    #' @param search_method An object inheriting class
-    #'   \code{"\link{NitroMethodsBase}"}.
-    #' @param phy A tree of class \code{phylo}. Resampling values will be
-    #'   calculated using this topology.
+    #' @param search_method  A valid tree search configuration.
     #' @param replications An integer value indicating the number of resampling
     #'   replications to perform.
-    initialize = function (cutoff = 0, search_method = NULL, phy = NULL,
-                           replications = 100) {
+    #' @param cutoff An integer value indicating the cutoff value for
+    #'   frequencies.
+    #' @param frequency_summary A character vector indicating which method(s) to
+    #'   use to summarize supports. More than one option can be specified. The
+    #'   options are:
+    #' \itemize{
+    #'   \item \code{absolute}: absolute frequencies, default;
+    #'   \item \code{difference}: frequency differences (i.e., group supported/contradicted);
+    #'   \item \code{slope}: frequency slopes.
+    #' }
+    initialize = function (search_method = NULL, replications = 100, cutoff = 50,
+                           frequency_summary = "absolute") {
       a <- as.list(environment(), all = TRUE)
       for (n in names(a)) {
         self[[n]] <- a[[n]]
@@ -41,16 +32,44 @@ NitroBootstrap <- R6Class("NitroBootstrap",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroBootstrap>\n")
-      cat(paste("* Replications:", private$.replications, "\n"))
-      cat(paste("* Frequency cutoff:", private$.cutoff, "\n"))
+      cli_text("{col_grey(\"# A TNT bootstrap resampling configuration\")}")
+
+      options <- c(
+        "Replications:" = self$replications,
+        "Cutoff frequency:" = self$cutoff,
+        "Frequency summary:" = paste(self$frequency_summary, collapse = ", ")
+      ) %>%
+        data.frame()
+
+      names(options) <- NULL
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
-      paste("resample= boot from 0 replications ", private$.replications,
-            " cut ", private$.cutoff,
-            " gc frequency [ ", paste(private$.search_method$tnt_cmd(), collapse = " "),
-            " ];", sep = "")
+    queue = function (...) {
+      queue <- CommandQueue$new()
+
+      choices <- c(gc = "difference", frequency = "absolute", slope = "slope")
+      freq_summ <- pmatch(self$frequency_summary, choices) %>%
+        na.omit() %>%
+        {names(choices)[.]} %>%
+        paste(collapse = " ")
+      if (!"difference" %in% self$frequency_summary) {
+        freq_summ <- glue("nogc {freq_summ}")
+      }
+
+      boot_args <- glue("boot from 0 replications {self$replications} cut {self$cutoff} {freq_summ} [")
+
+      sm_queue <- self$search_method$queue()
+      while(sm_queue$length() > 0) {
+        cmd <- sm_queue$read_next() %$%
+          paste(name, arguments, sep = " ", collapse = " ") %>%
+          glue(";")
+        boot_args <- c(boot_args, cmd)
+      }
+      boot_args <- c(boot_args, "]")
+
+      queue$add("resample", boot_args)
+      return(queue)
     }
   )
 )
