@@ -1,14 +1,17 @@
-#' Define a constraint sectorial search analysis
+#' Set options for a constrained sectorial search
 #'
 #' @description
-#' \code{NitroConstraintSectorialSearch} is an R6 class that defines the set of
-#' parameters required to perform sectorial searching analyses in
-#' \code{nitro}.
-#' @importFrom checkmate asInt assertInt assertTRUE
+#' \code{ConstrainedSectorialSearchOptions} is an R6 class that defines the set
+#'   of options required to perform sectorial searching analyses in
+#'   \code{nitro}.
+#' @importFrom checkmate asInt assert_int check_int check_flag
+#'   makeAssertCollection test_true
+#' @importFrom cli cli_abort cli_text
+#' @importFrom glue glue glue_data
 #' @importFrom R6 R6Class
 #' @export
-NitroConstraintSectorialSearch <- R6Class("NitroConstraintSectorialSearch",
-  inherit = NitroSectorialSearch,
+ConstrainedSectorialSearchOptions <- R6Class("ConstrainedSectorialSearchOptions",
+  inherit = SectorialSearchBaseOptions,
   private = list(
     .min_fork = NULL,
     .max_fork = NULL,
@@ -19,39 +22,56 @@ NitroConstraintSectorialSearch <- R6Class("NitroConstraintSectorialSearch",
     #'   with constraint-based sectorial searches.
     min_fork = function (value) {
       if (missing(value)) {
-        private$.min_fork
+        return(private$.min_fork)
       } else {
-        assertInt(value, lower = 0)
-        if (!is.null(private$.max_fork)) {
-          assertTRUE(value <= private$.max_fork)
+        coll <- makeAssertCollection()
+        assert_int(value, lower = 0, add = coll)
+        if (!is.null(private$.min_fork)) {
+          assert_int(value, upper = private$.max_fork, add = coll)
+        }
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg min_fork} must be a valid integer.",
+                      "x" = val_check))
         }
         private$.min_fork <- asInt(value)
-        self
       }
     },
     #' @field max_fork An integer value indicating the maximum fork number to use
     #'   with constraint-based sectorial searches.
     max_fork = function (value) {
       if (missing(value)) {
-        private$.max_fork
+        return(private$.max_fork)
       } else {
-        assertInt(value, lower = 0)
+        coll <- makeAssertCollection()
+        assert_int(value, lower = 0, add = coll)
         if (!is.null(private$.min_fork)) {
-          assertTRUE(value >= private$.min_fork)
+          assert_int(value, lower = private$.min_fork, add = coll)
         }
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg max_fork} must be a valid integer.",
+                      "x" = val_check))
+        }
+
         private$.max_fork <- asInt(value)
-        self
       }
     },
     #' @field rounds An integer value indicating the number of times to cycle over
     #'   groups in constraint-based selections.
     rounds = function (value) {
       if (missing(value)) {
-        private$.rounds
+        return(private$.rounds)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg rounds} must be an integer.",
+                      "x" = val_check))
+        }
+
         private$.rounds <- asInt(value)
-        self
       }
     }
   ),
@@ -75,26 +95,38 @@ NitroConstraintSectorialSearch <- R6Class("NitroConstraintSectorialSearch",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroConstraintSectorialSearch>\n")
-      cat(paste("* Rounds:", private$.rounds, "\n"))
-      cat(paste("* Minimum fork size:", private$.min_fork, "\n"))
-      cat(paste("* Maximum fork size:", private$.max_fork, "\n"))
-      cat(paste("* Use independent buffer:", private$.buffer, "\n"))
-      cat(paste("* Percentage memory increase:", private$.slack, "\n"))
+      cli_text("{col_grey(\"# A TNT constraint sectorial search configuration\")}")
+
+      options <- c("Rounds:" = self$rounds,
+                   "Minimum fork size:" = self$min_fork,
+                   "Maximum fork size:" = self$max_fork,
+                   "Using independent buffer:" = ifelse(self$buffer, "yes", "no"),
+                   "Percentage memory increase:" = self$slack) %>%
+        data.frame()
+
+      colnames(options) <- NULL
+      print(options)
     },
     #' @param set_only A logical indicating whether to instruct the command to
     #'   execute immediately (\code{TRUE}) or set the variables for future
-    #'   execution \code{FALSE}.
-    tnt_cmd = function (set_only = FALSE) {
-      assertLogical(set_only, len = 1)
+    #'   execution (\code{FALSE}, default).
+    queue = function (set_only = FALSE) {
+      val_check <- check_flag(set_only)
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg set_only} must be a logical.",
+                    "x" = val_check))
+      }
+
+      queue <- CommandQueue$new()
       cmd_flag <- ifelse(set_only, ":", "=")
-      sect_cmd <- c(" minfork ", private$.min_fork,
-                    " maxfork ", private$.max_fork,
-                    " rounds ", private$.rounds,
-                    " slack ", private$.slack,
-                    paste0(ifelse(private$.buffer, " ", " no"), "xbuf"))
-      sect_cmd <- paste(c("sectsch", cmd_flag, " css ", sect_cmd, ";"), collapse = "", sep = "")
-      sect_cmd
+
+      css_opts <- self %>%
+        glue_data("minfork {min_fork} maxfork {max_fork} rounds {rounds} slack {slack}")
+      buffer <- paste(ifelse(private$.buffer, "", "no"), "xbuf", sep = "")
+      css_opts <- glue("{cmd_flag} css {css_opts} {buffer}")
+
+      queue$add("sectsch", css_opts)
+      return(queue)
     }
   )
 )
