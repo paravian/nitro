@@ -1,13 +1,14 @@
-#' Define tree fusing properties
+#' Set options for tree fusing
 #'
 #' @description
-#' \code{NitroTreeFuse} is an R6 class that defines the set of parameters
+#' \code{TreeFusingOptions} is an R6 class that defines the set of parameters
 #' required for performing tree fusing operations in \code{nitro}.
-#' @importFrom checkmate asInt assertInt assertLogical
+#' @importFrom checkmate asInt check_int check_flag
+#' @importFrom cli cli_abort cli_text
+#' @importFrom dplyr if_else
 #' @importFrom R6 R6Class
 #' @export
-NitroTreeFuse <- R6Class("NitroTreeFuse",
-  inherit = NitroMethodsBase,
+TreeFusingOptions <- R6Class("TreeFusingOptions",
   private = list(
     .rounds = NULL,
     .exchange_equal = NULL,
@@ -23,7 +24,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.rounds
       } else {
-        assertInt(value, lower = 0, upper = 100)
+        val_check <- check_int(value, lower = 0, upper = 100)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg rounds} must be an integer.",
+                      "x" = val_check))
+        }
         value <- asInt(value)
         private$.rounds <- value
       }
@@ -34,7 +39,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.exchange_equal
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg iterations} must be a logical.",
+                      "x" = val_check))
+        }
         private$.exchange_equal <- value
       }
     },
@@ -44,7 +53,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.start_best
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg start_best} must be a logical.",
+                      "x" = val_check))
+        }
         private$.start_best <- value
       }
     },
@@ -54,7 +67,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.keep_all
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg keep_all} must be a logical.",
+                      "x" = val_check))
+        }
         private$.keep_all <- value
       }
     },
@@ -64,7 +81,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.accept_all
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg accept_all} must be a logical.",
+                      "x" = val_check))
+        }
         private$.accept_all <- value
       }
     },
@@ -74,7 +95,11 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
       if (missing(value)) {
         private$.swap
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg swap} must be a logical.",
+                      "x" = val_check))
+        }
         private$.swap <- value
       }
     }
@@ -102,22 +127,33 @@ NitroTreeFuse <- R6Class("NitroTreeFuse",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroTreeFuse>\n")
-      cat(paste("* Rounds:", private$.rounds, "\n"))
-      cat(paste("* Exchange equal score trees:", private$.exchange_equal, "\n"))
-      cat(paste("* Start with best tree:", private$.start_best, "\n"))
-      cat(paste("* Keep all trees:", private$.keep_all, "\n"))
-      cat(paste("* Accept all exchanges:", private$.accept_all, "\n"))
-      cat(paste("* Swap after exchanges:", private$.swap, "\n"))
+      cli_text("{col_grey(\"# A TNT tree fusing configuration\")}")
+
+      options <- c("Exchange equal score trees:" = self$exchange_equal,
+                   "Start with best tree:" = self$start_best,
+                   "Keep all trees:" = self$keep_all,
+                   "Accept all exchanges:" = self$accept_all,
+                   "Swap after exchanges:" = self$swap) %>%
+        ifelse("yes", "no")
+
+      options <- c("Rounds:" = as.character(self$rounds), options) %>%
+        data.frame()
+
+      colnames(options) <- NULL
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
-      return(paste("tfuse: rounds ", private$.rounds,
-                   ifelse(private$.exchange_equal, " equals", " noequals"),
-                   ifelse(private$.start_best, " beststart", " nobeststart"),
-                   ifelse(private$.keep_all, " keepall", " nokeepall"),
-                   ifelse(private$.accept_all, " norepeat", " repeat"),
-                   ifelse(private$.swap, " swap", " noswap"), ";", sep = ""))
+    queue = function (...) {
+      queue <- CommandQueue$new()
+      fuse_args <- glue(": rounds {self$rounds} ",
+        "{ifelse(self$exchange_equal, \"\", \"no\")}equals ",
+        "{ifelse(self$start_best, \"\", \"no\")}beststart ",
+        "{ifelse(self$keep_all, \"\", \"\")}keepall ",
+        "{ifelse(self$accept_all, \"no\", \"\")}repeat ",
+        "{ifelse(self$swap, \"\", \"no\")}swap ",
+      )
+      queue$add("tfuse", fuse_args)
+      return(queue)
     }
   )
 )
