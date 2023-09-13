@@ -1,13 +1,14 @@
-#' Define a parsimony ratchet analysis
+#' Set options for parsimony ratchet
 #'
-#' \code{NitroRatchet} is an R6 class that defines the set of parameters
-#' required to perform a parsimony ratchet phylogenetic analysis in
-#' \code{nitro}.
-#' @importFrom checkmate asInt assertInt
+#' \code{RatchetOptions} is an R6 class that defines the set of options
+#' for performing a parsimony ratchet phylogenetic analysis in \code{nitro}.
+#' @importFrom checkmate asInt check_int check_logical test_true
+#' @importFrom cli cli_abort
+#' @importFrom glue glue_data
+#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export
-NitroRatchet <- R6Class("NitroRatchet",
-  inherit = NitroMethodsBase,
+RatchetOptions <- R6Class("RatchetOptions",
   private = list(
     .iterations = NULL,
     .replacements = NULL,
@@ -18,9 +19,13 @@ NitroRatchet <- R6Class("NitroRatchet",
     #' @field iterations An integer value indicating the number of iterations.
     iterations = function (value) {
       if (missing(value)) {
-        private$.iterations
+        return(private$.iterations)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort("{.arg iterations} must be a single integer.",
+                    "x" = val_check)
+        }
         private$.iterations <- asInt(value)
       }
     },
@@ -29,9 +34,13 @@ NitroRatchet <- R6Class("NitroRatchet",
     #'   perturbation phase.
     replacements = function (value) {
       if (missing(value)) {
-        private$.replacements
+        return(private$.replacements)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort("{.arg replacements} must be a single integer.",
+                    "x" = val_check)
+        }
         private$.replacements <- asInt(value)
       }
     },
@@ -39,9 +48,13 @@ NitroRatchet <- R6Class("NitroRatchet",
     #'   upweighting a character.
     prob_up = function (value) {
       if (missing(value)) {
-        private$.prob_up
+        return(private$.prob_up)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort("{.arg prob_up} must be a single integer.",
+                    "x" = val_check)
+        }
         private$.prob_up <- asInt(value)
       }
     },
@@ -49,9 +62,13 @@ NitroRatchet <- R6Class("NitroRatchet",
     #'   downweighting a character.
     prob_down = function (value) {
       if (missing(value)) {
-        private$.prob_down
+        return(private$.prob_down)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort("{.arg prob_down} must be a single integer.",
+                    "x" = val_check)
+        }
         private$.prob_down <- asInt(value)
       }
     }
@@ -74,28 +91,37 @@ NitroRatchet <- R6Class("NitroRatchet",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroRatchet>\n")
-      cat(paste("* Iterations:", private$.iterations, "\n"))
-      cat(paste("* Replacements:", private$.replacements, "\n"))
-      cat(paste("* Upweighting probability:", private$.prob_up, "\n"))
-      cat(paste("* Downweighting probability:", private$.prob_down, "\n"))
+      cli_text("{col_grey(\"# A TNT ratchet configuration\")}")
+
+      options <- c("Iterations:" = self$iterations,
+                   "Replacements:" = self$replacements,
+                   "Upweighting probability:" = self$prob_up,
+                   "Downweighting probability:" = self$prob_down) %>%
+        data.frame()
+      names(options) <- NULL
+      print(options)
     },
     #' @param set_only A logical indicating whether to instruct the command to
     #'   execute immediately (\code{TRUE}) or set the variables for future
     #'   execution (\code{FALSE}).
-    tnt_cmd = function (set_only = FALSE) {
-      assertLogical(set_only, len = 1)
-      ratchet_cmd <- c()
+    queue = function (set_only = FALSE) {
+      val_check <- check_logical(set_only, len = 1)
+      if (!test_true(val_check)) {
+        cli_abort("{.arg set_only} must be logical.",
+                  "x" = val_check)
+      }
+
+      queue <- CommandQueue$new()
       cmd_flag <- ifelse(set_only, ":", "=")
       if (!set_only) {
-        ratchet_cmd <- c("mult= wagner replic 10;")
+        queue$add("mult", "= wagner replic 10")
       }
-      ratchet_cmd <- c(ratchet_cmd,
-                       paste0("ratchet", cmd_flag, " iter ", private$.iterations,
-                              " numsubs ", private$.replacements,
-                              " upfactor ", private$.prob_up,
-                              " downfact ", private$.prob_down, ";", sep = ""))
-      return(ratchet_cmd)
+
+      ratchet_opts <- self %>%
+        glue_data("iter {iterations} numsubs {replacements} upfactor {prob_up} downfact {prob_down}")
+
+      queue$add("ratchet", glue("{cmd_flag} {ratchet_opts}"))
+      return(queue)
     }
   )
 )
