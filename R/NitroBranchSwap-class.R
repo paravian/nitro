@@ -1,14 +1,13 @@
 #' Define a branch swapping analysis
 #'
 #' @description
-#' \code{NitroBranchSwap} is an R6 class that defines the set of parameters
-#' required to perform a branch swapping ('traditional', in TNTs terminology)
-#' phylogenetic analysis in \code{nitro}.
+#' \code{BranchSwappingOptions} is an R6 class that defines the set of options
+#' for performing a branch sweapping phylogenetic analysis with replications
+#' in \code{nitro}.
 #' @importFrom checkmate asInt assertInt assertLogical
 #' @importFrom R6 R6Class
 #' @export
-NitroBranchSwap <- R6Class("NitroBranchSwap",
-  inherit = NitroMethodsBase,
+BranchSwappingOptions <- R6Class("BranchSwappingOptions",
   private = list(
     .replications = NULL,
     .hold_rep = NULL,
@@ -62,15 +61,23 @@ NitroBranchSwap <- R6Class("NitroBranchSwap",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroBranchSwap>\n")
-      cat(paste("* RAS replications:", private$.replications, "\n"))
-      cat(paste("* Trees to hold per replicate:", private$.hold_rep, "\n"))
-      cat(paste("* Keep all trees:", private$.keep_all, "\n"))
+      cli_text("{col_grey(\"# A TNT branch swap configuration\")}")
+
+      options <- c("Replications:" = self$replications,
+                   "Trees to hold per replicate:" = self$hold_rep,
+                   "Keeping all trees:" = ifelse(self$keep_all, "yes", "no")) %>%
+        data.frame()
+
+      colnames(options) <- NULL
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
-      paste0("mult= replic ", private$.replications, " hold ", private$.hold_rep,
-             ifelse(private$.keep_all, " ", " no"), "keepall;")
+    queue = function (...) {
+      queue <- CommandQueue$new()
+      branchswap_opts <- glue("= replic {self$replications} hold {self$hold_rep} {ifelse(self$keep_all, \"\", \"no\")}keepall")
+
+      queue$add("mult", branchswap_opts)
+      return(queue)
     }
   )
 )
