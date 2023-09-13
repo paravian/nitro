@@ -1,14 +1,15 @@
-#' Define a driven search
+#' Set options for driven searches
 #'
 #' @description
-#' \code{NitroBranchSwap} is an R6 class that defines the set of parameters
+#' \code{DrivenSearchOptions} is an R6 class that defines the set of parameters
 #' required to perform a driven search in \code{nitro}.
+#' @importFrom checkmate asInt assert check_class check_flag check_int
+#'    check_class check_list check_null test_true
+#' @importFrom cli cli_abort cli_text
+#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
-#' @importFrom checkmate asInt assert assertClass assertInt
-#'   assertLogical checkClass checkList checkNull
 #' @export
-NitroDriven <- R6Class("NitroDriven",
-  inherit = NitroMethodsBase,
+DrivenSearchOptions <- R6Class("DrivenSearchOptions",
   private = list(
     .replications = NULL,
     .hits = NULL,
@@ -16,151 +17,205 @@ NitroDriven <- R6Class("NitroDriven",
     .keep_all = NULL,
     .multiply = NULL,
     .sectorial_search = NULL,
-    .tree_fuse = NULL,
-    .tree_hybridize = NULL,
-    .tree_drift = NULL,
+    .tree_fusing = NULL,
+    .tree_hybridizing = NULL,
+    .tree_drifting = NULL,
     .ratchet = NULL),
   active = list(
     #' @field replications An integer value indicating the number of replications.
     replications = function (value) {
       if (missing(value)) {
-        private$.replications
+        return(private$.replications)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 1)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg replications} must be an integer.",
+                      "x" = val_check))
+        }
+
         private$.replications <- asInt(value)
-        self
       }
     },
     #' @field hits An integer value indicating the number of times the shortest
     #'   tree must be found on consecutive re-runs of the analysis before stopping.
     hits = function (value) {
       if (missing(value)) {
-        private$.hits
+        return(private$.hits)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 1)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg hits} must be an integer.",
+                      "x" = val_check))
+        }
+
         private$.hits <- asInt(value)
-        self
       }
     },
     #' @field consense_times An integer value indicating the number of times to
     #'   consense until the consensus is stablilised.
     consense_times = function (value) {
       if (missing(value)) {
-        private$.consense_times
+        return(private$.consense_times)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg consense_times} must be an integer",
+                      "x" = val_check))
+        }
+
         private$.consense_times <- asInt(value)
-        self
       }
     },
     #' @field keep_all A logical value indicating whether to retain all generated
-    #'   trees from each replication regardless of length. This has a different
-    #'   meaning when \code{hits} = 1 and when \code{hits} > 1. When
-    #'   \code{hits} = 1, it is trees from each of the RAS + TBR +  SS or DFT or
-    #'   RAT, in addition to the trees resulting from fusing those. When
-    #'   \code{hits} > 1, then it means the trees resulting from fusing the
-    #'   initial starting trees for each of starting points.
+    #'   trees from each replication regardless of length.
     keep_all = function (value) {
       if (missing(value)) {
-        private$.keep_all
+        return(private$.keep_all)
       } else {
-        assertLogical(value, len = 1, any.missing = FALSE)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg keep_all} must be a logical.",
+                      "x" = val_check))
+        }
         private$.keep_all <- value
-        self
       }
     },
     #' @field multiply A logical value indicating whether to find additional trees
     #'   by fusing suboptimal trees with optimal trees.
     multiply = function (value) {
       if (missing(value)) {
-        private$.multiply
+        return(private$.multiply)
       } else {
-        assertLogical(value, len = 1, any.missing = FALSE)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg multiply} must be an integer.",
+                      "x" = val_check))
+        }
         private$.multiply <- value
-        self
       }
     },
     #' @field sectorial_search A list of objects of inheriting
-    #'   \code{"\link{NitroSectorialSearch}"}.
+    #'   \code{"\link{SectorialSearchOptions}"}.
     sectorial_search = function (value) {
       if (missing(value)) {
-        private$.sectorial_search
+        return(private$.sectorial_search)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkClass(value, "NitroSectorialSearch"),
-          checkList(value, types = "NitroSectorialSearch")
+          check_null(value),
+          check_class(value, c("SectorialSearchOptions", "R6")),
+          check_list(value, types = "SectorialSearchOptions"),
+          add = coll
         )
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg sectorial_search} must be a valid (list of) objects.",
+                      "x" = val_check))
+        }
+
         if (is.null(value)) {
-          value <- list(NitroRandomSectorialSearch$new(),
-                        NitroConstraintSectorialSearch$new())
+          value <- list(RandomSectorialSearchOptions$new(),
+                        ConstrainedSectorialSearchOptions$new())
         }
         private$.sectorial_search <- value
-        self
       }
     },
-    #' @field tree_fuse An object of class \code{"\link{NitroTreeFuse}"}.
-    tree_fuse = function (value) {
+    #' @field tree_fusing An object of class \code{"\link{TreeFusingOptions}"}.
+    tree_fusing = function (value) {
       if (missing(value)) {
-        private$.tree_fuse
+        return(private$.tree_fusing)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkClass(value, "NitroTreeFuse")
+          check_null(value),
+          check_class(value, c("TreeFusingOptions", "R6")),
+          add = coll
         )
-        if (is.null(value)) {
-          value <- NitroTreeFuse$new()
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg tree_fusing} must be a valid object.",
+                      "x" = val_check))
         }
-        private$.tree_fuse <- value
+
+        if (is.null(value)) {
+          value <- TreeFusingOptions$new()
+        }
+        private$.tree_fusing <- value
         self
       }
     },
-    #' @field tree_hybridize An object of class \code{"\link{NitroTreeHybridize}"}.
-    tree_hybridize = function (value) {
+    #' @field tree_hybridizing An object of class \code{"\link{TreeHybridizingOptions}"}.
+    tree_hybridizing = function (value) {
       if (missing(value)) {
-        private$.tree_hybridize
+        return(private$.tree_hybridizing)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkClass(value, "NitroTreeHybridize")
+          check_null(value),
+          check_class(value, c("TreeHybridizingOptions", "R6")),
+          add = coll
         )
-        if (is.null(value)) {
-          value <- NitroTreeHybridize$new(rounds = 0)
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg tree_hybridizing} must be a valid object.",
+                      "x" = val_check))
         }
-        private$.tree_hybridize <- value
-        self
+
+        if (is.null(value)) {
+          value <- TreeHybridizingOptions$new(rounds = 0)
+        }
+        private$.tree_hybridizing <- value
       }
     },
-    #' @field tree_drift An object of class \code{"\link{NitroTreeDrift}"}.
-    tree_drift = function (value) {
+    #' @field tree_drifting An object of class \code{"\link{TreeDriftingOptions}"}.
+    tree_drifting = function (value) {
       if (missing(value)) {
-        private$.tree_drift
+        return(private$.tree_drifting)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkClass(value, "NitroTreeDrift")
+          check_null(value),
+          check_class(value, "TreeDriftingOptions"),
+          add = coll
         )
-        if (is.null(value)) {
-          value <- NitroTreeDrift$new(iterations = 5)
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg tree_drifting} must be a valid object.",
+                      "x" = val_check))
         }
-        private$.tree_drift <- value
-        self
+
+        if (is.null(value)) {
+          value <- TreeDriftingOptions$new(iterations = 5)
+        }
+        private$.tree_drifting <- value
       }
     },
-    #' @field ratchet An object of class \code{"\link{NitroRatchet}"}.
+    #' @field ratchet An object of class \code{"\link{RatchetOptions}"}.
     ratchet = function (value) {
       if (missing(value)) {
-        private$.ratchet
+        return(private$.ratchet)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkClass(value, "NitroRatchet")
+          check_null(value),
+          check_class(value, "RatchetOptions"),
+          add = coll
         )
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg ratchet} must be a valid object.",
+                      "x" = val_check))
+        }
+
         if (is.null(value)) {
-          value <- NitroRatchet$new(iterations = 0)
+          value <- RatchetOptions$new(iterations = 0)
         }
         private$.ratchet <- value
-        self
       }
     }
   ),
@@ -181,72 +236,77 @@ NitroDriven <- R6Class("NitroDriven",
     #'   by fusing suboptimal trees with optimal trees.
     #' @param sectorial_search A list of objects of inheriting
     #'   \code{"\link{NitroSectorialSearch}"}.
-    #' @param tree_fuse An object of class \code{"\link{NitroTreeFuse}"}.
-    #' @param tree_hybridize An object of class \code{"\link{NitroTreeHybridize}"}.
-    #' @param tree_drift An object of class \code{"\link{NitroTreeDrift}"}.
+    #' @param tree_fusing An object of class \code{"\link{NitroTreeFusing}"}.
+    #' @param tree_hybridizing An object of class \code{"\link{NitroTreeHybridize}"}.
+    #' @param tree_drifting An object of class \code{"\link{NitroTreeDrifting}"}.
     #' @param ratchet An object of class \code{"\link{NitroRatchet}"}.
-   initialize = function (replications = 4, hits = 1, consense_times = 0,
-                          keep_all = FALSE, multiply = TRUE,
-                          sectorial_search = NULL, tree_fuse = NULL,
-                          tree_hybridize = NULL, tree_drift = NULL,
-                          ratchet = NULL) {
-     a <- as.list(environment(), all = TRUE)
-     for (n in names(a)) {
-       self[[n]] <- a[[n]]
-     }
-   },
-   #' @param ... Ignored.
-   print = function (...) {
-     cat("<NitroDriven>\n")
-     cat(paste("* Replications:", private$.replications, "\n"))
-     cat(paste("* Hits:", private$.hits, "\n"))
-     if (private$.consense_times > 0) {
-       cat(paste("* Consense times:", private$.consense_times, "\n"))
-     }
-     cat(paste("* Keep all trees:", private$.keep_all, "\n"))
-     cat(paste("* Multiply trees by fusing:", private$.multiply, "\n"))
-   },
-   #' @param ... Ignored.
-   tnt_cmd = function (...) {
-     driven_cmd <- c()
-     if (length(private$.sectorial_search)) {
-       driven_cmd <- c(driven_cmd,
-                       sapply(private$.sectorial_search,
-                              function (s) s$tnt_cmd(set_only = TRUE)))
-     }
-     if (private$.tree_fuse$rounds > 0) {
-       driven_cmd <- c(driven_cmd, private$.tree_fuse$tnt_cmd())
-     }
-     if (private$.tree_hybridize$rounds > 0) {
-       driven_cmd <- c(driven_cmd, private$.tree_hybridize$tnt_cmd())
-     }
-     if (private$.tree_drift$iterations > 0) {
-       driven_cmd <- c(driven_cmd, private$.tree_drift$tnt_cmd(set_only = TRUE))
-     }
-     if (private$.ratchet$iterations > 0) {
-       driven_cmd <- c(driven_cmd, private$.ratchet$tnt_cmd(set_only = TRUE))
-     }
-     sect_classes <- sapply(private$.sectorial_search, class)
-     driven_cmd <- c(driven_cmd,
-                     paste0("xmult= hits ", private$.hits,
-                            " replications ", private$.replications,
-                            ifelse("NitroRandomSectorialSearch" %in% sect_classes,
-                                   " rss", " norss"),
-                            ifelse("NitroConstraintSectorialSearch" %in% sect_classes,
-                                   " css", " nocss"),
-                            ifelse(private$.tree_fuse$rounds == 0, " nofuse",
-                                   paste(" fuse", private$.tree_fuse$rounds)),
-                            ifelse(private$.tree_hybridize$rounds == 0, " nohybrid",
-                                   " hybrid"),
-                            ifelse(private$.tree_drift$iterations == 0, " nodrift",
-                                   paste(" drift", private$.tree_drift$iterations)),
-                            ifelse(private$.ratchet$iterations == 0, " noratchet",
-                                   paste(" ratchet", private$.ratchet$iterations)),
-                            ifelse(private$.consense_times == 0, " noconsense",
-                                   paste(" consense", private$.consense_times)),
-                            ifelse(private$.keep_all, " keepall", " nokeepall"),
-                            ifelse(private$.multiply, " multiply", " nomultiply"), ";"))
-     driven_cmd
-   }
+    initialize = function (replications = 4, hits = 1, consense_times = 0,
+                           keep_all = FALSE, multiply = TRUE,
+                           sectorial_search = NULL, tree_fusing = NULL,
+                           tree_hybridizing = NULL, tree_drifting = NULL,
+                           ratchet = NULL) {
+      a <- as.list(environment(), all = TRUE)
+      for (n in names(a)) {
+        self[[n]] <- a[[n]]
+      }
+    },
+    #' @param ... Ignored.
+    print = function (...) {
+      cli_text("{col_grey(\"# A TNT driven search configuration\")}")
+
+      options <- c("Keep all trees:" = self$keep_all,
+                   "Multiply trees by fusing:" = self$multiply) %>%
+        ifelse("yes", "no")
+
+      if (self$consense_times > 0) {
+        options <- c("Consense times:" = self$consense_times, options)
+      }
+
+      options <- c("Iterations:" = self$replications,
+                   "Substitutions:" = self$hits, options) %>%
+        data.frame()
+
+      colnames(options) <- NULL
+      print(options)
+    },
+    #' @param ... Ignored.
+    queue = function (...) {
+      queue <- CommandQueue$new()
+
+      if (length(self$sectorial_search)) {
+        queue <- c(queue, sapply(self$sectorial_search, function (x) x$queue(set_only = TRUE)))
+      }
+      if (self$tree_fusing$rounds > 0) {
+        queue <- c(queue, self$tree_fusing$queue())
+      }
+      if (self$tree_hybridizing$rounds > 0) {
+        queue <- c(queue, self$tree_hybridizing$queue())
+      }
+      if (self$tree_drifting$iterations > 0) {
+        queue <- c(queue, self$tree_drifting$queue(set_only = TRUE))
+      }
+      if (self$ratchet$iterations > 0) {
+        queue <- c(queue, self$ratchet$queue(set_only = TRUE))
+      }
+
+      sect_classes <- sapply(self$sectorial_search, class)
+
+      driven_cmd <- glue(
+        "= hits {self$hits} replications {self$replications} {rss}rss {css}css {xss}xss {fuse} {hybrid}hybrid {drift} {ratchet} {consense} {keepall}keepall {multiply}multiply",
+        rss = ifelse("RandomSectorialSearchOptions" %in% sect_classes, "", "no"),
+        css = ifelse("ConstraintSectorialSearchOptions" %in% sect_classes, "", "no"),
+        xss = ifelse("ExclusiveSectorialSearchOptions" %in% sect_classes, "", "no"),
+        fuse = ifelse(self$tree_fusing$rounds == 0, "nofuse", glue("fuse {self$tree_fusing$rounds}")),
+        hybrid = ifelse(self$tree_hybridizing$rounds == 0, "no", ""),
+        drift = ifelse(self$tree_drifting$iterations == 0, "nodrift", glue("drift {self$tree_drifting$iterations}")),
+        ratchet = ifelse(self$ratchet$iterations == 0, "noratchet", glue("ratchet {self$ratchet$iterations}")),
+        consense = ifelse(self$consense_times == 0, "noconsense", glue("consense {self$consense_times}")),
+        keepall = ifelse(self$keep_all, "", "no"),
+        multiply = ifelse(self$multiply, "", "no")
+      )
+
+      queue$add("xmult", driven_cmd)
+      return(queue)
+    }
   )
 )
