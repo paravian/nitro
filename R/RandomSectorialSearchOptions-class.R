@@ -173,7 +173,7 @@ RandomSectorialSearchOptions <- R6Class("RandomSectorialSearchOptions",
     #'   execute immediately (\code{TRUE}) or set the variables for future
     #'   execution \code{FALSE}.
     queue = function (set_only = FALSE) {
-      val_check <- check_flag(set_only, len = 1)
+      val_check <- check_flag(set_only)
       if (!isTRUE(val_check)) {
         cli_abort(c("{.arg set_only} must be a logical.",
                     "x" = val_check))
