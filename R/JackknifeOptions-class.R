@@ -52,7 +52,7 @@ JackknifeOptions <- R6Class("JackknifeOptions",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cli_text("{col_grey(\"# A jackknife resampling configuration\")}")
+      cli_text("{col_grey(\"# A TNT jackknife resampling configuration\")}")
 
       options <- c(
         "Removal probability:" = self$probability,
