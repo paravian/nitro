@@ -1,78 +1,85 @@
-#' Define constrained tree search
+#' Set constraints on monophyly
 #'
 #' @description
-#' \code{NitroConstraint} is an R6 class that defines a constrained tree
-#' search.
-#' @importFrom checkmate assertFALSE assertLogical assertTRUE checkLogical
-#'   checkNull
+#' \code{MonophylyConstraintOptions} is an R6 class that sets options for tree
+#'   searches with constraints on monophyly.
+#' @importFrom checkmate assert check_character check_disjunct check_flag
+#'   check_null check_character makeAssertCollection
+#' @importFrom cli cli_abort cli_text
+#' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export
-NitroConstraint <- R6Class("NitroConstraint",
+MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
+  inherit = ConstraintBaseOptions,
   private = list(
-    .is_positive = NULL,
     .fixed_otus = NULL,
     .floating_otus = NULL
   ),
   active = list(
-    #' @field is_positive A logical value indicating whether the constraint is
-    #'   positive (\code{TRUE}) or negative (\code{FALSE}).
-    is_positive = function (value) {
-      if (missing(value)) {
-        private$.is_positive
-      } else {
-        assertLogical(value, len = 1)
-        private$.is_positive <- value
-        self
-      }
-    },
     #' @field fixed_otus A logical vector indicating which OTUs from the matrix
     #'   to assign as a fixed constraint.
     fixed_otus = function (value) {
       if (missing(value)) {
-        private$.fixed_otus
+        return(private$.fixed_otus)
       } else {
-        assert(
-          checkNull(value),
-          checkLogical(value, any.missing = FALSE)
-        )
-        if (!is.null(private$.floating_otus)) {
-          assertLogical(private$.floating_otus, any.missing = FALSE,
-                        len = length(value))
-          assertFALSE(any(apply(data.frame(value, private$.floating_otus), 1, all)))
+        val_check <- check_character(value, min.chars = 1, any.missing = FALSE, min.len = 2, unique = TRUE)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg fixed_otus} must be a valid character vector.",
+                      "x" = val_check))
         }
+
+        if (!is.null(self$floating_otus)) {
+          val_check <- check_disjunct(value, self$floating_otus)
+          if (!isTRUE(val_check)) {
+            cli_abort(c("{.arg fixed_otus} must not contain taxa from {.arg floating_otus}.",
+                        "x" = val_check))
+          }
+        }
+
         private$.fixed_otus <- value
-        self
       }
     },
     #' @field floating_otus An optional logical vector indicating which OTUs from
     #'   the matrix to assign as floating constraints.
     floating_otus = function (value) {
       if (missing(value)) {
-        private$.floating_otus
+        return(private$.floating_otus)
       } else {
+        coll <- makeAssertCollection()
         assert(
-          checkNull(value),
-          checkLogical(value, any.missing = FALSE)
+          check_null(value),
+          check_character(value, min.chars = 1, any.missing = FALSE, min.len = 1, unique = TRUE),
+          add = coll
         )
-        if (!is.null(private$.fixed_otus)) {
-          assertLogical(private$.fixed_otus, any.missing = FALSE,
-                        len = length(value))
-          assertFALSE(any(apply(data.frame(value, private$.fixed_otus), 1, all)))
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg floating_otus} must be either a valid character vector or {.val NULL}.",
+                      "x" = val_check))
         }
+
+        if (!is.null(self$fixed_otus)) {
+          val_check <- check_disjunct(value, self$fixed_otus)
+          if (!isTRUE(val_check)) {
+            val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
+            cli_abort(c("{.arg floating_otus} must not contain taxa from {.arg fixed_otus}.",
+                        "x" = val_check))
+          }
+        }
+
         private$.floating_otus <- value
-        self
       }
     }
   ),
   public = list(
-    #' @param is_positive A logical value indicating whether the constraint is
-    #'   positive (\code{TRUE}) or negative (\code{FALSE}).
     #' @param fixed_otus A character vector indicating which OTUs from the matrix
     #'   to assign as a fixed constraint.
     #' @param floating_otus An character logical vector indicating which OTUs from
     #'   the matrix to assign as floating constraints.
-    initialize = function (is_positive = TRUE, fixed_otus = NULL,
-                           floating_otus = NULL) {
+    #' @param is_positive A logical value indicating whether the constraint is
+    #'   positive (\code{TRUE}) or negative (\code{FALSE}).
+    initialize = function (fixed_otus, floating_otus = NULL,
+                           is_positive = TRUE) {
       a <- as.list(environment(), all = TRUE)
       for (n in names(a)) {
         self[[n]] <- a[[n]]
@@ -80,22 +87,31 @@ NitroConstraint <- R6Class("NitroConstraint",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroConstraint>\n")
-      cat(paste("* Type:", ifelse(private$.is_positive, "positive", "negative"), "\n"))
-      cat(paste("* Fixed OTUs:", sum(private$.fixed_otus), "\n"))
-      if (any(private$.floating_otus)) {
-        cat(paste("* Floating OTUs:", sum(private$.floating_otus), "\n"))
+      cli_text("{col_grey(\"# A monophyly constraint\")}")
+
+      options <- c("Type:" = ifelse(self$is_positive, "positive", "negative"),
+                   "Fixed OTUs:" = length(self$fixed_otus))
+      if (!is.null(self$floating_otus)) {
+        options <- c(options, "Floating OTUs:" = length(self$floating_otus))
       }
+      options <- data.frame(c(options))
+      names(options) <- NULL
+
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
-      fixed <- paste(which(private$.fixed_otus) - 1, collapse = " ")
-      floating <- paste(which(private$.floating_otus) - 1, collapse = " ")
-      if (nchar(floating) > 0) {
-        floating <- paste(" (", floating, ")")
+    queue = function (...) {
+      queue <- CommandQueue$new()
+      force_arg <- paste(self$fixed_otus, collapse = " ")
+
+      if (!is.null(self$floating_otus)) {
+        force_arg <- glue("[ {force_arg} ({floating}) ]", floating = paste(self$floating_otus, collapse = " "))
       }
-      type <- ifelse(private$.is_positive, " +", " -")
-      return(paste(type, " [ ", fixed, floating, " ]", sep = ""))
+
+      type <- ifelse(self$is_positive, "+", "-")
+      force_arg <- glue("{type} {force_arg}")
+      queue$add("force", force_arg)
+      return(queue)
     }
   )
 )
