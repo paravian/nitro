@@ -19,7 +19,7 @@ ConstraintBaseOptions <- R6Class("ConstraintBaseOptions",
         return(private$.is_positive)
       } else {
         val_check <- check_flag(value)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg is_positive} must be a logical value.",
                       "x" = val_check))
         }
