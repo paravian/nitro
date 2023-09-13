@@ -4,7 +4,7 @@
 #' \code{MonophylyConstraintOptions} is an R6 class that sets options for tree
 #'   searches with constraints on monophyly.
 #' @importFrom checkmate assert check_character check_disjunct check_flag
-#'   check_null check_character makeAssertCollection
+#'   check_null check_character makeAssertCollection test_true
 #' @importFrom cli cli_abort cli_text
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
@@ -23,14 +23,14 @@ MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
         return(private$.fixed_otus)
       } else {
         val_check <- check_character(value, min.chars = 1, any.missing = FALSE, min.len = 2, unique = TRUE)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg fixed_otus} must be a valid character vector.",
                       "x" = val_check))
         }
 
         if (!is.null(self$floating_otus)) {
           val_check <- check_disjunct(value, self$floating_otus)
-          if (!isTRUE(val_check)) {
+          if (!test_true(val_check)) {
             cli_abort(c("{.arg fixed_otus} must not contain taxa from {.arg floating_otus}.",
                         "x" = val_check))
           }
@@ -60,7 +60,7 @@ MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
 
         if (!is.null(self$fixed_otus)) {
           val_check <- check_disjunct(value, self$fixed_otus)
-          if (!isTRUE(val_check)) {
+          if (!test_true(val_check)) {
             val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
             cli_abort(c("{.arg floating_otus} must not contain taxa from {.arg fixed_otus}.",
                         "x" = val_check))
