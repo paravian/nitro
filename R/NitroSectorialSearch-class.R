@@ -1,14 +1,12 @@
-#' Define a sectorial search analysis
+#' Set options common to sectorial searches
 #'
 #' @description
-#' \code{NitroSectorialSearch} is an R6 class that defines the set of
-#' parameters required to perform sectorial searching analyses in
-#' \code{nitro}.
-#' @importFrom checkmate assertInt assertLogical
+#' \code{SectorialSearchBaseOptions} is an R6 class that defines the set of
+#'   options for using sectorial searches in \code{nitro}.
+#' @importFrom checkmate check_int check_flag
+#' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
-#' @export
-NitroSectorialSearch <- R6Class("NitroSectorialSearch",
-  inherit = NitroMethodsBase,
+SectorialSearchBaseOptions <- R6Class("SectorialSearchBaseOptions",
   private = list(
     .buffer = NULL,
     .slack = NULL
@@ -18,9 +16,13 @@ NitroSectorialSearch <- R6Class("NitroSectorialSearch",
     #    memory buffer for analysis of sectors.
     buffer = function (value) {
       if (missing(value)) {
-        private$.buffer
+        return(private$.buffer)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg buffer} must be a logical.",
+                      "x" = val_check))
+        }
         private$.buffer <- value
       }
     },
@@ -28,9 +30,13 @@ NitroSectorialSearch <- R6Class("NitroSectorialSearch",
     #'   available memory during searches.
     slack = function (value) {
       if (missing(value)) {
-        private$.slack
+        return(private$.slack)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!isTRUE(val_check)) {
+          cli_abort(c("{.arg slack} must be an integer.",
+                      "x" = val_check))
+        }
         private$.slack <- value
       }
     }
