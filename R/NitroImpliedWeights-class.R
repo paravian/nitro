@@ -1,13 +1,14 @@
-#' Define implied weights analysis
+#' Set options for implied weighting
 #'
 #' @description
-#' \code{NitroImpliedWeights} is an R6 class that serves as the basis for
-#' classes that define parameters for implied weights phylogenetic analyses.
-#' @importFrom checkmate assertLogical assertNumber
+#' \code{ImpliedWeightingOptions} is an R6 class that defines the set of options
+#'   for using (extended) implied weighting with phylogenetic analyses in
+#'   \code{nitro}.
+#' @importFrom checkmate check_flag check_number test_true
+#' @importFrom cli cli_abort cli_text
 #' @importFrom R6 R6Class
 #' @export
-NitroImpliedWeights <- R6Class("NitroImpliedWeights",
-  inherit = NitroWeightsBase,
+ImpliedWeightingOptions <- R6Class("ImpliedWeightingOptions",
   private = list(
     .k = NULL,
     .multi_k = NULL,
@@ -22,11 +23,14 @@ NitroImpliedWeights <- R6Class("NitroImpliedWeights",
     #'   concavity constants.
     k = function (value) {
       if (missing(value)) {
-        private$.k
+        return(private$.k)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg k} must be a number.",
+                      "x" = val_check))
+        }
         private$.k <- value
-        self
       }
     },
     #' @field multi_k A logical value indicating whether each character will be
@@ -34,11 +38,15 @@ NitroImpliedWeights <- R6Class("NitroImpliedWeights",
     #'   during an implied weights analysis.
     multi_k = function (value) {
       if (missing(value)) {
-        private$.multi_k
+        return(private$.multi_k)
       } else {
-        assertLogical(value, len = 1)
+        val_check <- check_flag(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg multi_k} must be a logical.",
+                      "x" = val_check))
+        }
+
         private$.multi_k <- value
-        self
       }
     },
     #' @field proportion A numeric value indicating the proportion of homoplasy
@@ -48,9 +56,13 @@ NitroImpliedWeights <- R6Class("NitroImpliedWeights",
     #'   \code{multi_k} set as \code{FALSE}.
     proportion =  function (value) {
       if (missing(value)) {
-        private$.proportion
+        return(private$.proportion)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg proportion} must be a number.",
+                      "x" = val_check))
+        }
         private$.proportion <- value
         self
       }
@@ -62,11 +74,14 @@ NitroImpliedWeights <- R6Class("NitroImpliedWeights",
     #'   \code{FALSE}.
     max_ratio =  function (value) {
       if (missing(value)) {
-        private$.max_ratio
+        return(private$.max_ratio)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg max_ratio} must be a number.",
+                      "x" = val_check))
+        }
         private$.max_ratio <- value
-        self
       }
     }
   ),
@@ -96,22 +111,30 @@ NitroImpliedWeights <- R6Class("NitroImpliedWeights",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroImpliedWeights>\n")
-      cat(paste("* Concavity constant (k):     ", private$.k, "\n"))
-      cat(paste("* Multiple constants:         ", private$.multi_k, "\n"))
+      cli_text("{col_grey(\"# A TNT implied weighting configuration\")}")
+
+      options <- c("Concavity constant (k):" = self$k,
+                   "Multiple constants:" = ifelse(self$multi_k, "yes", "no"))
+
       if (private$.multi_k) {
-        cat(paste("* Proportion:                 ", private$.proportion, "\n"))
-        cat(paste("* Maximum ratio:              ", private$.max_ratio, "\n"))
+        options <- c(options, "Proportion:" = self$proportion,
+                     "Maximum ratio:" = self$max_ratio)
       }
+
+      options <- data.frame(options)
+
+      colnames(options) <- NULL
+      print(options)
     },
     #' @param ... Ignored.
-    tnt_cmd = function (...) {
-      cmds <- c(paste0("piwe =", private$.k))
+    queue = function (...) {
+      queue <- CommandQueue$new()
+      queue$add("piwe", "=")
       if (private$.multi_k) {
-        cmds <- c(cmds, paste("xpiwe ( *", private$.proportion, " <", private$.max_ratio,
-                              " /", private$.k, ";", sep = ""))
+        ext_iw_opts <- glue("( *{self$proportion} <{self$max_ratio} /{self$k}")
+        queue$add("xpiwe", ext_iw_opts)
       }
-      return(cmds)
+      return(queue)
     }
   )
 )
