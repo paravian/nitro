@@ -22,7 +22,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   to perform.
     rounds = function (value) {
       if (missing(value)) {
-        private$.rounds
+        return(private$.rounds)
       } else {
         val_check <- check_int(value, lower = 0, upper = 100)
         if (!test_true(val_check)) {
@@ -37,7 +37,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   of equal score.
     exchange_equal = function (value) {
       if (missing(value)) {
-        private$.exchange_equal
+        return(private$.exchange_equal)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
@@ -51,7 +51,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   start tree-fusing.
     start_best = function (value) {
       if (missing(value)) {
-        private$.start_best
+        return(private$.start_best)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
@@ -65,7 +65,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   instead of only the best trees.
     keep_all = function (value) {
       if (missing(value)) {
-        private$.keep_all
+        return(private$.keep_all)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
@@ -79,7 +79,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   rather than only those that improve the best score.
     accept_all = function (value) {
       if (missing(value)) {
-        private$.accept_all
+        return(private$.accept_all)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
@@ -93,7 +93,7 @@ TreeFusingOptions <- R6Class("TreeFusingOptions",
     #'   reconnection swapping after exchanging clades.
     swap = function (value) {
       if (missing(value)) {
-        private$.swap
+        return(private$.swap)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
