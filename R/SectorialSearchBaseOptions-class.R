@@ -2,7 +2,7 @@
 #'
 #' @description
 #' \code{SectorialSearchBaseOptions} is an R6 class that defines the set of
-#'   options for using sectorial searches in \code{nitro}.
+#'   options common to all types of sectorial searches in \code{nitro}.
 #' @importFrom checkmate check_int check_flag
 #' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
