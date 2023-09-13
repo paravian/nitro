@@ -1,13 +1,14 @@
-#' Define tree drift properties
+#' Set options for tree drifting
 #'
 #' @description
-#' \code{NitroTreeDrift} is an R6 class that defines the set of parameters
+#' \code{TreeDriftingOptions} is an R6 class that defines the set of parameters
 #' required for performing tree drift operations in \code{nitro}.
-#' @importFrom checkmate asInt assertInt assertNumber
+#' @importFrom checkmate asInt check_int check_flag check_number
+#' @importFrom cli cli_abort cli_text
+#' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export
-NitroTreeDrift <- R6Class("NitroTreeDrift",
-  inherit = NitroMethodsBase,
+TreeDriftingOptions <- R6Class("TreeDriftingOptions",
   private = list(
     .iterations = NULL,
     .substitutions = NULL,
@@ -21,9 +22,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #'   cycles to perform.
     iterations = function (value) {
       if (missing(value)) {
-        private$.iterations
+        return(private$.iterations)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg iterations} must be an integer",
+                      "x" = val_check))
+        }
         private$.iterations <- asInt(value)
       }
     },
@@ -31,9 +36,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #' (i.e., accepted tree rearrangements) to perform in the perturbation phase.
     substitutions = function (value) {
       if (missing(value)) {
-        private$.substitutions
+        return(private$.substitutions)
       } else {
-        assertInt(value, lower = 1)
+        val_check <- check_int(value, lower = 1)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg substitutions} must be an integer",
+                      "x" = val_check))
+        }
         private$.substitutions <- asInt(value)
       }
     },
@@ -41,9 +50,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #'   difference.
     max_abs_fit_diff = function (value) {
       if (missing(value)) {
-        private$.max_abs_fit_diff
+        return(private$.max_abs_fit_diff)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg max_abs_fit_diff} must be an integer",
+                      "x" = val_check))
+        }
         private$.max_abs_fit_diff <- value
       }
     },
@@ -51,9 +64,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #'   difference.
     max_rel_fit_diff = function (value) {
       if (missing(value)) {
-        private$.max_rel_fit_diff
+        return(private$.max_rel_fit_diff)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg max_rel_fit_diff} must be an integer",
+                      "x" = val_check))
+        }
         private$.max_rel_fit_diff <- value
       }
     },
@@ -61,9 +78,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #'   suboptimal trees.
     reject_factor = function (value) {
       if (missing(value)) {
-        private$.reject_factor
+        return(private$.reject_factor)
       } else {
-        assertNumber(value, lower = 0)
+        val_check <- check_number(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg reject_factor} must be an integer",
+                      "x" = val_check))
+        }
         private$.reject_factor <- value
       }
     },
@@ -71,9 +92,13 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     #'   autoconstrained cycles to perform.
     autoconstrain_cycles = function (value) {
       if (missing(value)) {
-        private$.autoconstrain_cycles
+        return(private$.autoconstrain_cycles)
       } else {
-        assertInt(value, lower = 0)
+        val_check <- check_int(value, lower = 0)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg autoconstrain_cycles} must be an integer",
+                      "x" = val_check))
+        }
         private$.autoconstrain_cycles <- asInt(value)
       }
     }
@@ -101,37 +126,49 @@ NitroTreeDrift <- R6Class("NitroTreeDrift",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cat("<NitroTreeDrift>\n")
-      cat(paste("* Iterations:", private$.iterations, "\n"))
-      cat(paste("* Substitutions:", private$.substitutions, "\n"))
-      cat(paste("* Maximum absolute fit difference:", private$.max_abs_fit_diff, "\n"))
-      cat(paste("* Maximum relative fit difference:", private$.max_rel_fit_diff, "\n"))
-      cat(paste("* Rejection factor:", private$.reject_factor, "\n"))
-      cat(paste("* Autoconstrain cycles:", private$.autoconstrain_cycles, "\n"))
+      cli_text("{col_grey(\"# A TNT tree drift configuration\")}")
+
+      options <- c(
+        "Iterations:" = self$iterations,
+        "Substitutions:" = self$substitutions,
+        "Maximum absolute fit difference:" = self$max_abs_fit_diff,
+        "Maximum relative fit difference:" = self$max_rel_fit_diff,
+        "Rejection factor:" = self$reject_factor,
+        "Autoconstrain cycles:" = self$autoconstrain_cycles
+        ) %>%
+        as.character() %>%
+        data.frame()
+
+      colnames(options) <- NULL
+      print(options)
     },
     #' @param set_only A logical indicating whether to instruct the command to
     #'   execute immediately (\code{TRUE}) or set the variables for future
     #'   execution \code{FALSE}.
-    tnt_cmd = function (set_only = FALSE) {
-      assertLogical(set_only, len = 1)
-      cmd_flag <- ifelse(set_only, ":", "=")
-
-      fuse_cmd <- c()
-      if (!set_only) {
-        fuse_cmd <- c("mult= wagner replic 10;")
+    queue = function (set_only = FALSE) {
+      val_check <- check_flag(set_only, len = 1)
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg set_only} must be a logical",
+                    "x" = val_check))
       }
-      fuse_cmd <- c(fuse_cmd,
-                    paste("drift", cmd_flag,
-                          " iterations ", private$.iterations,
-                          " numsubs ", private$.substitutions,
-                          " fitdiff ", private$.max_abs_fit_diff,
-                          " rfitdiff ", private$.max_rel_fit_diff,
-                          " xfactor ", private$.reject_factor,
-                          ifelse(private$.autoconstrain_cycles == 0,
-                                 " noautoconst",
-                                 paste(" autoconst", private$.autoconstrain_cycles)),
-                          ";", sep = ""))
-      fuse_cmd
+
+      queue <- CommandQueue$new()
+      cmd_flag <- ifelse(set_only, ":", "=")
+      if (!set_only) {
+        queue$add("mult", "= wagner replic 10")
+      }
+
+      drift_opts <- self %>%
+        glue_data("iterations {iterations} numsubs {substitutions} fitdiff {max_abs_fit_diff} rfitdiff {max_rel_fit_diff} xfactor {reject_factor}")
+
+      autoconst <- ifelse(
+        self$autoconstrain_cycles == 0, "noautoconst",
+        glue("autoconst {self$autoconstrain_cycles}")
+      )
+
+      drift_opts <- glue("{cmd_flag} {drift_opts} {autoconst}")
+      queue$add("drift", drift_opts)
+      return(queue)
     }
   )
 )
