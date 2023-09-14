@@ -1,0 +1,30 @@
+Package: nitro
+Type: Package
+Title: Integration of TNT in R
+Version: 0.2.0
+Author: Sienna Birch
+Maintainer: Sienna Birch <contact@paravian.net>
+Description: Integration of the phylogenetics software TNT (Goloboff et al.
+    2008, Goloboff and Catalano 2016) in R. It interfaces with a locally
+    installed copy of the TNT command-line program and provides functions for
+    performing branch swapping, parsimony ratchet and driven (i.e., "New
+    Technology") searches. Each tree search function automatically returns
+    a set of trees for visualisation or use with other R packages.
+Depends: R (>= 3.2.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Imports: 
+    ape,
+    checkmate,
+    cli,
+    dplyr,
+    glue,
+    magrittr,
+    lubridate,
+    processx,
+    R6,
+    stringr,
+    treeio,
+    TreeTools
