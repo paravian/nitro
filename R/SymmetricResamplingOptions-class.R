@@ -29,8 +29,8 @@ SymmetricResamplingOptions <- R6Class("SymmetricResamplingOptions",
   ),
   public = list(
     #' @param probability An integer value indicating the change probability.
-    #' @param search_method An object inheriting class
-    #'   \code{"\link{NitroMethodsBase}"}.
+    #' @param search_method An object that contains configuration options for a
+    #'   tree analysis method.
     #' @param replications An integer value indicating the number of resampling
     #'   replications to perform.
     #' @param cutoff An integer value indicating the cutoff value for

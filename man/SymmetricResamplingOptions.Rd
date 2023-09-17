@@ -45,8 +45,8 @@ symmetric resampling analyses.
 \describe{
 \item{\code{probability}}{An integer value indicating the change probability.}
 
-\item{\code{search_method}}{An object inheriting class
-\code{"\link{NitroMethodsBase}"}.}
+\item{\code{search_method}}{An object that contains configuration options for a
+tree analysis method.}
 
 \item{\code{replications}}{An integer value indicating the number of resampling
 replications to perform.}

@@ -25,7 +25,7 @@ trees from each replication regardless of length.}
 by fusing suboptimal trees with optimal trees.}
 
 \item{\code{sectorial_search}}{A list of objects of inheriting
-\code{"\link{SectorialSearchOptions}"}.}
+\code{"\link{SectorialSearchBaseOptions}"}.}
 
 \item{\code{tree_fusing}}{An object of class \code{"\link{TreeFusingOptions}"}.}
 
@@ -88,15 +88,15 @@ initial starting trees for each of starting points.}
 by fusing suboptimal trees with optimal trees.}
 
 \item{\code{sectorial_search}}{A list of objects of inheriting
-\code{"\link{NitroSectorialSearch}"}.}
+\code{"\link{SectorialSearchBaseOptions}"}.}
 
-\item{\code{tree_fusing}}{An object of class \code{"\link{NitroTreeFusing}"}.}
+\item{\code{tree_fusing}}{An object of class \code{"\link{TreeFusingOptions}"}.}
 
-\item{\code{tree_hybridizing}}{An object of class \code{"\link{NitroTreeHybridize}"}.}
+\item{\code{tree_hybridizing}}{An object of class \code{"\link{TreeHybridizingOptions}"}.}
 
-\item{\code{tree_drifting}}{An object of class \code{"\link{NitroTreeDrifting}"}.}
+\item{\code{tree_drifting}}{An object of class \code{"\link{TreeDriftingOptions}"}.}
 
-\item{\code{ratchet}}{An object of class \code{"\link{NitroRatchet}"}.}
+\item{\code{ratchet}}{An object of class \code{"\link{RatchetOptions}"}.}
 }
 \if{html}{\out{</div>}}
 }

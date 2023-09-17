@@ -95,7 +95,7 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
       }
     },
     #' @field sectorial_search A list of objects of inheriting
-    #'   \code{"\link{SectorialSearchOptions}"}.
+    #'   \code{"\link{SectorialSearchBaseOptions}"}.
     sectorial_search = function (value) {
       if (missing(value)) {
         return(private$.sectorial_search)
@@ -103,8 +103,8 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
         coll <- makeAssertCollection()
         assert(
           check_null(value),
-          check_class(value, c("SectorialSearchOptions", "R6")),
-          check_list(value, types = "SectorialSearchOptions"),
+          check_class(value, c("SectorialSearchBaseOptions", "R6")),
+          check_list(value, types = "SectorialSearchBaseOptions"),
           add = coll
         )
 
@@ -235,11 +235,11 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
     #' @param multiply A logical value indicating whether to find additional trees
     #'   by fusing suboptimal trees with optimal trees.
     #' @param sectorial_search A list of objects of inheriting
-    #'   \code{"\link{NitroSectorialSearch}"}.
-    #' @param tree_fusing An object of class \code{"\link{NitroTreeFusing}"}.
-    #' @param tree_hybridizing An object of class \code{"\link{NitroTreeHybridize}"}.
-    #' @param tree_drifting An object of class \code{"\link{NitroTreeDrifting}"}.
-    #' @param ratchet An object of class \code{"\link{NitroRatchet}"}.
+    #'   \code{"\link{SectorialSearchBaseOptions}"}.
+    #' @param tree_fusing An object of class \code{"\link{TreeFusingOptions}"}.
+    #' @param tree_hybridizing An object of class \code{"\link{TreeHybridizingOptions}"}.
+    #' @param tree_drifting An object of class \code{"\link{TreeDriftingOptions}"}.
+    #' @param ratchet An object of class \code{"\link{RatchetOptions}"}.
     initialize = function (replications = 4, hits = 1, consense_times = 0,
                            keep_all = FALSE, multiply = TRUE,
                            sectorial_search = NULL, tree_fusing = NULL,

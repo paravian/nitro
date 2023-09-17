@@ -54,7 +54,7 @@ RandomSectorialSearchOptions <- R6Class("RandomSectorialSearchOptions",
     #' @field max_size An integer value indicating the maximum size of random
     #'   selections. If \code{NULL} (the default), this value will be
     #'   automatically set according to the number of taxa in the matrix when a
-    #'   new \code{"\link{NitroTreeSearch}"} object is initialized.
+    #'   new \code{"\link{TreeAnalysis}"} object is initialized.
     max_size = function (value) {
       if (missing(value)) {
         if (is.null(private$.max_size)) {

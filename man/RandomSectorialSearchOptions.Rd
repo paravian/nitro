@@ -21,7 +21,7 @@ used with a \code{"\link{TreeAnalysis}"} object.}
 \item{\code{max_size}}{An integer value indicating the maximum size of random
 selections. If \code{NULL} (the default), this value will be
 automatically set according to the number of taxa in the matrix when a
-new \code{"\link{NitroTreeSearch}"} object is initialized.}
+new \code{"\link{TreeAnalysis}"} object is initialized.}
 
 \item{\code{selection_factor}}{An integer value indicating the maximum number
 of random selections for the currently active taxa.}
