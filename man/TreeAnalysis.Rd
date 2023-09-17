@@ -11,8 +11,6 @@
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
-\item{\code{tnt_process}}{A \code{"\link{TNTProcess}"} object.}
-
 \item{\code{discrete_matrix}}{A \code{"\link{DiscreteMatrix}"} object.}
 
 \item{\code{continuous_matrix}}{A \code{"\link{ContinuousMatrix}"} object.}
@@ -76,7 +74,6 @@ allow a search to run for before terminating.}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$new(
-  tnt_process,
   method,
   discrete_matrix = NULL,
   continuous_matrix = NULL,
@@ -95,8 +92,6 @@ allow a search to run for before terminating.}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{tnt_process}}{A \code{"\link{TNTProcess}"} object.}
-
 \item{\code{method}}{An object that contains configuration options for the tree
 analysis method.}
 
@@ -180,13 +175,13 @@ allow a search to run for before terminating.}
 \if{latex}{\out{\hypertarget{method-TreeAnalysis-run}{}}}
 \subsection{Method \code{run()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$run(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$run(.envir = parent.frame())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{...}}{Ignored.}
+\item{\code{.envir}}{The environment that a TNTProcess object has been assigned to.}
 }
 \if{html}{\out{</div>}}
 }

@@ -5,7 +5,7 @@
 #'  character weighting and constraints on monophyly.
 #' @importFrom ape write.tree .compressTipLabel
 #' @importFrom checkmate asInt assert check_character check_class check_disjunct
-#'   check_int check_flag check_multi_class check_inull check_number
+#'   check_int check_flag check_multi_class check_null check_number
 #'   check_numeric check_r6 check_subset check_false makeAssertCollection
 #'   reportAssertions test_class test_multi_class test_null test_true
 #' @importFrom cli cli_text
@@ -21,7 +21,6 @@
 #' @export
 TreeAnalysis <- R6Class("TreeAnalysis",
   private = list(
-    .tnt_process = NULL,
     .discrete_matrix = NULL,
     .continuous_matrix = NULL,
     .inactive_taxa = NULL,
@@ -37,29 +36,6 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     .timeout = NULL
   ),
   active = list(
-    #' @field tnt_process A \code{"\link{TNTProcess}"} object.
-    tnt_process = function (value) {
-      if (missing(value)) {
-        return(private$.tnt_process)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_r6(value),
-          check_class(value, "TNTProcess"),
-          combine = "and", add = coll
-        )
-        val_check <- coll$getMessages()
-        if (!coll$isEmpty()) {
-          cli_abort(c("{.arg tnt_process} must be of valid type.",
-                      "x" = val_check))
-        }
-
-        # if (!value$is_active()) {
-        #   cli_abort(c("{.arg tnt_process} must be a currently active {.cls TNTProcess} object."),)
-        # }
-        private$.tnt_process <- value
-      }
-    },
     #' @field discrete_matrix A \code{"\link{DiscreteMatrix}"} object.
     discrete_matrix = function (value) {
       if (missing(value)) {
@@ -506,7 +482,6 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     }
   ),
   public = list(
-    #' @param tnt_process A \code{"\link{TNTProcess}"} object.
     #' @param method An object that contains configuration options for the tree
     #'   analysis method.
     #' @param discrete_matrix A \code{"\link{DiscreteMatrix}"} object.
@@ -538,7 +513,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     #'   allocate for use by TNT.
     #' @param timeout A positive integer indicating the number of seconds to
     #'   allow a search to run for before terminating.
-    initialize = function (tnt_process, method, discrete_matrix = NULL,
+    initialize = function (method, discrete_matrix = NULL,
                            continuous_matrix = NULL, inactive_taxa = NULL,
                            outgroup = NULL, zlb_rule = "minimum",
                            constraints = NULL, weights = NULL,
@@ -707,9 +682,15 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       # queue$add("zzz")
       return(queue)
     },
-    #' @param ... Ignored.
-    run = function (...) {
-      output <- self$tnt_process$execute_queue(self$queue())
+    #' @param .envir The environment that a TNTProcess object has been assigned to.
+    run = function (.envir = parent.frame()) {
+      val_check <- check_environment(.envir)
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg .envir} must be an environment.",
+                    "x" = val_check))
+      }
+
+      output <- execute_queue(self$queue(), .envir)
       output$queue <- self$queue()
 
       all_taxa <- c(continuous = self$continuous_matrix,
