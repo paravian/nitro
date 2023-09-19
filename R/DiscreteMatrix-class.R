@@ -2,9 +2,8 @@
 #'
 #' \code{DiscreteMatrix} is an R6 class that contains a discrete character
 #'   matrix and functions for modifying character activity and ordering.
-#' @importFrom checkmate asInt assert check_class check_int check_logical
-#'   check_null check_numeric makeAssertCollection reportAssertions
-#' @importFrom cli cli_abort
+#' @importFrom checkmate asInt assert check_class check_logical check_null
+#'   check_numeric check_subset makeAssertCollection
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
@@ -154,7 +153,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     },
     #' @param ... Ignored.
     print = function (...) {
-      cli_text("{col_grey(\"# A TNT matrix\")}")
+      cli_text("{col_grey(\"# A TNT discrete matrix\")}")
 
       log_lists <- as.list(self) %$%
         list(self$ordered, self$inactive) %>%
@@ -173,22 +172,15 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     },
     #' @param ... Ignored.
     queue = function (...) {
-      all_taxa <- c()
-      data_type <- self$data_type
-      if (isTRUE(check_class(private$.matrix, "phyDat"))) {
-        data_type <- private$.data_type
-        tax_names <- names(private$.matrix) %>%
-          {str_pad(., nchar(.) %>% max(), side = "right")}
-        taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
-          {glue("{tax_names} {.}")} %>%
-          as.character()
-        all_taxa <- c(all_taxa, taxa)
-      } else {
-        cli_abort(c("Data type must be supported."))
-      }
+      data_type <- private$.data_type
+      tax_names <- names(private$.matrix) %>%
+        {str_pad(., nchar(.) %>% max(), side = "right")}
+      taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
+        {glue("{tax_names} {.}")} %>%
+        as.character()
 
       queue <- CommandQueue$new()
-      queue$add("xread", all_taxa)
+      queue$add("xread", taxa)
       return(queue)
     }
   )
