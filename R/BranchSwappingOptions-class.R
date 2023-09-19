@@ -18,7 +18,7 @@ BranchSwappingOptions <- R6Class("BranchSwappingOptions",
     #' @field replications An integer value indicating the number of replications.
     replications = function (value) {
       if (missing(value)) {
-        private$.replications
+        return(private$.replications)
       } else {
         assertInt(value, lower = 1)
         value <- asInt(value)
@@ -29,7 +29,7 @@ BranchSwappingOptions <- R6Class("BranchSwappingOptions",
     #'   retain during each replication.
     hold_rep = function (value) {
       if (missing(value)) {
-        private$.hold_rep
+        return(private$.hold_rep)
       } else {
         assertInt(value, lower = 1)
         value <- asInt(value)
@@ -40,7 +40,7 @@ BranchSwappingOptions <- R6Class("BranchSwappingOptions",
     #'   trees from each replication regardless of length.
     keep_all = function (value) {
       if (missing(value)) {
-        private$.keep_all
+        return(private$.keep_all)
       } else {
         assertLogical(value)
         private$.keep_all <- value
