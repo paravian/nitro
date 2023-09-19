@@ -57,7 +57,8 @@ OutputParser <- R6Class("OutputParser",
       private$target <- list(
         ratchet = "iter (?<count>[0-9]+)",
         mult = "replic (?<count>[0-9]+)",
-        xmult = "hits (?<round>[0-9]+) replications (?<count>[0-9]+)"
+        xmult = "hits (?<round>[0-9]+) replications (?<count>[0-9]+)",
+        resample = "[a-z]+ from 0 replications (?<count>[0-9]+)"
       )
 
       if (platform == "unix") {
@@ -146,9 +147,11 @@ OutputParser <- R6Class("OutputParser",
       }
 
       if (name == "xmult") {
-        progress_re <- glue("^(?<round>[0-9]+) +[A-Z]+ +(?<count>[0-9]+)")
+        progress_re <- "^(?<round>[0-9]+) +[A-Z]+ +(?<count>[0-9]+)"
+      } else if (name == "resample") {
+        progress_re <- "^[A-Za-z]+ \\(rep\\. (?<count>[0-9]+) of [0-9]+\\)"
       } else {
-        progress_re <- glue("^(?<count>[0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+")
+        progress_re <- "^(?<count>[0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+"
       }
 
       prog_vars <- str_match(output$value, progress_re) %>%
@@ -158,25 +161,22 @@ OutputParser <- R6Class("OutputParser",
         as.list()
 
       target_vars <- str_match(arguments, private$target[[name]]) %>%
+        na.omit() %>%
         extract(,-1) %>%
         sapply(as.numeric) %>%
         as.list()
 
       if ("round" %in% names(prog_vars)) {
         denominator <- with(target_vars, round * count)
-        # if (prog_vars$count == target_vars$count) {
-        #   prog_vars$round <- prog_vars$round + 1
-        #   prog_vars$count <- 0
-        # }
-        # prog_vars$count <- prog_vars$count - 1
-        numerator <- prog_vars$round * target_vars$count + prog_vars$count
+        numerator <- prog_vars$round * target_vars$count + (prog_vars$count - 1)
+        if ((numerator / denominator) > 1) {
+          numerator <- (prog_vars$round - 1) * target_vars$count + (prog_vars$count - 1)
+        }
       } else {
         denominator <- target_vars$count
         numerator <- prog_vars$count
       }
 
-      print(prog_vars)
-      print(target_vars)
       percent <- numerator / denominator * 100
       return(percent)
     },
@@ -232,11 +232,13 @@ OutputParser <- R6Class("OutputParser",
 
         tag_cols <- tags$tag %>%
           str_replace_all("\\[([0-9\\.]+)\\]", "-\\1") %>%
-          str_split("/", simplify = TRUE)
+          str_split("/", simplify = TRUE) %>%
+          data.frame()
 
         tags <- tags %>%
           select(node) %>%
           apply(2, as.numeric) %>%
+          data.frame() %>%
           bind_cols(tag_cols)
 
         output <- list(phy = phy, tags = tags)

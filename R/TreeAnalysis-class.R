@@ -111,7 +111,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       if (missing(value)) {
         return(private$.method)
       } else {
-        val_check <- check_multi_class(value, c("BootstrapOptions", "BranchBreakingOptions", "BranchSwappingOptions", "ConstraintSectorialSearchOptions", "DrivenSearchOptions", "ImplicitEnumerationOptions", "JackknifeOptions", "RandomSectorialSearchOptions", "RatchetOptions", "SymmetricResampleOptions", "BranchSupportOptions"))
+        val_check <- check_multi_class(value, c("BootstrapOptions", "BranchBreakingOptions", "BranchSwappingOptions", "ConstraintSectorialSearchOptions", "DrivenSearchOptions", "ImplicitEnumerationOptions", "JackknifeOptions", "RandomSectorialSearchOptions", "RatchetOptions", "SymmetricResamplingOptions", "BranchSupportOptions"))
         if (!test_true(val_check)) {
           cli_abort(c("{.arg method} must contain valid tree analysis options.",
                       "x" = val_check))

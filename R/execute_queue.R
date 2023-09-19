@@ -1,7 +1,8 @@
 #' Execute CommandQueue
 #'
-#' @importFrom cli cli_abort
 #' @importFrom checkmate check_class check_environment test_true
+#' @importFrom cli cli_abort cli_progress_bar cli_progress_done
+#'   cli_progress_update pb_bar pb_eta_str pb_name pb_percent
 #' @importFrom stringr str_replace str_replace_all str_split str_trim str_wrap
 #' @param queue A \link{"\code{CommandQueue}"} object.
 #' @param .envir The environment that the TNTProcess object will be assigned to.
@@ -27,12 +28,15 @@ execute_queue <- function (queue, .envir) {
   command <- queue$read_next()
   all_output <- c()
   res <- list()
-  write_next <- TRUE
 
   # bar <- cli_progress_bar("Tree search")
-  # cli_progress_bar(name = "Executing command",
-  #                  total = 100,
-  #                  format = "{pb_name} {n_cmds - queue$length()}/{n_cmds} ({.val {command$name}}) {pb_bar} {pb_percent} | {pb_eta_str}")
+  cli_alert_info("Starting tree analysis...")
+  envir <- parent.frame()
+  cli_progress_bar(
+    name = "Progress",
+    total = 100,
+    .envir = envir
+  )
 
   status <- "parsing"
   repl_input <- NULL
@@ -89,9 +93,8 @@ execute_queue <- function (queue, .envir) {
 
       if (output$eos_type %in% c("resample_progress", "search_progress")) {
         frac <- tnt_info$parser$progress(command$name, command$arguments, output)
-        print(frac)
-        # cli_progress_update(set = frac$numerator, total = frac$denominator, id = bar)
-        write_next <- FALSE
+        # cli_text("{frac}/100")
+        cli_progress_update(set = frac, .envir = envir)
       } else if (output$eos_type %in% expected) {
         if (output$eos_type == "tnt_prompt") {
           if (queue$length() == 0) {
@@ -108,9 +111,9 @@ execute_queue <- function (queue, .envir) {
                     "i" = "Output received: {.val {output$value}}"))
       }
     }
-    # cli_progress_update()
   }
 
-  # writeLines(all_output, "out-debug.txt")
+  cli_progress_done(.envir = envir)
+  cli_alert_success("Tree analysis complete.")
   return(res)
 }
