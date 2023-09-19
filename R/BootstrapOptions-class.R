@@ -3,7 +3,7 @@
 #' @description
 #' \code{BootstrapOptions} is an R6 class that defines options for bootstrap
 #'   resampling analyses.
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export

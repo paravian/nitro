@@ -5,7 +5,7 @@
 #' required to perform a driven search in \code{nitro}.
 #' @importFrom checkmate asInt assert check_class check_flag check_int
 #'    check_class check_list check_null test_true
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export

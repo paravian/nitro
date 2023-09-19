@@ -5,7 +5,7 @@
 #'   for using (extended) implied weighting with phylogenetic analyses in
 #'   \code{nitro}.
 #' @importFrom checkmate check_flag check_number test_true
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class
 #' @export
 ImpliedWeightingOptions <- R6Class("ImpliedWeightingOptions",

@@ -8,7 +8,7 @@
 #'   check_int check_flag check_multi_class check_null check_number
 #'   check_numeric check_r6 check_subset check_false makeAssertCollection
 #'   reportAssertions test_class test_multi_class test_null test_true
-#' @importFrom cli cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom dplyr if_else
 #' @importFrom glue glue
 #' @importFrom lubridate day hour minute second seconds_to_period

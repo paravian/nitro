@@ -6,7 +6,7 @@
 #'   \code{nitro}.
 #' @importFrom checkmate asInt assert_int check_int check_flag
 #'   makeAssertCollection test_true
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue glue_data
 #' @importFrom R6 R6Class
 #' @export

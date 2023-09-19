@@ -5,6 +5,7 @@
 #' for performing a branch sweapping phylogenetic analysis with replications
 #' in \code{nitro}.
 #' @importFrom checkmate asInt assertInt assertLogical
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class
 #' @export
 BranchSwappingOptions <- R6Class("BranchSwappingOptions",

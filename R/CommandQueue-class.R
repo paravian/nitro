@@ -4,7 +4,7 @@
 #' \code{CommandQueue} is an R6 class that stores a list of TNT commands to
 #'   execute in order.
 #' @importFrom checkmate check_character check_number check_string test_number
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class
 #' @export
 CommandQueue <- R6Class("CommandQueue",

@@ -4,7 +4,7 @@
 #' \code{TreeDriftingOptions} is an R6 class that defines the set of parameters
 #' required for performing tree drift operations in \code{nitro}.
 #' @importFrom checkmate asInt check_int check_flag check_number
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export

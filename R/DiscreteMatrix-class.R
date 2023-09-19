@@ -5,6 +5,7 @@
 #' @importFrom checkmate asInt assert check_class check_int check_logical
 #'   check_null check_numeric makeAssertCollection reportAssertions
 #' @importFrom cli cli_abort
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class

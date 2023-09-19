@@ -4,6 +4,7 @@
 #' \code{SymmetricResamplingOptions} is an R6 class that defines parameters for
 #' symmetric resampling analyses.
 #' @importFrom checkmate asInt assertInt
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export

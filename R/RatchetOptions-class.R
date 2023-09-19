@@ -3,7 +3,7 @@
 #' \code{RatchetOptions} is an R6 class that defines the set of options
 #' for performing a parsimony ratchet phylogenetic analysis in \code{nitro}.
 #' @importFrom checkmate asInt check_int check_logical test_true
-#' @importFrom cli cli_abort
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue_data
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class

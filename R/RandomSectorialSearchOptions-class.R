@@ -5,7 +5,7 @@
 #'   options required to perform sectorial searching analyses in \code{nitro}.
 #' @importFrom checkmate assert asInt assert_int check_int check_flag
 #'   check_null makeAssertCollection
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export

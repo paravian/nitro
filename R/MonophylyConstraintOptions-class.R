@@ -5,7 +5,7 @@
 #'   searches with constraints on monophyly.
 #' @importFrom checkmate assert check_character check_disjunct check_flag
 #'   check_null check_character makeAssertCollection test_true
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export

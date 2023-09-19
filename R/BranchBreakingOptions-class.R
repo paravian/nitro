@@ -4,7 +4,7 @@
 #' \code{BranchBreakingOptions} is an R6 class that defines the set of optiopns
 #' required to perform branch breaking.
 #' @importFrom checkmate asInt check_choice check_flag check_int test_true
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export

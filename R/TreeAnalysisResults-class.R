@@ -7,7 +7,7 @@
 #' @importFrom checkmate assert check_character check_class check_data_frame
 #'   check_numeric check_null check_number makeAssertCollection
 #' @importFrom treeio as_tibble
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export

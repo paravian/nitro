@@ -4,7 +4,7 @@
 #' \code{BranchSupportOptions} is an R6 class that defines options for calculating
 #'   decay indices.
 #' @importFrom checkmate check_int
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class
 #' @export
 BranchSupportOptions <- R6Class("BranchSupportOptions",

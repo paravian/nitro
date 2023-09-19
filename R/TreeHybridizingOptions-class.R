@@ -5,7 +5,7 @@
 #'   parameters required for performing tree hybridizing operations in
 #'   \code{nitro}.
 #' @importFrom checkmate asInt check_int check_flag
-#' @importFrom cli cli_abort cli_text
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export
