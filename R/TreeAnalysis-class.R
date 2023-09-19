@@ -623,7 +623,9 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       }
 
       queue$add("xread", xread)
-      queue$add("ccode", paste(ccode, collapse = " "))
+      if (length(ccode) > 0) {
+        queue$add("ccode", paste(ccode, collapse = " "))
+      }
       if (!test_null(private$.inactive_taxa)) {
         queue$add("taxcode", glue("-{taxa}", taxa = paste(private$.inactive_taxa, collapse = " ")))
       }
