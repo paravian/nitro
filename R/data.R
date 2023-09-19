@@ -1,7 +1,7 @@
 #' Canale et al. (2022) matrix
-#' 
-#' A phylogenetic matrix of carcharodontisaurid theropod dinosaurs.
-#' 
+#'
+#' A phylogenetic matrix of carcharodontosaurid theropod dinosaurs.
+#'
 #' @format A phyDat object containing 20 taxa and 175 characters.
 #' @source Downloaded from the Supplemental Information section of
 #'   Canale et al. (2022) <https://doi.org/10.1016/j.cub.2022.05.057>,
