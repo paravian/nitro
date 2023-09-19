@@ -182,7 +182,7 @@ as.multiPhylo.TreeAnalysisResults <- function (x) {
   val_check <- check_class(x, "TreeAnalysisResults")
   if (!isTRUE(val_check)) {
     cli_abort(c("{.arg x} must be a {.cls TreeAnalysisResults} object.",
-                "x" = val_checl))
+                "x" = val_check))
   }
 
   phy <- lapply(x$trees, as.phylo) %>%
