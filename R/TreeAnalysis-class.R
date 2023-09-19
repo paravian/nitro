@@ -213,7 +213,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         }
 
         val_check <- check_subset(value, all_taxa)
-        if (!coll$isEmpty()) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg inactive_taxa} must contain taxa present in {.arg matrix}.",
                       "x" = val_check))
         }
