@@ -9,8 +9,8 @@
 #' @importFrom dplyr bind_cols select mutate
 #' @importFrom magrittr %>% extract extract2 set_names
 #' @importFrom R6 R6Class
-#' @importFrom stringr str_detect str_extract_all str_length str_match_all
-#'   str_replace_all str_split str_to_lower str_trim str_which
+#' @importFrom stringr str_detect str_extract_all str_length str_match
+#'   str_match_all str_replace_all str_split str_to_lower str_trim str_which
 #' @export
 OutputParser <- R6Class("OutputParser",
   private = list(
@@ -270,25 +270,22 @@ OutputParser <- R6Class("OutputParser",
       } else if (content_type %in% c("min_length", "max_length")) {
         output <- str_which(output, pattern = output_re) %>%
           {output[.]} %>%
-          str_match_all(pattern = output_re) %>%
-          unlist() %>%
+          str_match(pattern = output_re) %>%
           extract(2) %>%
           as.numeric()
       } else {
         output <- paste(output, collapse = " ") %>%
-          str_match_all(glue("{output_re}([^A-Za-z]+)")) %>%
-          extract2(1) %>%
-          extract(,2) %>%
+          str_match(glue("{output_re}([^A-Za-z]+)")) %>%
+          extract2(2) %>%
           str_trim() %>%
-          str_split("(\n\ )+") %>%
-          unlist()
+          str_split_1("\n")
 
         output <- output %>%
-            {.[str_length(.) > 0]} %>%
-            {.[rep(c(FALSE, TRUE), length(.) / 2)]} %>%
-            str_extract_all("[^A-Za-z ]+") %>%
-            unlist() %>%
-            as.numeric()
+          {.[str_length(.) > 0]} %>%
+          {.[rep(c(FALSE, TRUE, FALSE), length(.) / 3)]} %>%
+          str_extract_all("[^A-Za-z ]+") %>%
+          unlist() %>%
+          as.numeric()
       }
       return(output)
     }
