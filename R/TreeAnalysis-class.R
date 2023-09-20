@@ -684,7 +684,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       # queue$add("zzz")
       return(queue)
     },
-    #' @param .envir The environment that a TNTProcess object has been assigned to.
+    #' @param .envir The environment that TNT has been attached to.
     run = function (.envir = parent.frame()) {
       val_check <- check_environment(.envir)
       if (!test_true(val_check)) {

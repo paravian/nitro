@@ -181,7 +181,7 @@ allow a search to run for before terminating.}
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{.envir}}{The environment that a TNTProcess object has been assigned to.}
+\item{\code{.envir}}{The environment that TNT has been attached to.}
 }
 \if{html}{\out{</div>}}
 }

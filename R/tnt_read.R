@@ -1,3 +1,7 @@
+#' Read output from TNT
+#'
+#' @param process A process object running TNT.
+#' @param .envir The environment that TNT has been attached to.
 tnt_read <- function (process, .envir) {
   val_check <- check_environment(.envir)
   if (!test_true(val_check)) {

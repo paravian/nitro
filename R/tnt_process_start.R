@@ -2,7 +2,7 @@
 #'
 #' @description
 #' \code{tnt_process_start} starts an instance of TNT.
-#' @param path The location of the TNT command line executable.
+#' @param .envir The environment that TNT has been attached to.
 #' @importFrom checkmate check_environment check_string test_list test_string
 #'   test_true
 #' @importFrom cli cli_abort

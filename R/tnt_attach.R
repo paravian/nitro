@@ -3,11 +3,12 @@
 #' @description
 #' \code{tnt_attach} attaches an instance of TNT to an R environment.
 #' @param path The location of the TNT command line executable.
-#' @param .envir The environment that the TNTProcess object will be assigned to.
+#' @param .envir The environment that TNT has been attached to.
 #' @importFrom checkmate check_choice check_environment check_string test_true
-#' @importFrom cli cli_abort cli_alert_warning cli_alert_info cli_alert_success
-#'   cli_text
+#' @importFrom cli cli_abort cli_alert_danger cli_alert_warning cli_alert_info
+#'   cli_alert_success cli_text
 #' @importFrom glue glue
+#' @importFrom stats na.omit
 #' @importFrom stringr str_extract str_match
 #' @export
 tnt_attach <- function (path, .envir = parent.frame()) {

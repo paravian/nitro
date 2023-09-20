@@ -4,8 +4,8 @@
 #' @importFrom cli cli_abort cli_progress_bar cli_progress_done
 #'   cli_progress_update pb_bar pb_eta_str pb_name pb_percent
 #' @importFrom stringr str_replace str_replace_all str_split str_trim str_wrap
-#' @param queue A \link{"\code{CommandQueue}"} object.
-#' @param .envir The environment that the TNTProcess object will be assigned to.
+#' @param queue A \code{"\link{CommandQueue}"} object.
+#' @param .envir The environment that TNT has been attached to.
 execute_queue <- function (queue, .envir) {
   val_check <- check_class(queue, c("CommandQueue", "R6"))
   if (!test_true(val_check)) {

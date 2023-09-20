@@ -9,7 +9,7 @@ tnt_attach(path, .envir = parent.frame())
 \arguments{
 \item{path}{The location of the TNT command line executable.}
 
-\item{.envir}{The environment that the TNTProcess object will be assigned to.}
+\item{.envir}{The environment that TNT has been attached to.}
 }
 \description{
 \code{tnt_attach} attaches an instance of TNT to an R environment.
