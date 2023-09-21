@@ -278,12 +278,9 @@ OutputParser <- R6Class("OutputParser",
           str_match(glue("{output_re}([^A-Za-z]+)")) %>%
           extract2(2) %>%
           str_trim() %>%
-          str_split_1("\n")
-
-        output <- output %>%
-          {.[str_length(.) > 0]} %>%
-          {.[rep(c(FALSE, TRUE, FALSE), length(.) / 3)]} %>%
+          str_split_1("(\\n\\s+)+") %>%
           str_extract_all("[^A-Za-z ]+") %>%
+          {.[rep(c(FALSE, TRUE), length(.) / 2)]} %>%
           unlist() %>%
           as.numeric()
       }
