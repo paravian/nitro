@@ -279,8 +279,9 @@ OutputParser <- R6Class("OutputParser",
           extract2(2) %>%
           str_trim() %>%
           str_split_1("(\\n\\s+)+") %>%
+          extract(-1) %>%
+          str_replace("^[0-9]+\\s+", "") %>%
           str_extract_all("[^A-Za-z ]+") %>%
-          {.[rep(c(FALSE, TRUE), length(.) / 2)]} %>%
           unlist() %>%
           as.numeric()
       }

@@ -583,7 +583,6 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       queue$add("log", "stdout")
       queue$add("silent", "=all")
       queue$add("silent", "-console")
-      queue$add("tables", "=")
       queue$add("collapse", private$.zlb_rule)
 
       weight_queue <- NULL
