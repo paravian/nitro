@@ -170,14 +170,48 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
 
       print(options)
     },
-    #' @param ... Ignored.
-    queue = function (...) {
-      data_type <- private$.data_type
-      tax_names <- names(private$.matrix) %>%
-        {str_pad(., nchar(.) %>% max(), side = "right")}
-      taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
-        {glue("{tax_names} {.}")} %>%
-        as.character()
+    #' @param interleave A logical value indicating whether to interleave the
+    #'   command arguments for reading in the character states for each
+    #'   taxon. The default (\code{FALSE}) is suitable when only reading in a
+    #'   discrete character matrix; \code{TRUE} is required when a continuous
+    #'   matrix is combined with a discrete character matrix.
+    queue = function (interleave = FALSE) {
+      tax_names <- names(private$.matrix)
+      max_tax_len <- nchar(tax_names) %>% max()
+      tax_names <- tax_names %>%
+        {str_pad(., max_tax_len, side = "right")}
+
+
+      if (interleave) {
+        data_type <- private$.data_type
+
+        tokens <- PhyDatToMatrix(private$.matrix, parentheses = c("[", "]"))
+
+        # Calculate the maximum token length for each character and apply padding
+        max_token_lens <- apply(tokens, 2, function (x) nchar(x) %>% max())
+        for (n_token in seq(max_token_lens)) {
+          char_len <- max_token_lens[n_token]
+          if (char_len > 1) {
+            tokens[,n_token] <- str_pad(tokens[,n_token], width = char_len, side = "left")
+          }
+        }
+
+        # Write tokens into interleaved matrices given the maximum allowed space
+        max_char_len <- 254 - (max_tax_len + 1)
+        taxa <- c()
+        while (length(max_token_lens)) {
+          mask <- cumsum(max_token_lens) < max_char_len
+          mask_tokens <- apply(tokens[,mask], 1, paste, collapse = "") %>%
+            {glue("{tax_names} {.}")}
+          taxa <- c(taxa, glue("&[{data_type}]"), mask_tokens)
+          max_token_lens <- max_token_lens[!mask]
+          tokens <- tokens[,!mask]
+        }
+      } else {
+        taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
+          {glue("{tax_names} {.}")} %>%
+          as.character()
+      }
 
       queue <- CommandQueue$new()
       queue$add("xread", taxa)
