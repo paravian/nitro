@@ -51,16 +51,24 @@ execute_queue <- function (queue, .envir) {
         repl_input <- paste(repl_input, collapse = " ")
       }
       n_lines <- length(repl_input)
-      repl_input[n_lines] <- repl_input[n_lines] %>%
-        str_replace(";*$", ";")
 
+      repl_input[n_lines] <- repl_input[n_lines] %>%
+        str_replace(";*$", "")
       if (command$name == "xread") {
-        repl_input <- str_replace_all(repl_input, "(.{254})", "\\1\n")
+        repl_input <- c(repl_input, ";")
       } else {
-        repl_input <- str_wrap(repl_input, width = 254)
+        repl_input[n_lines] <- paste(repl_input[n_lines], ";", sep = "")
       }
-      repl_input <- str_split(repl_input, "\n") %>%
-        as.list()
+
+      repl_input <- str_wrap(repl_input, width = 254) %>%
+        str_split("\n") %>%
+        unlist()
+
+      if (any(nchar(repl_input) > 254)) {
+        repl_input <- str_replace_all(repl_input, "(.{254})", "\\1\n") %>%
+          str_split("\n") %>%
+          unlist()
+      }
 
       expected <- c("tnt_prompt", command$name)
       status <- "writing"
@@ -76,7 +84,7 @@ execute_queue <- function (queue, .envir) {
 
       if (is.null(output)) {
         cli_abort(c("No output received from TNT process.",
-                    "i" = "Attempted to execute {.arg {repl_input[[1]]}}"))
+                    "i" = "Attempted to execute {.arg {repl_input[1]}}"))
       }
 
       if (output$content_type == "error") {
@@ -103,7 +111,7 @@ execute_queue <- function (queue, .envir) {
             status <- "parsing"
           }
         } else {
-          repl_input[[1]] <- NULL
+          repl_input <- repl_input[-1]
           status <- "writing"
         }
       } else {
