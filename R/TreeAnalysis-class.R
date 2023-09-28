@@ -592,33 +592,52 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         queue$add(weight_cmd$name, weight_cmd$arguments)
       }
 
-      all_mtx <- c(continuous = self$continuous_matrix, discrete = self$discrete_matrix)
+      all_mtx <- c(
+        continuous = self$continuous_matrix,
+        discrete = self$discrete_matrix
+      )
+
       all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
         as.vector() %>%
         unique()
 
       queue$add("taxname", glue("+{nchar(all_taxa) %>% max() + 1}"))
 
-      ccode <- xread <- c()
+      mtx_chars <- sapply(all_mtx, `[[`, "n_characters")
+
+      xread <- glue("{n_char} {n_tax}",
+                    n_char = sum(mtx_chars),
+                    n_tax = length(all_taxa))
+
+      ccode <- c()
+
       n <- 0
-      for (mtx in all_mtx) {
+
+      for (n_mtx in seq(all_mtx)) {
+        mtx <- all_mtx[[n_mtx]]
         is_discrete <- test_class(mtx, c("DiscreteMatrix", "R6"))
-        mtx_args <- mtx$queue()$read_next()$arguments
+        is_continuous <- test_class(mtx, c("ContinuousMatrix", "R6"))
+
+        if (is_continuous) {
+          queue$add("nstates", "cont")
+        }
+
+        if (length(all_mtx) > 1 & is_discrete) {
+          xread <- c(xread, mtx$queue(interleave = TRUE)$read_next()$arguments)
+        } else {
+          xread <- c(xread, mtx$queue()$read_next()$arguments)
+        }
+
         if (is_discrete) {
           if (!test_null(mtx$ordered)) {
-            ccode <- c(ccode, glue("+ {paste(mtx$ordered - 1, collapse = \" \")}"))
+            ccode <- c(ccode, glue("+ {paste(mtx$ordered + n - 1, collapse = \" \")}"))
           }
-          if (length(all_mtx) == 1) {
-            mtx_args <- c(glue("{mtx$n_characters} {length(mtx$taxa)}"), mtx_args)
-          }
-        } else {
-          mtx_args <- c(glue("[&{mtx$data_type}]"), mtx_args)
         }
+
         if (!test_null(mtx$inactive)) {
           ccode <- c(ccode, glue("] {paste(mtx$inactive + n - 1, collapse = \" \")}"))
-          n <- n + mtx$n_characters
         }
-        xread <- c(xread, mtx_args)
+        n <- n + mtx$n_characters
       }
 
       queue$add("xread", xread)
