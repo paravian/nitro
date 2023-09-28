@@ -32,8 +32,10 @@ tnt_attach <- function (path, .envir = parent.frame()) {
 
   # Prepare TNT for interactive use
   assign("tnt_info", check_tnt_info, envir = .envir)
-  tnt_process <- tnt_process_start(.envir)
-  startup <- tnt_read(tnt_process, .envir)
+  tnt_process_start(.envir)
+  startup <- tnt_read(.envir)
+  check_tnt_info <- get("tnt_info", envir = .envir)
+  tnt_process <- check_tnt_info$process
 
   ready <- FALSE
   pul_warned <- FALSE
@@ -95,6 +97,6 @@ tnt_attach <- function (path, .envir = parent.frame()) {
   cli_alert_info("Found TNT version {tnt_info$number} ({tnt_info$date}, {tnt_info$bits} bit)")
 
   assign("tnt_info", tnt_info, envir = .envir)
-  cli_alert_success("TNT executable verified and registered.")
+  cli_alert_success("TNT executable verified and attached to {.val {format(.envir)}}.")
   invisible(tnt_process$kill())
 }

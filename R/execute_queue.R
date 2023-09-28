@@ -19,8 +19,8 @@ execute_queue <- function (queue, .envir) {
                 "x" = val_check))
   }
 
-  tnt_process <- tnt_process_start(.envir)
-  startup <- tnt_read(tnt_process, .envir)
+  tnt_process_start(.envir)
+  startup <- tnt_read(.envir)
 
   tnt_info <- get("tnt_info", .envir)
 
@@ -66,12 +66,12 @@ execute_queue <- function (queue, .envir) {
       status <- "writing"
     } else if (status == "writing") {
       if (length(repl_input) > 0) {
-        tnt_process$write_input(glue("{repl_input[[1]]}\r"))
-        # cli_text("Writing: {repl_input[[1]]}")
+        tnt_info$process$write_input(glue("{repl_input[1]}\r"))
+        # cli_text("Writing: {repl_input[1]}")
       }
       status <- "waiting"
     } else if (status == "waiting") {
-      output <- tnt_read(tnt_process, .envir)
+      output <- tnt_read(.envir)
       # cli_text("Reading: ({output$eos_type}; {output$content_type}) {output$value}")
 
       if (is.null(output)) {

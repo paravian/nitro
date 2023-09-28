@@ -1,8 +1,9 @@
 #' Read output from TNT
 #'
-#' @param process A process object running TNT.
+#' @importFrom cli cli_abort
+#' @importFrom checkmate check_environment check_class test_true test_list
 #' @param .envir The environment that TNT has been attached to.
-tnt_read <- function (process, .envir) {
+tnt_read <- function (.envir) {
   val_check <- check_environment(.envir)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg .envir} must be an environment.",
@@ -14,11 +15,14 @@ tnt_read <- function (process, .envir) {
     cli_abort(c("Could not find attached TNT process in {format(.envir)}"))
   }
 
-  if (!test_string(tnt_info$path)) {
-    cli_abort(c("Could not find path to TNT process."))
+  var_check <- check_class(tnt_info$process, c("process", "R6"))
+  if (!test_true(var_check)) {
+    cli_abort(c("Could not find TNT process.",
+                "x" = var_check))
   }
 
   # Check that the TNT subprocess is alive
+  process <- tnt_info$process
   if (!process$is_alive()) {
     cli_abort(c("Can't read to executable process.",
                 "x" = "The executable process has terminated."))

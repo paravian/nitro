@@ -35,5 +35,8 @@ tnt_process_start <- function (.envir) {
               "x" = "{.pkg nitro} does not currently support running on non UNIX-like platforms (i.e., Windows).")
   }
 
-  return(tnt_process)
+  tnt_info$process <- tnt_process
+  assign("tnt_info", tnt_info, envir = .envir)
+
+  return(invisible(TRUE))
 }
