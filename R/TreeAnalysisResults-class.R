@@ -6,6 +6,7 @@
 #' @importFrom ape .compressTipLabel
 #' @importFrom checkmate assert check_character check_class check_data_frame
 #'   check_numeric check_null check_number makeAssertCollection
+#' @importFrom dplyr full_join
 #' @importFrom treeio as_tibble
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom magrittr %>%
@@ -138,7 +139,7 @@ TreeAnalysisResults <- R6Class("TreeAnalysisResults",
         tree <- phy[[row]] %>%
           as_tibble()
         if (!is.null(tags)) {
-          tree <- merge(tree, tags, all.x = T)
+          tree <- full_join(tree, tags, by = "node")
         }
         tree <- as.treedata(tree)
         result <- tree_data[row,]

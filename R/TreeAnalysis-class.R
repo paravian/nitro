@@ -722,6 +722,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       if (!test_null(output$tags)) {
         output$phy <- output$tags$phy
         output$tags <- output$tags$tags
+        output$tags$node <- output$tags$node + 1
       }
 
       output$phy <- lapply(output$phy, function (x) {
