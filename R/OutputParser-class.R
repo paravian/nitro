@@ -44,7 +44,7 @@ OutputParser <- R6Class("OutputParser",
 
       # Define content matches for stream output
       private$content <- list(
-        error = "\a\a",
+        error = "\a+",
         lengths = "Tree lengths",
         min_length = "Minimum steps for [0-9]+ active taxa \\(total = ([0-9\\.]+)\\)",
         max_length = "Maximum steps for [0-9]+ active taxa \\(total = ([0-9\\.]+)\\)",
