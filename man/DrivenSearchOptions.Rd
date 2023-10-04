@@ -24,7 +24,7 @@ trees from each replication regardless of length.}
 \item{\code{multiply}}{A logical value indicating whether to find additional trees
 by fusing suboptimal trees with optimal trees.}
 
-\item{\code{sectorial_search}}{A list of objects of inheriting
+\item{\code{sectorial_search}}{One or a list of objects of inheriting
 \code{"\link{SectorialSearchBaseOptions}"}.}
 
 \item{\code{tree_fusing}}{An object of class \code{"\link{TreeFusingOptions}"}.}

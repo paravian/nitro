@@ -94,9 +94,9 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
         private$.multiply <- value
       }
     },
-    #' @field sectorial_search A list of objects of inheriting
+    #' @field sectorial_search One or a list of objects of inheriting
     #'   \code{"\link{SectorialSearchBaseOptions}"}.
-    sectorial_search = function (value) {
+    sectorial_search = function (value = c(RandomSectorialSearchOptions$new(), ConstrainedSectorialSearchOptions$new())) {
       if (missing(value)) {
         return(private$.sectorial_search)
       } else {
@@ -114,9 +114,8 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
                       "x" = val_check))
         }
 
-        if (is.null(value)) {
-          value <- list(RandomSectorialSearchOptions$new(),
-                        ConstrainedSectorialSearchOptions$new())
+        if (!test_multi_class(value, c("list", "NULL"))) {
+          value <- c(value)
         }
         private$.sectorial_search <- value
       }
