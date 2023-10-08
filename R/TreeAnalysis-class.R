@@ -563,14 +563,35 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       which_mtx <- (!sapply(all_mtx, test_null)) %>%
         {glue("{sum(.)} ({paste(names(all_mtx)[.], collapse = \", \")})")}
       inactive_taxa <- self$inactive_taxa %>%
-        {ifelse(!test_null(.), paste(., collapse = ", "), "None")}
-      # if(!test_null(private$.constraints)) {
-      #   cat(paste("* Constraints:", length(private$.constraints)))
-      # }
+        {ifelse(!test_null(.), as.character(length(.)), "None")}
+
+      n_constraints <- 0
+      if(!test_null(private$.constraints)) {
+        n_constraints <- length(private$.constraints)
+      }
+
+      weighting <- "Equal"
+      if (test_class(self$weighting, "ImpliedWeightingOptions")) {
+        weighting <- "Implied"
+      }
+
+      ta_method <- class(self$method)[1] %>%
+        str_replace_all(c("Options" = "", "([a-z])([A-Z])" = "\\1 \\2")) %>%
+        str_to_sentence()
 
       config <- c("Character matrices:" = which_mtx,
                   "Inactive taxa:" = inactive_taxa,
-                  "Outgroup:" = self$outgroup) %>%
+                  "Outgroup:" = self$outgroup,
+                  "Tree analysis method:" = ta_method,
+                  "Zero-length branch rule:" = str_to_sentence(self$zlb_rule))
+
+      if (n_constraints > 0) {
+        config <- c(config,
+                    "Constraints:" = n_constraints)
+      }
+
+      config <- c(config,
+                  "Weighting:" = weighting) %>%
         data.frame()
 
       names(config) <- NULL
