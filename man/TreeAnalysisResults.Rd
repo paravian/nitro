@@ -13,6 +13,8 @@
 \item{\code{trees}}{The trees generated from the analysis of \code{queue}.}
 
 \item{\code{queue}}{The \code{CommandQueue} object and generated the results.}
+
+\item{\code{statistics}}{The statistics associated with each tree in \code{trees}.}
 }
 \if{html}{\out{</div>}}
 }

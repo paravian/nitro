@@ -31,7 +31,20 @@ TreeAnalysisResults <- R6Class("TreeAnalysisResults",
       if (length(list(...)) == 0) {
         return(private$.queue$clone())
       } else {
-        cli_abort(c("{.arg trees} is a read-only attribute."))
+        cli_abort(c("{.arg queue} is a read-only attribute."))
+      }
+    },
+    #' @field statistics The statistics associated with each tree in \code{trees}.
+    statistics = function (...) {
+      if (length(list(...)) == 0) {
+        stat_df <- sapply(self$trees, function (x) x@info) %>%
+          apply(1, as.numeric) %>%
+          {cbind(tree = seq(nrow(.)), .)} %>%
+          as_tibble()
+
+        return(stat_df)
+      } else {
+        cli_abort(c("{.arg statistics} is a read-only attribute."))
       }
     }
   ),
