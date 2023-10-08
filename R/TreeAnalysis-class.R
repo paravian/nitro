@@ -30,7 +30,6 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     .method = NULL,
     .weights = NULL,
     .start_trees = NULL,
-    .combine = NULL,
     .hold = NULL,
     .max_ram = NULL,
     .timeout = NULL
