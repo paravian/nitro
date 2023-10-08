@@ -116,6 +116,10 @@ length branches. The options are:
  possible length of the branch is zero (the default); and
 \item \code{discard_tree}: discard all trees that must contain a zero
  length branch.
+\item \code{spr}: collapse an interior branch using subtree pruning and
+ reconnection (SPR) operations; and
+\item \code{tbr}: collapse an interior branch using tree bisection and
+ reconnection (TBR) operations.
 }}
 
 \item{\code{constraints}}{One or more \code{"\link{MonophylyConstraintOptions}"} objects.}
