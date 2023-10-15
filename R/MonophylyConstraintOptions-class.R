@@ -105,11 +105,11 @@ MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
       force_arg <- paste(self$fixed_otus, collapse = " ")
 
       if (!is.null(self$floating_otus)) {
-        force_arg <- glue("[ {force_arg} ({floating}) ]", floating = paste(self$floating_otus, collapse = " "))
+        force_arg <- glue("{force_arg} ({floating})", floating = paste(self$floating_otus, collapse = " "))
       }
 
       type <- ifelse(self$is_positive, "+", "-")
-      force_arg <- glue("{type} {force_arg}")
+      force_arg <- glue("{type} [ {force_arg} ]")
       queue$add("force", force_arg)
       return(queue)
     }
