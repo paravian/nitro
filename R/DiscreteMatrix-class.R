@@ -181,9 +181,9 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
       tax_names <- tax_names %>%
         {str_pad(., max_tax_len, side = "right")}
 
+      data_type <- private$.data_type
 
       if (interleave) {
-        data_type <- private$.data_type
 
         tokens <- PhyDatToMatrix(private$.matrix, parentheses = c("[", "]"))
 
@@ -211,6 +211,9 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
           {glue("{tax_names} {.}")} %>%
           as.character()
+        if (data_type != "numeric") {
+          taxa <- c(glue("&[{data_type}]"), taxa)
+        }
       }
 
       queue <- CommandQueue$new()
