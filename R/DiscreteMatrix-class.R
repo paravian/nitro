@@ -155,19 +155,21 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     print = function (...) {
       cli_text("{col_grey(\"# A TNT discrete matrix\")}")
 
-      log_lists <- as.list(self) %$%
-        list(self$ordered, self$inactive) %>%
-        {sapply(., function (x) ifelse(is.null(x), 0, length(x)))}
+      log_lists <- list(ordered = self$ordered, inactive = self$inactive) %>%
+        {lapply(., function (x) ifelse(is.null(x), 0, length(x)))}
 
-      options <- c(self$data_type, length(private$.matrix),
-                   attr(private$.matrix, "nr"), log_lists) %>%
-        data.frame()
+      options <- c("Data type:" = self$data_type,
+                   "Number of taxa:" = length(private$.matrix),
+                   "Number of characters:" = length(attr(private$.matrix, "index")),
+                   "Number of inactive characters:" = log_lists$inactive)
 
-      rownames(options) <- c("Data type:", "Number of taxa:",
-                             "Number of characters:", "Number of ordered characters:",
-                             "Number of inactive characters:")
+      if (self$data_type == "numeric") {
+        options <- c(options,
+                     "Number of ordered characters:" = log_lists$ordered)
+      }
+
+      options <- data.frame(options)
       names(options) <- NULL
-
       print(options)
     },
     #' @param interleave A logical value indicating whether to interleave the
