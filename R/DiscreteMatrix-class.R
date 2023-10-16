@@ -76,10 +76,15 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
           check_null(value),
           check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.matrix, "nr"), unique = TRUE, any.missing = FALSE),
           add = coll)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg ordered} must contain valid unique character indices.",
                       "x" = val_check))
         }
+
+        if (self$data_type != "numeric" & !test_null(value)) {
+          cli_abort(c("Ordering can only be applied to a matrix with numeric data type."))
+        }
+
         is_ordered <- rep(FALSE, self$n_characters)
         if (!is.null(value)) {
           is_ordered[value] <- TRUE
@@ -101,7 +106,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
           check_null(value),
           check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.matrix, "nr"), unique = TRUE, any.missing = FALSE),
           add = coll)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg inactive} must contain valid unique character indices.",
                       "x" = val_check))
         }
@@ -119,7 +124,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     #' @param inactive A numeric vector indicating which characters to mark as inactive.
     initialize = function (matrix, ordered = NULL, inactive = NULL) {
       val_check <- check_class(matrix, "phyDat")
-      if (!isTRUE(val_check)) {
+      if (!test_true(val_check)) {
         cli_abort(c("Matrix must be of a supported class."),
                   "x" = val_check)
       }
@@ -129,7 +134,6 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
       private$.symbols <- attr(private$.matrix, "levels") %>%
         as.character()
       private$.taxa <- names(private$.matrix)
-      self$ordered <- ordered
       self$inactive <- inactive
 
       data_type <- attr(private$.matrix, "type") %>%
@@ -139,7 +143,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         symbols <- matrix$symbols %>%
           {.[!. %in% noncoding]}
         val_check <- check_subset(symbols, as.character(0:9))
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           val_check <- str_replace_all(val_check, "(\\{|\\})", "\\1\\1")
           cli_abort(c("Discrete character matrices with user-defined symbols must be numeric.",
                       "x" = val_check))
@@ -150,6 +154,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
       }
 
       private$.data_type <- data_type
+      self$ordered <- ordered
     },
     #' @param ... Ignored.
     print = function (...) {
