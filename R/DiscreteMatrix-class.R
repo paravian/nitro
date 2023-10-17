@@ -9,7 +9,8 @@
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_pad str_to_lower
-#' @importFrom TreeTools PhyDatToString
+#' @importFrom tibble as_tibble
+#' @importFrom TreeTools PhyDatToMatrix PhyDatToString
 #' @export
 DiscreteMatrix <- R6Class("DiscreteMatrix",
   private = list(
@@ -23,6 +24,18 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     .taxa = NULL
   ),
   active = list(
+    #' @field data The discrete character-taxon matrix.
+    data = function (value) {
+      if (missing(value)) {
+        mtx_tbl <- PhyDatToMatrix(private$.data, parentheses = c("[", "]")) %>%
+          apply(1, paste, collapse = "") %>%
+          data.frame(taxon = names(.), characters = .) %>%
+          as_tibble()
+        return(mtx_tbl)
+      } else {
+        cli_abort(c("{.arg data} is a read-only attribute."))
+      }
+    },
     #' @field data_type The type of discrete character data contained in the matrix.
     data_type = function (value) {
       if (missing(value)) {

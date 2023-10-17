@@ -10,6 +10,8 @@
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{
+\item{\code{data}}{The discrete character-taxon matrix.}
+
 \item{\code{data_type}}{The type of discrete character data contained in the matrix.}
 
 \item{\code{taxa}}{The names of the taxa contained in the matrix.}
@@ -46,7 +48,7 @@
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{matrix}}{An \code{phyDat} discrete character matrix.}
+\item{\code{data}}{An \code{phyDat} discrete character matrix.}
 
 \item{\code{ordered}}{A numeric vector indicating which characters to mark as ordered.}
 
