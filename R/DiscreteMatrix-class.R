@@ -13,10 +13,10 @@
 #' @export
 DiscreteMatrix <- R6Class("DiscreteMatrix",
   private = list(
+    .data = NULL,
     .data_type = NULL,
     .is_inactive = NULL,
     .is_ordered = NULL,
-    .matrix = NULL,
     .n_characters = NULL,
     .n_states = NULL,
     .symbols = NULL,
@@ -74,7 +74,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         coll <- makeAssertCollection()
         val_check <- assert(
           check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.matrix, "nr"), unique = TRUE, any.missing = FALSE),
+          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.data, "nr"), unique = TRUE, any.missing = FALSE),
           add = coll)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg ordered} must contain valid unique character indices.",
@@ -95,7 +95,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     #' @field inactive A numeric vector indicating which characters to mark as inactive.
     inactive = function (value) {
       if (missing(value)) {
-        is_inactive <- !attr(private$.matrix, "active")
+        is_inactive <- !attr(private$.data, "active")
         if (any(is_inactive)) {
           return(which(is_inactive))
         }
@@ -104,7 +104,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         coll <- makeAssertCollection()
         val_check <- assert(
           check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.matrix, "nr"), unique = TRUE, any.missing = FALSE),
+          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.data, "nr"), unique = TRUE, any.missing = FALSE),
           add = coll)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg inactive} must contain valid unique character indices.",
@@ -114,33 +114,33 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         if (!is.null(value)) {
           is_active[value] <- FALSE
         }
-        attr(private$.matrix, "active") <- is_active
+        attr(private$.data, "active") <- is_active
       }
     }
   ),
   public = list(
-    #' @param matrix An \code{phyDat} discrete character matrix.
+    #' @param data An \code{phyDat} discrete character matrix.
     #' @param ordered A numeric vector indicating which characters to mark as ordered.
     #' @param inactive A numeric vector indicating which characters to mark as inactive.
-    initialize = function (matrix, ordered = NULL, inactive = NULL) {
-      val_check <- check_class(matrix, "phyDat")
+    initialize = function (data, ordered = NULL, inactive = NULL) {
+      val_check <- check_class(data, "phyDat")
       if (!test_true(val_check)) {
         cli_abort(c("Matrix must be of a supported class."),
                   "x" = val_check)
       }
-      private$.matrix <- matrix
-      private$.n_states <- attr(private$.matrix, "nc")
-      private$.n_characters <- length(attr(private$.matrix, "index"))
-      private$.symbols <- attr(private$.matrix, "levels") %>%
+      private$.data <- data
+      private$.n_states <- attr(private$.data, "nc")
+      private$.n_characters <- length(attr(private$.data, "index"))
+      private$.symbols <- attr(private$.data, "levels") %>%
         as.character()
-      private$.taxa <- names(private$.matrix)
+      private$.taxa <- names(private$.data)
       self$inactive <- inactive
 
-      data_type <- attr(private$.matrix, "type") %>%
+      data_type <- attr(private$.data, "type") %>%
         str_to_lower()
       if (data_type == "user") {
         noncoding <- c("?", "-")
-        symbols <- matrix$symbols %>%
+        symbols <- data$symbols %>%
           {.[!. %in% noncoding]}
         val_check <- check_subset(symbols, as.character(0:9))
         if (!test_true(val_check)) {
@@ -164,8 +164,8 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         {lapply(., function (x) ifelse(is.null(x), 0, length(x)))}
 
       options <- c("Data type:" = self$data_type,
-                   "Number of taxa:" = length(private$.matrix),
-                   "Number of characters:" = length(attr(private$.matrix, "index")),
+                   "Number of taxa:" = length(private$.data),
+                   "Number of characters:" = length(attr(private$.data, "index")),
                    "Number of inactive characters:" = log_lists$inactive)
 
       if (self$data_type == "numeric") {
@@ -177,13 +177,16 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
       names(options) <- NULL
       print(options)
     },
+    #' @description
+    #' Generate the command queue
+    #'
     #' @param interleave A logical value indicating whether to interleave the
     #'   command arguments for reading in the character states for each
     #'   taxon. The default (\code{FALSE}) is suitable when only reading in a
     #'   discrete character matrix; \code{TRUE} is required when a continuous
     #'   matrix is combined with a discrete character matrix.
     queue = function (interleave = FALSE) {
-      tax_names <- names(private$.matrix)
+      tax_names <- names(private$.data)
       max_tax_len <- nchar(tax_names) %>% max()
       tax_names <- tax_names %>%
         {str_pad(., max_tax_len, side = "right")}
@@ -191,8 +194,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
       data_type <- private$.data_type
 
       if (interleave) {
-
-        tokens <- PhyDatToMatrix(private$.matrix, parentheses = c("[", "]"))
+        tokens <- PhyDatToMatrix(private$.data, parentheses = c("[", "]"))
 
         # Calculate the maximum token length for each character and apply padding
         max_token_lens <- apply(tokens, 2, function (x) nchar(x) %>% max())
@@ -215,7 +217,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
           tokens <- tokens[,!mask]
         }
       } else {
-        taxa <- PhyDatToString(private$.matrix, parentheses = "[", concatenate = FALSE) %>%
+        taxa <- PhyDatToString(private$.data, parentheses = "[", concatenate = FALSE) %>%
           {glue("{tax_names} {.}")} %>%
           as.character()
         if (data_type != "numeric") {

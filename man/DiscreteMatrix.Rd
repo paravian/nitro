@@ -40,7 +40,7 @@
 \if{latex}{\out{\hypertarget{method-DiscreteMatrix-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$new(matrix, ordered = NULL, inactive = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$new(data = data, ordered = NULL, inactive = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
