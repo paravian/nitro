@@ -27,11 +27,7 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
     #' @field data The discrete character-taxon matrix.
     data = function (value) {
       if (missing(value)) {
-        mtx_tbl <- PhyDatToMatrix(private$.data, parentheses = c("[", "]")) %>%
-          apply(1, paste, collapse = "") %>%
-          data.frame(taxon = names(.), characters = .) %>%
-          as_tibble()
-        return(mtx_tbl)
+        return(private$.data)
       } else {
         cli_abort(c("{.arg data} is a read-only attribute."))
       }
