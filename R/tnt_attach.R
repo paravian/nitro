@@ -58,7 +58,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
         proc_read <- FALSE
         next
       }
-      tnt_process$write(response)
+      tnt_process$write_input(glue("{response}\r"))
     } else if (startup$eos_type == "agree") {
       if (proc_read) {
         cli_text(paste(startup$value, collapse = "\n"))
@@ -70,7 +70,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
         proc_read <- FALSE
         next
       }
-      tnt_process$write(glue("{response}"))
+      tnt_process$write_input(glue("{response}\r"))
       cli_alert_info("Please wait while TNT starts...")
     } else if (startup$eos_type == "tnt_prompt") {
       ready <- TRUE
@@ -80,7 +80,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
     proc_read <- TRUE
 
     if (proc_read) {
-      startup <- tnt_process$read()
+      startup <- tnt_read(.envir)
       if (is.null(startup)) {
         next
       }
