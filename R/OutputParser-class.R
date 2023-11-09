@@ -56,12 +56,9 @@ OutputParser <- R6Class("OutputParser",
                     "x" = val_check))
       }
 
-      if (!is.null(private$escapes)) {
-        cleaned <- str_replace_all(value, private$escapes, "")
-      }
-      cleaned <- str_split(cleaned, private$newline) %>%
-        unlist() %>%
-        {.[nchar(.) > 0]}
+      cleaned <- str_split_1(value, private$newline) %>%
+        str_trim() %>%
+        .[nchar(.) > 0]
       return(cleaned)
     },
     #' @param value A character vector.
