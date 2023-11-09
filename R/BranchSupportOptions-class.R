@@ -11,6 +11,7 @@ BranchSupportOptions <- R6Class("BranchSupportOptions",
   private = list(
     .index_type = NULL,
     .group_loss_cost = NULL,
+    .group_collapse_value = NULL,
     .suboptimal_steps = NULL,
     .relative_suboptimal_fit = NULL
   ),
@@ -101,6 +102,22 @@ BranchSupportOptions <- R6Class("BranchSupportOptions",
 
         private$.relative_suboptimal_fit <- value
       }
+    },
+    #' @field group_collapse_value An integer value indicating the support value
+    #'   below which groups in the tree will be collapsed. Can be zero or a
+    #'   negative number.
+    group_collapse_value = function (value) {
+      if (missing(value)) {
+        return(private$.group_collapse_value)
+      } else {
+        val_check <- check_int(value)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg group_collapse_support} must be an integer.",
+                      "x" = val_check))
+        }
+        
+        private$.group_collapse_value <- value
+      }
     }
   ),
   public = list(
@@ -111,11 +128,15 @@ BranchSupportOptions <- R6Class("BranchSupportOptions",
     #'   for losing a group in a suboptimal tree.
     #' @param suboptimal_steps An integer value indicating the maximum length
     #'   of suboptimal trees to keep during branch swapping.
+    #' @param group_collapse_value An integer value indicating the support value
+    #'   below which groups in the tree will be collapsed. Can be zero or a
+    #'   negative number.
     #' @param relative_suboptimal_fit A numeric value indicating the maximum
     #'   relative fit difference of suboptimal trees to use for calculating
     #'   supports.
     initialize = function (index_type = "absolute", group_loss_cost = "standard",
-                           suboptimal_steps = 10, relative_suboptimal_fit = NULL) {
+                           group_collapse_value = 1, suboptimal_steps = 10,
+                           relative_suboptimal_fit = NULL) {
       a <- as.list(environment(), all = TRUE)
 
       for (n in names(a)) {
@@ -129,6 +150,7 @@ BranchSupportOptions <- R6Class("BranchSupportOptions",
       options <- c(
         "Index type:" = self$index_type,
         "Group loss cost:" = self$group_loss_cost,
+        "Group collapse value:" = self$group_collapse_value,
         "Suboptimal steps:" = self$suboptimal_steps
       )
 
@@ -153,7 +175,8 @@ BranchSupportOptions <- R6Class("BranchSupportOptions",
       queue$add("subopt", subopt_arg)
 
       bs_args <- glue(
-        "{index_type} !{group_loss_cost}0",
+        "{index_type} ={group_collapse_value} !{group_loss_cost}0",
+        group_collapse_value = self$group_collapse_value,
         group_loss_cost = ifelse(self$group_loss_cost == "score_difference", "+", ""),
         index_type = ifelse(self$index_type == "relative", "[", "")
       )

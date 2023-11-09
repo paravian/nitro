@@ -24,6 +24,10 @@ for calculating supports.}
 \item{\code{relative_suboptimal_fit}}{A numeric value indicating the maximum
 relative fit difference of suboptimal trees to use for calculating
 supports.}
+
+\item{\code{group_collapse_value}}{An integer value indicating the support value
+below which groups in the tree will be collapsed. Can be zero or a
+negative number.}
 }
 \if{html}{\out{</div>}}
 }
@@ -44,6 +48,7 @@ supports.}
 \if{html}{\out{<div class="r">}}\preformatted{BranchSupportOptions$new(
   index_type = "absolute",
   group_loss_cost = "standard",
+  group_collapse_value = 1,
   suboptimal_steps = 10,
   relative_suboptimal_fit = NULL
 )}\if{html}{\out{</div>}}
@@ -58,6 +63,10 @@ calculate. Options are either \code{absolute} (default) or
 
 \item{\code{group_loss_cost}}{A character vector indicating what cost to use
 for losing a group in a suboptimal tree.}
+
+\item{\code{group_collapse_value}}{An integer value indicating the support value
+below which groups in the tree will be collapsed. Can be zero or a
+negative number.}
 
 \item{\code{suboptimal_steps}}{An integer value indicating the maximum length
 of suboptimal trees to keep during branch swapping.}
