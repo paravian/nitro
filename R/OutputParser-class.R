@@ -63,9 +63,9 @@ OutputParser <- R6Class("OutputParser",
     },
     #' @param value A character vector.
     content_detect = function (value) {
-      val_check <- check_character(value, min.len = 1, any.missing = FALSE)
+      val_check <- check_character(value, any.missing = FALSE)
       if (!isTRUE(val_check)) {
-        cli_abort(c("A properly formatted character vector must be supplied.",
+        cli_abort(c("A character vector must be supplied.",
                     "x" = val_check))
       }
 
@@ -115,9 +115,8 @@ OutputParser <- R6Class("OutputParser",
           lapply(read.tree, file = NULL) %>%
           .compressTipLabel()
       } else if (content_type == "tags") {
-        phy <- str_match(output, "^[0-9\\(\\) ]+\\;") %>%
-          na.omit() %>%
-          as.vector() %>%
+        phy <- str_match(output, "[0-9\\(\\) ]+\\;") %>%
+          extract(1) %>%
           str_replace_all(c(" " = ",", ",\\)" = "\\)", "\\)\\(" = "\\),\\(")) %>%
           read.tree(file = NULL) %>%
           list() %>%
@@ -144,7 +143,7 @@ OutputParser <- R6Class("OutputParser",
         type_pattern <- c("Standard B" = "b", "Jacknifing" = "jackknife", "(Relative )*[Bb]remer" = "branch")
 
         legend_re <- c("^(?<summary>[^,]+), [0-9]+ replicates, cut=[0-9]+ \\(tree [0-9]\\) - (?<type>(?:[A-Za-z]+ *?){1,2})(?: \\(P=[0-9]+\\))*$",
-                      "(?<type>[A-Za-z ]+) \\(from [0-9]+ trees, cut [0-9\\.]+\\)")
+                      "(?<type>[A-Za-z ]+) \\(from [0-9]+ trees, cut \\-?[0-9\\.]+\\)")
 
         legend <- str_match_all(output, output_re) %>%
           Reduce(f = rbind) %>%
@@ -171,14 +170,14 @@ OutputParser <- R6Class("OutputParser",
           extract(2) %>%
           as.numeric()
       } else {
-        output <- paste(output, collapse = " ") %>%
-          str_match(glue("{output_re}([^A-Za-z]+)")) %>%
+        n_header <- ifelse(private$platform == "unix", 1, 3)
+        output <- str_match(output, glue("{output_re}([^A-Za-z]+)")) %>%
           extract2(2) %>%
           str_trim() %>%
-          str_split_1("(\\n\\s+)+") %>%
-          extract(-1) %>%
-          str_replace("^[0-9]+\\s+", "") %>%
-          str_extract_all("[^A-Za-z ]+") %>%
+          str_split_1(glue("{private$newline}+")) %>%
+          extract(-seq(n_header)) %>%
+          str_remove_all("^\\s+[0-9]+") %>%
+          str_extract_all("[^A-Za-z\\s]+") %>%
           unlist() %>%
           as.numeric()
       }
