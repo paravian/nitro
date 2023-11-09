@@ -7,7 +7,7 @@
 #' @importFrom utils head tail
 #' @param tree_analysis A \code{"\link{TreeAnalysis}"} object.
 #' @param .envir The environment that TNT has been attached to.
-execute_queue <- function (tree_analysis, .envir) {
+execute_analysis <- function (tree_analysis, .envir) {
   val_check <- check_class(tree_analysis, c("TreeAnalysis", "R6"))
   if (!test_true(val_check)) {
     cli_abort(c("{.arg tree_analysis} must be a {.arg TreeAnalysis} object.",
