@@ -14,19 +14,27 @@
 #' @export
 OutputParser <- R6Class("OutputParser",
   private = list(
-    newline = NULL,
-    escapes = NULL,
     content = NULL,
+    newline = NULL,
+    platform = NULL,
     target = NULL
   ),
   public = list(
-    #' @param platform The name of the platform. Options are \code{unix} or \code{windows}.
-    initialize = function (platform) {
+    #' @param ... Ignored.
+    initialize = function (...) {
+      platform <- .Platform$OS.type
       val_check <- check_choice(platform, c("unix", "windows"))
       if (!isTRUE(val_check)) {
         cli_abort(c("{.arg platform} must be a valid platform.",
                     "x" = val_check))
       }
+
+      if (platform == "unix") {
+        private$newline <- "\n"
+      } else {
+        private$newline <- "\r\n"
+      }
+      private$platform <- platform
 
       # Define content matches for stream output
       private$content <- list(
@@ -39,14 +47,6 @@ OutputParser <- R6Class("OutputParser",
         tags = "Tree with tags",
         phy = "Tread 'set of [0-9]+ trees'"
       )
-
-      if (platform == "unix") {
-        private$newline <- "\r"
-        private$escapes <- "\033\\[.*"
-      } else {
-        cli_abort(c("Can't define parser for non-UNIX like platforms.",
-                    "x" = "You're using {.cls {platform}}."))
-      }
     },
     #' @param value A character vector.
     clean = function (value) {
