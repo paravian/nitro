@@ -604,6 +604,8 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     queue = function (...) {
       queue <- CommandQueue$new()
 
+      queue$add("echo", "=")
+      queue$add("screen", "25x10000")
       queue$add("log", "stdout")
       queue$add("silent", "=all")
       queue$add("silent", "-console")
@@ -708,7 +710,6 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         queue$add("ttags", ")")
         if (test_multi_class(private$.method, "ResampleBaseOptions")) {
           queue$add("unique")
-          queue$add("tplot", "*")
         }
         queue$add("ttags", "/")
       } else {
@@ -723,7 +724,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       }
       queue$add("minmax", "-<")
       queue$add("minmax", "->")
-      # queue$add("zzz")
+      queue$add("zzz")
       return(queue)
     },
     #' @param .envir The environment that TNT has been attached to.
