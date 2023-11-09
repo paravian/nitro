@@ -89,3 +89,20 @@ c.CommandQueue <- function (...) {
 
   return(obj)
 }
+
+#' Convert to character
+#' 
+#' @param queue A \code{CommandQueue} object.
+#' @export
+as.character.CommandQueue <- function (queue) {
+  all_cmds <- character(0)
+  while (queue$length() > 0) {
+    next_cmd <- queue$read_next()
+    tnt_cmd <- c(next_cmd$name, next_cmd$arguments, ";")
+    if (length(next_cmd$arguments) < 2) {
+      tnt_cmd <- paste(tnt_cmd, collapse = " ")
+    }
+    all_cmds <- c(all_cmds, tnt_cmd)
+  }
+  return(all_cmds)
+}
