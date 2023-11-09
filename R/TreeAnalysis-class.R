@@ -542,7 +542,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       }
 
       # Check that resampling analyses have a start tree
-      if (test_multi_class(method, c("ResampleBaseOptions"))) {
+      if (test_multi_class(method, c("ResampleBaseOptions", "BranchSupportOptions"))) {
         val_check <- check_class(start_trees, "phylo")
         if (!test_true(val_check)) {
           cli_abort(c("{.arg start_trees} must be a {.cls phylo} object when a {.arg method} is a resampling analysis.",
