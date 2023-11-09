@@ -10,7 +10,8 @@
 #' @importFrom magrittr %>% extract extract2 set_names
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_detect str_extract_all str_length str_match
-#'   str_match_all str_replace_all str_split str_to_lower str_trim str_which
+#'   str_match_all str_remove_all str_replace_all str_split str_to_lower
+#'   str_trim str_which
 #' @export
 OutputParser <- R6Class("OutputParser",
   private = list(
