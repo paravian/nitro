@@ -735,7 +735,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
                     "x" = val_check))
       }
 
-      output <- execute_queue(self$queue(), .envir)
+      output <- execute_analysis(self, .envir)
       output$queue <- self$queue()
 
       all_taxa <- c(continuous = self$continuous_matrix,
