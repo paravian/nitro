@@ -12,8 +12,6 @@
 \item \href{#method-OutputParser-new}{\code{OutputParser$new()}}
 \item \href{#method-OutputParser-clean}{\code{OutputParser$clean()}}
 \item \href{#method-OutputParser-content_detect}{\code{OutputParser$content_detect()}}
-\item \href{#method-OutputParser-eos_detect}{\code{OutputParser$eos_detect()}}
-\item \href{#method-OutputParser-progress}{\code{OutputParser$progress()}}
 \item \href{#method-OutputParser-transform}{\code{OutputParser$transform()}}
 \item \href{#method-OutputParser-clone}{\code{OutputParser$clone()}}
 }
@@ -23,13 +21,13 @@
 \if{latex}{\out{\hypertarget{method-OutputParser-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OutputParser$new(platform)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{OutputParser$new(...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{platform}}{The name of the platform. Options are \code{unix} or \code{windows}.}
+\item{\code{...}}{Ignored.}
 }
 \if{html}{\out{</div>}}
 }
@@ -61,43 +59,7 @@
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{value}}{A character vector.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OutputParser-eos_detect"></a>}}
-\if{latex}{\out{\hypertarget{method-OutputParser-eos_detect}{}}}
-\subsection{Method \code{eos_detect()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OutputParser$eos_detect(value)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{value}}{A character vector.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-OutputParser-progress"></a>}}
-\if{latex}{\out{\hypertarget{method-OutputParser-progress}{}}}
-\subsection{Method \code{progress()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{OutputParser$progress(name, arguments, output)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{A character vector containing the name of a TNT command.}
-
-\item{\code{arguments}}{A character vector containing the arguments for \code{name}.}
-
-\item{\code{output}}{A character vector containing the output of \code{command}.
+\item{\code{value}}{A character vector.
 Parse raw TNT tree output}
 }
 \if{html}{\out{</div>}}

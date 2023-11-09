@@ -4,6 +4,11 @@
 \alias{DiscreteMatrix}
 \title{Create a discrete character matrix}
 \description{
+Create a discrete character matrix
+
+Create a discrete character matrix
+}
+\details{
 \code{DiscreteMatrix} is an R6 class that contains a discrete character
   matrix and functions for modifying character activity and ordering.
 }
@@ -42,7 +47,7 @@
 \if{latex}{\out{\hypertarget{method-DiscreteMatrix-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$new(data = data, ordered = NULL, inactive = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$new(data, ordered = NULL, inactive = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -77,6 +82,7 @@
 \if{html}{\out{<a id="method-DiscreteMatrix-queue"></a>}}
 \if{latex}{\out{\hypertarget{method-DiscreteMatrix-queue}{}}}
 \subsection{Method \code{queue()}}{
+Generate the command queue
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$queue(interleave = FALSE)}\if{html}{\out{</div>}}
 }
