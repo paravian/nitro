@@ -16,7 +16,6 @@ OutputParser <- R6Class("OutputParser",
   private = list(
     newline = NULL,
     escapes = NULL,
-    eos = NULL,
     content = NULL,
     target = NULL
   ),
@@ -28,19 +27,6 @@ OutputParser <- R6Class("OutputParser",
         cli_abort(c("{.arg platform} must be a valid platform.",
                     "x" = val_check))
       }
-      # Define all of the end of stream types
-      private$eos <- list(
-        licence = c("(press 'y' to accept, 'n' to decline)", "(Please, 'y' or 'n')"),
-        agree = "Do you agree to all the terms and conditions?",
-        tnt_prompt = "tnt\\*>",
-        xread = "xread>",
-        force = "force>",
-        resample = "resample>",
-        taxcode = "taxcode>",
-        tread = "tread>",
-        resample_progress = "([A-Za-z]+) \\(rep\\. ([0-9]+) of ([0-9]+)\\) X*=+",
-        search_progress = "([0-9]+) +[A-Z]+ +(?:[0-9]+ of )*([0-9]+) +(?:[0-9\\.]+|-+) +([0-9\\.]+|-+) +[0-9:]+ +[0-9,]+"
-      )
 
       # Define content matches for stream output
       private$content <- list(
@@ -101,25 +87,6 @@ OutputParser <- R6Class("OutputParser",
       }
       return(content_type)
     },
-    #' @param value A character vector.
-    eos_detect = function (value) {
-      val_check <- check_character(value, min.len = 1, any.missing = FALSE)
-      if (!isTRUE(val_check)) {
-        cli_abort(c("A properly formatted character vector must be supplied.",
-                    "x" = val_check))
-      }
-
-      eos_type <- NULL
-
-      eos_detects <- sapply(private$eos, function (x) any(str_detect(value, pattern = x)))
-      if (any(eos_detects)) {
-        eos_type <- names(private$eos)[which(eos_detects)[1]]
-      }
-      return(eos_type)
-    },
-    #' @param name A character vector containing the name of a TNT command.
-    #' @param arguments A character vector containing the arguments for \code{name}.
-    #' @param output A character vector containing the output of \code{command}.
     progress = function (name, arguments, output) {
       # cli_text(output$value)
       val_check <- check_string(name, min.chars = 1)
