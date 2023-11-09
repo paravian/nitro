@@ -40,13 +40,6 @@ OutputParser <- R6Class("OutputParser",
         phy = "Tread 'set of [0-9]+ trees'"
       )
 
-      private$target <- list(
-        ratchet = "iter (?<count>[0-9]+)",
-        mult = "replic (?<count>[0-9]+)",
-        xmult = "hits (?<round>[0-9]+) replications (?<count>[0-9]+)",
-        resample = "[a-z]+ from 0 replications (?<count>[0-9]+)"
-      )
-
       if (platform == "unix") {
         private$newline <- "\r"
         private$escapes <- "\033\\[.*"
@@ -86,66 +79,6 @@ OutputParser <- R6Class("OutputParser",
         content_type <- names(private$content)[which(content_detects)[1]]
       }
       return(content_type)
-    },
-    progress = function (name, arguments, output) {
-      # cli_text(output$value)
-      val_check <- check_string(name, min.chars = 1)
-      if (!isTRUE(val_check)) {
-        cli_abort(c("{.arg arguments} must be a string.",
-                    "x" = val_check))
-      }
-      val_check <- check_character(arguments, min.chars = 1, any.missing = FALSE, min.len = 1)
-      if (!isTRUE(val_check)) {
-        cli_abort(c("{.arg arguments} must be a character vector.",
-                    "x" = val_check))
-      }
-
-      coll <- makeAssertCollection()
-      assert(
-        check_list(output, types = "character", names = "named"),
-        check_subset(names(output), c("eos_type", "content_type", "value")),
-        combine = "and", add = coll
-      )
-      val_check <- coll$getMessages()
-      if (!coll$isEmpty()) {
-        val_check <- str_replace_all(val_check, "(\\{|\\})", "\\1\\1")
-        cli_abort(c("{.arg output} must be a named list.",
-                    "x" = val_check))
-      }
-
-      if (name == "xmult") {
-        progress_re <- "^(?<round>[0-9]+) +[A-Z]+ +(?<count>[0-9]+)"
-      } else if (name == "resample") {
-        progress_re <- "^[A-Za-z]+ \\(rep\\. (?<count>[0-9]+) of [0-9]+\\)"
-      } else {
-        progress_re <- "^(?<count>[0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+"
-      }
-
-      prog_vars <- str_match(output$value, progress_re) %>%
-        na.omit() %>%
-        extract(,-1) %>%
-        sapply(as.numeric) %>%
-        as.list()
-
-      target_vars <- str_match(arguments, private$target[[name]]) %>%
-        na.omit() %>%
-        extract(,-1) %>%
-        sapply(as.numeric) %>%
-        as.list()
-
-      if ("round" %in% names(prog_vars)) {
-        denominator <- with(target_vars, round * count)
-        numerator <- prog_vars$round * target_vars$count + (prog_vars$count - 1)
-        if ((numerator / denominator) > 1) {
-          numerator <- (prog_vars$round - 1) * target_vars$count + (prog_vars$count - 1)
-        }
-      } else {
-        denominator <- target_vars$count
-        numerator <- prog_vars$count
-      }
-
-      percent <- numerator / denominator * 100
-      return(percent)
     },
     #' Parse raw TNT tree output
     #'
