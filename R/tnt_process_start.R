@@ -41,7 +41,8 @@ tnt_process_start <- function (.envir, queue = NULL) {
   } else {
     if (tnt_info$platform == "unix") {
       proc_args$pty <- TRUE
-      stdin = "|"
+      proc_args$stdout <- NULL
+      proc_args$stderr <- NULL
     }
   }
   

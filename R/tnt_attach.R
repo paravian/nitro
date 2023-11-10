@@ -9,7 +9,7 @@
 #'   cli_alert_success cli_text
 #' @importFrom glue glue
 #' @importFrom stats na.omit
-#' @importFrom stringr str_extract str_match
+#' @importFrom stringr str_detect str_extract str_match
 #' @export
 tnt_attach <- function (path, .envir = parent.frame()) {
   val_check <- check_string(path)
@@ -43,6 +43,11 @@ tnt_attach <- function (path, .envir = parent.frame()) {
   check_tnt_info <- get("tnt_info", envir = .envir)
   tnt_process <- check_tnt_info$process
 
+  conn_id <- 2
+  if (!tnt_process$has_error_connection()) {
+    conn_id <- 1
+  }
+  
   prompts <- list(
     yesno = "(press 'y' to accept, 'n' to decline)",
     agree = "Do you agree to all the terms and conditions?",
@@ -58,22 +63,31 @@ tnt_attach <- function (path, .envir = parent.frame()) {
     if (proc_read) {
       proc_poll <- tnt_process$poll_io(5000)
       
-      if (proc_poll[2] != "ready") {
+      if (proc_poll[conn_id] != "ready") {
         next
       }
       
-      proc_out <- tnt_process$read_error() %>%
-        check_tnt_info$parser$clean()
+      if (conn_id == 1) {
+        proc_out <- tnt_process$read_output()
+      } else {
+        proc_out <- tnt_process$read_error()
+      }
+      buffer <- paste(buffer, proc_out)
       
       if (length(proc_out) == 0) {
         next
       }
       
-      prompt_match <- sapply(prompts, str_detect, string = proc_out) %>%
-        apply(2, any) %>%
-        names(prompts)[.]
+      prompt_match <- sapply(prompts, str_detect, string = buffer)
+      
+      if (!any(prompt_match)) {
+        next
+      }
+      
+      prompt_match <- names(prompts)[prompt_match]
     }
     
+    buffer <- check_tnt_info$parser$clean(buffer)
     
     if ("yesno" %in% prompt_match) {
       if (!pul_warned) {
@@ -87,7 +101,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
       }
       
       if (proc_read) {
-        cli_text(proc_out)
+        cli_text(buffer)
       }
       
       response <- readline(prompt = "Please enter [y]es or [n]o: ")
@@ -100,7 +114,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
       tnt_process$write_input(response)
     } else if ("agree" %in% prompt_match) {
       if (proc_read) {
-        cli_text(proc_out)
+        cli_text(buffer)
       }
       
       response <- readline(prompt = "Please enter \"I agree\": ")
@@ -118,6 +132,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
       break
     }
 
+    buffer <- character()
     proc_read <- TRUE
   }
 
@@ -127,7 +142,7 @@ tnt_attach <- function (path, .envir = parent.frame()) {
     version_re <- "Version (?<number>[0-9]+\\.[0-9]+) - [0-9]+ bits - \\((?<date>[A-Za-z]+ [0-9]{4})\\)"
   }
   
-  tnt_info <- str_extract(proc_out, version_re) %>%
+  tnt_info <- str_extract(buffer, version_re) %>%
     na.omit() %>%
     str_match(version_re) %>%
     extract(1,-1) %>%
