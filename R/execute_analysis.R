@@ -77,11 +77,6 @@ execute_analysis <- function (tree_analysis, .envir) {
         
         raw_out <- c(raw_out, head(cmd_out, -1))
         buffer <- tail(cmd_out, 1)
-        
-        buff_size <- nchar(str_trim(buffer))
-        if (!tnt_process$is_alive() & buff_size == 0) {
-          done <- TRUE
-        }
       } else if (has_counter) {
         progress <- str_match(proc_out, progress_re) %>%
           extract(1,) %>%
@@ -103,6 +98,11 @@ execute_analysis <- function (tree_analysis, .envir) {
         cli_progress_update(set = percent, .envir = pb_envir)
       } else {
         buffer <- paste(buffer, proc_out, sep = "")
+      }
+      
+      buff_size <- nchar(str_trim(buffer))
+      if (!tnt_process$is_alive() & buff_size == 0) {
+        done <- TRUE
       }
     }
   }
