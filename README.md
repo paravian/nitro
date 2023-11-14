@@ -9,91 +9,25 @@ function automatically returns a set of trees for visualisation or use with
 other R packages.
 
 ## Installation
+ 
 
-`nitro` can be installed directly from this Github repository using `devtools`:
+`nitro` is not currently available on CRAN and must be installed directly from
+this repository. Firstly, install the `treeio` package, which is made available
+via [Bioconductor](https://bioconductor.org) and which can be installed using
+the R package `BiocManager`:
 
 ```
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("treeio")
+```
+
+Then install `nitro` from this repository using `devtools`:
+
+```
+if (!require("devtools", quietly = TRUE))
+    install.packages("devtools")
 devtools::install_github("paravian/nitro")
-```
-
-## Basic usage
-
-`nitro` requires the command line version (not the menu-driven graphical
-version) of TNT. Windows, macOS and Linux versions of TNT are available at
-[http://www.lillo.org.ar/phylogeny/tnt/](http://www.lillo.org.ar/phylogeny/tnt/). Once
-the files have been extracted from the `.zip` file, TNT can be prepared for use
-in R by creating a new `TNTProcess` [R6](https://r6.r-lib.org/) object and
-specifying the path of the executable:
-
-```
-library(nitro)
-
-tnt_path <- "Downloads/tnt-linux/binaries/tnt"
-TNTProcess$new(path = tnt_path)
-```
-
-If this is the first time that you have run TNT, you will be prompted to accept
-TNT's licence agreement. Read and follow the on-screen instructions until you
-receive the following notification:
-
-```
-✔ TNT executable verified and ready.
-```
-
-The following example shows the generation of a set of most parsimonious trees
-using TNT's branch swapping method and the calculation and
-visualisation of a strict consensus tree. Like the `TNTProcess` object, options
-for tree searches, weighting strategies, resampling, branch support and
-topological constraints are defined with R6 classes in `nitro`. These classes
-provide a simple yet flexible framework for quickly constructing and modifying
-the components of a phylogenetic analysis.
-
-`nitro` provides the `DiscreteMatrix` R6 class for including data from discrete character-taxon matrices. `DiscreteMatrix` accepts `phyDat` matrix objects which
-can be created easily using
-[`TreeTools`](https://cran.r-project.org/package=TreeTools),
-either directly from Nexus or TNT files using `ReadAsPhyDat` or
-`ReadTntAsPhyDat` respectively, or directly from a `matrix` object using
-`MatrixToPhyDat`:
-
-```
-library(TreeTools)
-mtx <- DiscreteMatrix$new(matrix = ReadAsPhyDat("matrix.nex"))
-```
-
-`DiscreteMatrix` also contains methods for setting the ordering and activity
-status of characters.
-
-Individual analyses are configured using the `TreeAnalysis` R6 object. A
-`TreeAnalysis` object specifies the matrix and the tree analysis method to use,
-as well as other properties such as taxon activity, outgroup taxon,
-zero-length branch rule, topological constraints and character weighting
-strategy. Once created, a `TreeAnalysis` object can be executed with its `run`
-method:
-
-```
-branch_swap <- BranchSwappingOptions$new(replications = 1000, hold_rep = 10)
-tree_search <- TreeAnalysis$new(discrete_matrix = matrix, method = branch_swap, hold = 100)
-res <- tree_search$run()
-```
-  
-Results from `TreeAnalysis` runs are `TreeAnalysisResults` R6 objects. The
-`trees` attribute of a `TreeAnalysisResults` object is a list of 
-[`treedata`](https://yulab-smu.top/treedata-book/chapter2.html) trees.
-`TreeAnalysis` automatically calculates the consistency, retention and
-rescaled consistency indices for all trees, and can additionally annotate trees
-with data such as resampling and branch supports, when those analysis methods
-are used. `treedata` trees can be visualised as publication quality figures with
-[`ggtree`](https://yulab-smu.top/treedata-book/chapter4.html). However, trees
-from a `TreeAnalysisResults` object can be easily converted into the standard
-`phylo` objects used by [`ape`](https://cran.r-project.org/package=ape) using
-the generic `as.multiPhylo` function from `TreeTools`. This allows the 
-use of any function that accepts `phylo` objects to quickly process and
-visualise the results of tree analyses:
-
-```
-phys <- as.multiPhylo(res)
-cons <- consensus(phys, rooted = TRUE)
-plot(ladderize(cons), no.margin = TRUE)
 ```
 
 # Features
