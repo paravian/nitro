@@ -648,11 +648,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
           queue$add("nstates", "cont")
         }
 
-        if (length(all_mtx) > 1 & is_discrete) {
-          xread <- c(xread, mtx$queue(interleave = TRUE)$read_next()$arguments)
-        } else {
-          xread <- c(xread, mtx$queue()$read_next()$arguments)
-        }
+        xread <- c(xread, mtx$queue()$read_next()$arguments)
 
         if (is_discrete) {
           if (!test_null(mtx$ordered)) {

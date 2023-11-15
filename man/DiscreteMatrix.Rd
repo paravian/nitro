@@ -84,17 +84,13 @@ Create a discrete character matrix
 \subsection{Method \code{queue()}}{
 Generate the command queue
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$queue(interleave = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$queue(...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{interleave}}{A logical value indicating whether to interleave the
-command arguments for reading in the character states for each
-taxon. The default (\code{FALSE}) is suitable when only reading in a
-discrete character matrix; \code{TRUE} is required when a continuous
-matrix is combined with a discrete character matrix.}
+\item{\code{...}}{Ignored.}
 }
 \if{html}{\out{</div>}}
 }
