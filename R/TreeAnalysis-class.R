@@ -28,7 +28,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     .zlb_rule = NULL,
     .constraints = NULL,
     .method = NULL,
-    .weights = NULL,
+    .weighting = NULL,
     .start_trees = NULL,
     .hold = NULL,
     .max_ram = NULL,
@@ -371,11 +371,11 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         private$.constraints <- obj
       }
     },
-    #' @field weights An object containing configuration options for character
+    #' @field weighting An object containing configuration options for character
     #'  weighting.
-    weights = function (value) {
+    weighting = function (value) {
       if (missing(value)) {
-        return(private$.weights)
+        return(private$.weighting)
       } else {
         coll <- makeAssertCollection()
         assert(
@@ -385,11 +385,11 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         )
         val_check <- reportAssertions(coll)
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg weights} must contain a valid weighting configuration.",
+          cli_abort(c("{.arg weighting} must contain a valid weighting configuration.",
                       "x" = val_check))
         }
 
-        private$.weights <- value
+        private$.weighting <- value
       }
     },
     #' @field start_trees A \code{phylo} or \code{multiPhylo} of trees to load
@@ -506,7 +506,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     #'    reconnection (TBR) operations.
     #'   }
     #' @param constraints One or more \code{"\link{MonophylyConstraintOptions}"} objects.
-    #' @param weights An object containing configuration options for character
+    #' @param weighting An object containing configuration options for character
     #'  weighting.
     #' @param start_trees A \code{phylo} or \code{multiPhylo} of trees to load
     #'  prior to starting the tree analysis.
@@ -519,7 +519,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
     initialize = function (method, discrete_matrix = NULL,
                            continuous_matrix = NULL, inactive_taxa = NULL,
                            outgroup = NULL, zlb_rule = "minimum",
-                           constraints = NULL, weights = NULL,
+                           constraints = NULL, weighting = NULL,
                            start_trees = NULL, hold = 100, max_ram = 16,
                            timeout = NULL) {
       a <- as.list(environment(), all = TRUE)
@@ -612,8 +612,8 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       queue$add("collapse", private$.zlb_rule)
 
       weight_queue <- NULL
-      if (test_class(self$weights, c("ImpliedWeightingOptions", "R6"))) {
-        weight_queue <- self$weights$queue()
+      if (test_class(self$weighting, c("ImpliedWeightingOptions", "R6"))) {
+        weight_queue <- self$weighting$queue()
         weight_cmd <- weight_queue$read_next()
         queue$add(weight_cmd$name, weight_cmd$arguments)
       }
@@ -715,7 +715,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
       }
 
       queue$add("length")
-      if (test_class(self$weights, c("ImpliedWeightingOptions", "R6"))) {
+      if (test_class(self$weighting, c("ImpliedWeightingOptions", "R6"))) {
         queue$add("score")
       }
       queue$add("minmax", "-<")
@@ -757,7 +757,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         .compressTipLabel()
 
       if (!test_null(output$legend)) {
-        # weight_legend <- ifelse(test_class(self$weights, "ImpliedWeightingOptions"), "adjusted homoplasy score", "steps")
+        # weight_legend <- ifelse(test_class(self$weighting, "ImpliedWeightingOptions"), "adjusted homoplasy score", "steps")
         output$legend <- mutate(
           output$legend,
           # weight = weight_legend,

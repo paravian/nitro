@@ -41,7 +41,7 @@ length branches. The options are:
 
 \item{\code{constraints}}{One or more \code{"\link{MonophylyConstraintOptions}"} objects.}
 
-\item{\code{weights}}{An object containing configuration options for character
+\item{\code{weighting}}{An object containing configuration options for character
 weighting.}
 
 \item{\code{start_trees}}{A \code{phylo} or \code{multiPhylo} of trees to load
@@ -81,7 +81,7 @@ allow a search to run for before terminating.}
   outgroup = NULL,
   zlb_rule = "minimum",
   constraints = NULL,
-  weights = NULL,
+  weighting = NULL,
   start_trees = NULL,
   hold = 100,
   max_ram = 16,
@@ -124,7 +124,7 @@ length branches. The options are:
 
 \item{\code{constraints}}{One or more \code{"\link{MonophylyConstraintOptions}"} objects.}
 
-\item{\code{weights}}{An object containing configuration options for character
+\item{\code{weighting}}{An object containing configuration options for character
 weighting.}
 
 \item{\code{start_trees}}{A \code{phylo} or \code{multiPhylo} of trees to load
