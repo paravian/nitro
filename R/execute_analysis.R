@@ -24,6 +24,7 @@ execute_analysis <- function (tree_analysis, .envir) {
   if (test_class(tree_analysis$method, "DrivenSearchOptions")) {
     progress_re <- "(?<round>[0-9]+) +[A-Z]+ +(?<count>[0-9]+)"
     target$rounds <- tree_analysis$method$hits
+    target$count <- tree_analysis$method$replications
   } else if (test_class(tree_analysis$method, "ResampleBaseOptions")) {
     progress_re <- "[A-Za-z]+ \\(rep\\. (?<count>[0-9]+) of [0-9]+\\)"
     target$count <- tree_analysis$method$replications
@@ -85,7 +86,7 @@ execute_analysis <- function (tree_analysis, .envir) {
           lapply(as.numeric)
         
         if ("round" %in% names(progress)) {
-          denominator <- with(target, round * count)
+          denominator <- with(target, rounds * count)
           numerator <- progress$round * target$count + (progress$count - 1)
           if ((numerator / denominator) > 1) {
             numerator <- (progress$round - 1) * target$count + (progress$count - 1)
