@@ -147,6 +147,10 @@ TreeAnalysisResults <- R6Class("TreeAnalysisResults",
           tree_data$RC <- tree_data$CI * tree_data$RI
         }
       }
+      
+      if (!is.null(tags)) {
+        tags$node <- tags$node - 1
+      }
 
       trees <- lapply(seq(nrow(tree_data)), function (row) {
         tree <- phy[[row]] %>%
