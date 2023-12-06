@@ -262,7 +262,7 @@ DrivenSearchOptions <- R6Class("DrivenSearchOptions",
       }
 
       options <- c("Iterations:" = self$replications,
-                   "Substitutions:" = self$hits, options) %>%
+                   "Hits:" = self$hits, options) %>%
         data.frame()
 
       colnames(options) <- NULL
