@@ -2,8 +2,11 @@ Package: nitro
 Type: Package
 Title: Integration of TNT in R
 Version: 0.2.0
-Author: Sienna Birch
-Maintainer: Sienna Birch <contact@paravian.net>
+Authors@R: c(
+  person("Sienna A.", "Birch", role = c("aut", "cre", "cph"), 
+         email = "sbirch8@une.edu.au",
+         comment = c(ORCID = "0000-0002-2771-536X"))
+         )
 Description: Integration of the phylogenetics software TNT (Goloboff et al.
     2008, Goloboff and Catalano 2016) in R. It interfaces with a locally
     installed copy of the TNT command-line program and provides functions for
