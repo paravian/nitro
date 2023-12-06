@@ -213,6 +213,7 @@ TreeAnalysis <- R6Class("TreeAnalysis",
 
         val_check <- check_subset(value, all_taxa)
         if (!test_true(val_check)) {
+          val_check <- str_replace_all(val_check, "(\\{|\\})", "\\1\\1")
           cli_abort(c("{.arg inactive_taxa} must contain taxa present in {.arg matrix}.",
                       "x" = val_check))
         }
