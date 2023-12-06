@@ -51,10 +51,10 @@ execute_analysis <- function (tree_analysis, .envir) {
   tnt_info <- get("tnt_info", .envir)
   tnt_process <- tnt_info$process
   
-  read_next <- TRUE
   cmd_name <- "start"
   buffer <- character()
   cmd_re <- "COMMAND: (?<cmdname>[A-Z]+)"
+  err_re <- "\a+(.+)"
   
   raw_out <- c()
   
@@ -65,10 +65,17 @@ execute_analysis <- function (tree_analysis, .envir) {
     if (proc_poll[2] == "ready") {
       proc_out <- tnt_process$read_error()
       
-      # print(proc_out)
-      
       has_cmd <- str_detect(proc_out, cmd_re)
       has_counter <- str_detect(proc_out, progress_re)
+      
+      err_check <- str_detect(proc_out, err_re)
+      if (any(err_check)) {
+        tnt_process$kill()
+        tnt_err <- str_match(proc_out[which(err_check)], err_re) %>%
+          extract(2)
+        cli_abort(c("A TNT error occurred, cannot continue.",
+                    "x" = tnt_err))
+      }
       
       if (has_cmd) {
         # Merge the buffer with the process output; split by command and write
