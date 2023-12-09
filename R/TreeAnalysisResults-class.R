@@ -148,6 +148,10 @@ TreeAnalysisResults <- R6Class("TreeAnalysisResults",
           tree_data$RI <- (max_length - lengths) / (max_length - min_length)
           tree_data$RC <- tree_data$CI * tree_data$RI
         }
+        
+        if (!is.null(adjusted_homoplasy_scores)) {
+          tree_data$adjusted_homoplasy_scores <- adjusted_homoplasy_scores
+        }
       }
       
       if (!is.null(tags)) {
