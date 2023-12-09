@@ -6,7 +6,8 @@
 #' @importFrom ape .compressTipLabel
 #' @importFrom checkmate assert check_character check_class check_data_frame
 #'   check_numeric check_null check_number makeAssertCollection
-#' @importFrom dplyr full_join
+#' @importFrom dplyr full_join everything
+#' @importFrom tidyr unnest
 #' @importFrom treeio as_tibble
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom magrittr %>%
@@ -37,10 +38,11 @@ TreeAnalysisResults <- R6Class("TreeAnalysisResults",
     #' @field statistics The statistics associated with each tree in \code{trees}.
     statistics = function (...) {
       if (length(list(...)) == 0) {
-        stat_df <- sapply(self$trees, function (x) x@info) %>%
-          apply(1, as.numeric) %>%
-          {cbind(tree = seq(nrow(.)), .)} %>%
-          as_tibble()
+        stat_df <- lapply(self$trees, function (x) x@info) %>%
+          Reduce(f = rbind) %>%
+          as_tibble() %>%
+          unnest(cols = everything()) %>%
+          bind_cols(tree = seq(nrow(.)), .)
 
         return(stat_df)
       } else {
