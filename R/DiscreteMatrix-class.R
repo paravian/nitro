@@ -1,5 +1,6 @@
-#' Create a discrete character matrix
+#' Discrete character matrix
 #'
+#' @description
 #' \code{DiscreteMatrix} is an R6 class that contains a discrete character
 #'   matrix and functions for modifying character activity and ordering.
 #' @importFrom checkmate asInt assert check_class check_logical check_null
@@ -11,49 +12,21 @@
 #' @importFrom stringr str_pad str_to_lower
 #' @importFrom tibble as_tibble
 #' @importFrom TreeTools PhyDatToMatrix PhyDatToString
-#' @export
 DiscreteMatrix <- R6Class("DiscreteMatrix",
+  inherit = AbstractCharacterMatrix,
   private = list(
-    .data = NULL,
     .data_type = NULL,
-    .is_inactive = NULL,
     .is_ordered = NULL,
-    .n_characters = NULL,
     .n_states = NULL,
-    .symbols = NULL,
-    .taxa = NULL
+    .symbols = NULL
   ),
   active = list(
-    #' @field data The discrete character-taxon matrix.
-    data = function (value) {
-      if (missing(value)) {
-        return(private$.data)
-      } else {
-        cli_abort(c("{.arg data} is a read-only attribute."))
-      }
-    },
     #' @field data_type The type of discrete character data contained in the matrix.
     data_type = function (value) {
       if (missing(value)) {
         return(private$.data_type)
       } else {
         cli_abort(c("{.arg data_type} is a read-only attribute."))
-      }
-    },
-    #' @field taxa The names of the taxa contained in the matrix.
-    taxa = function (value) {
-      if (missing(value)) {
-        return(private$.taxa)
-      } else {
-        cli_abort(c("{.arg taxa} is a read-only attribute."))
-      }
-    },
-    #' @field n_characters The number of the characters contained in the matrix.
-    n_characters = function (value) {
-      if (missing(value)) {
-        return(private$.n_characters)
-      } else {
-        cli_abort(c("{.arg n_characters} is a read-only attribute."))
       }
     },
     #' @field n_states The number of unique states contained in the matrix.
@@ -80,12 +53,16 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         }
         return(NULL)
       } else {
+        n_chars <- attr(private$.data, "index") %>%
+          length()
         coll <- makeAssertCollection()
-        val_check <- assert(
+        assert(
           check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.data, "nr"), unique = TRUE, any.missing = FALSE),
-          add = coll)
-        if (!test_true(val_check)) {
+          check_numeric(value, min.len = 1, lower = 1, upper = n_chars, unique = TRUE, any.missing = FALSE),
+          add = coll
+        )
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
           cli_abort(c("{.arg ordered} must contain valid unique character indices.",
                       "x" = val_check))
         }
@@ -100,35 +77,10 @@ DiscreteMatrix <- R6Class("DiscreteMatrix",
         }
         private$.is_ordered <- is_ordered
       }
-    },
-    #' @field inactive A numeric vector indicating which characters to mark as inactive.
-    inactive = function (value) {
-      if (missing(value)) {
-        is_inactive <- !attr(private$.data, "active")
-        if (any(is_inactive)) {
-          return(which(is_inactive))
-        }
-        return(NULL)
-      } else {
-        coll <- makeAssertCollection()
-        val_check <- assert(
-          check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.data, "nr"), unique = TRUE, any.missing = FALSE),
-          add = coll)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg inactive} must contain valid unique character indices.",
-                      "x" = val_check))
-        }
-        is_active <- rep(TRUE, self$n_characters)
-        if (!is.null(value)) {
-          is_active[value] <- FALSE
-        }
-        attr(private$.data, "active") <- is_active
-      }
     }
   ),
   public = list(
-    #' @param data An \code{phyDat} discrete character matrix.
+    #' @param data A \code{phyDat} discrete character matrix.
     #' @param ordered A numeric vector indicating which characters to mark as ordered.
     #' @param inactive A numeric vector indicating which characters to mark as inactive.
     initialize = function (data, ordered = NULL, inactive = NULL) {
