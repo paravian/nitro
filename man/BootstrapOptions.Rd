@@ -7,8 +7,8 @@
 \code{BootstrapOptions} is an R6 class that defines options for bootstrap
   resampling analyses.
 }
-\section{Super class}{
-\code{\link[nitro:ResampleBaseOptions]{nitro::ResampleBaseOptions}} -> \code{BootstrapOptions}
+\section{Super classes}{
+\code{\link[nitro:AbstractExtension]{nitro::AbstractExtension}} -> \code{\link[nitro:AbstractResamplingOptions]{nitro::AbstractResamplingOptions}} -> \code{BootstrapOptions}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -25,7 +25,6 @@
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{BootstrapOptions$new(
-  search_method = NULL,
   replications = 100,
   cutoff = 50,
   frequency_summary = "absolute"
@@ -35,8 +34,6 @@
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{search_method}}{A valid tree search configuration.}
-
 \item{\code{replications}}{An integer value indicating the number of resampling
 replications to perform.}
 

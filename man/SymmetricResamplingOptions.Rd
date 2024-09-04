@@ -7,8 +7,8 @@
 \code{SymmetricResamplingOptions} is an R6 class that defines parameters for
 symmetric resampling analyses.
 }
-\section{Super class}{
-\code{\link[nitro:ResampleBaseOptions]{nitro::ResampleBaseOptions}} -> \code{SymmetricResamplingOptions}
+\section{Super classes}{
+\code{\link[nitro:AbstractExtension]{nitro::AbstractExtension}} -> \code{\link[nitro:AbstractResamplingOptions]{nitro::AbstractResamplingOptions}} -> \code{SymmetricResamplingOptions}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
@@ -32,9 +32,8 @@ symmetric resampling analyses.
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{SymmetricResamplingOptions$new(
-  probability = 36,
-  search_method = NULL,
   replications = 100,
+  probability = 36,
   cutoff = 0,
   frequency_summary = "absolute"
 )}\if{html}{\out{</div>}}
@@ -43,13 +42,10 @@ symmetric resampling analyses.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{probability}}{An integer value indicating the change probability.}
-
-\item{\code{search_method}}{An object that contains configuration options for a
-tree analysis method.}
-
 \item{\code{replications}}{An integer value indicating the number of resampling
 replications to perform.}
+
+\item{\code{probability}}{An integer value indicating the change probability.}
 
 \item{\code{cutoff}}{An integer value indicating the cutoff value for
 frequencies.}

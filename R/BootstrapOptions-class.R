@@ -6,11 +6,9 @@
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
-#' @export
 BootstrapOptions <- R6Class("BootstrapOptions",
-  inherit = ResampleBaseOptions,
+  inherit = AbstractResamplingOptions,
   public = list(
-    #' @param search_method  A valid tree search configuration.
     #' @param replications An integer value indicating the number of resampling
     #'   replications to perform.
     #' @param cutoff An integer value indicating the cutoff value for
@@ -23,7 +21,7 @@ BootstrapOptions <- R6Class("BootstrapOptions",
     #'   \item \code{difference}: frequency differences (i.e., group supported/contradicted);
     #'   \item \code{slope}: frequency slopes.
     #' }
-    initialize = function (search_method = NULL, replications = 100, cutoff = 50,
+    initialize = function (replications = 100, cutoff = 50,
                            frequency_summary = "absolute") {
       a <- as.list(environment(), all = TRUE)
       for (n in names(a)) {

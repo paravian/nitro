@@ -6,9 +6,8 @@
 #' @importFrom checkmate check_int
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class
-#' @export
 JackknifeOptions <- R6Class("JackknifeOptions",
-  inherit = ResampleBaseOptions,
+  inherit = AbstractResamplingOptions,
   private = list(
     .probability = NULL
   ),
@@ -28,11 +27,9 @@ JackknifeOptions <- R6Class("JackknifeOptions",
     }
   ),
   public = list(
-    #' @param probability An integer value indicating the change probability.
-    #' @param search_method An object that contains configuration options for a
-    #'   tree analysis method.
     #' @param replications An integer value indicating the number of resampling
     #'   replications to perform.
+    #' @param probability An integer value indicating the change probability.
     #' @param cutoff An integer value indicating the cutoff value for
     #'   frequencies.
     #' @param frequency_summary A character vector indicating which method(s) to
@@ -43,8 +40,8 @@ JackknifeOptions <- R6Class("JackknifeOptions",
     #'   \item \code{difference}: frequency differences (i.e., group supported/contradicted);
     #'   \item \code{slope}: frequency slopes.
     #' }
-    initialize = function (probability = 36, search_method = NULL, replications = 100,
-                           cutoff = 0, frequency_summary = "absolute") {
+    initialize = function (replications = 100, probability = 36, cutoff = 0,
+                           frequency_summary = "absolute") {
       a <- as.list(environment(), all = TRUE)
       for (n in names(a)) {
         self[[n]] <- a[[n]]
@@ -55,8 +52,8 @@ JackknifeOptions <- R6Class("JackknifeOptions",
       cli_text("{col_grey(\"# A TNT jackknife resampling configuration\")}")
 
       options <- c(
-        "Removal probability:" = self$probability,
         "Replications:" = self$replications,
+        "Removal probability:" = self$probability,
         "Cutoff frequency:" = self$cutoff,
         "Frequency summary:" = paste(self$frequency_summary, collapse = ", ")
       ) %>%
