@@ -1,5 +1,6 @@
-#' Create a discrete character matrix
+#' Continuous character matrix
 #'
+#' @description
 #' \code{ContinuousMatrix} is an R6 class that contains a continuous character
 #'   matrix and functions for modifying character activity.
 #' @importFrom checkmate asInt assert check_data_frame check_null check_numeric
@@ -11,82 +12,34 @@
 #' @importFrom R6 R6Class
 #' @importFrom stats na.omit
 #' @importFrom stringr str_pad str_replace_all str_replace_na
-#' @export
 ContinuousMatrix <- R6Class("ContinuousMatrix",
-  private = list(
-    .is_inactive = NULL,
-    .matrix = NULL,
-    .n_characters = NULL,
-    .taxa = NULL
-  ),
-  active = list(
-    #' @field taxa The names of the taxa contained in the matrix.
-    taxa = function (value) {
-      if (missing(value)) {
-        return(private$.taxa)
-      } else {
-        cli_abort(c("{.arg taxa} is a read-only attribute."))
-      }
-    },
-    #' @field n_characters The number of the characters contained in the matrix.
-    n_characters = function (value) {
-      if (missing(value)) {
-        return(private$.n_characters)
-      } else {
-        cli_abort(c("{.arg n_characters} is a read-only attribute."))
-      }
-    },
-    #' @field inactive A numeric vector indicating which characters to mark as inactive.
-    inactive = function (value) {
-      if (missing(value)) {
-        is_inactive <- !attr(private$.matrix, "active")
-        if (any(is_inactive)) {
-          return(which(is_inactive))
-        }
-        return(NULL)
-      } else {
-        coll <- makeAssertCollection()
-        val_check <- assert(
-          check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = attr(private$.matrix, "nr"), unique = TRUE, any.missing = FALSE),
-          add = coll)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg inactive} must contain valid unique character indices.",
-                      "x" = val_check))
-        }
-        is_active <- rep(TRUE, self$n_characters)
-        if (!test_null(value)) {
-          is_active[value] <- FALSE
-        }
-        attr(private$.matrix, "active") <- is_active
-      }
-    }
-  ),
+  inherit = AbstractCharacterMatrix,
   public = list(
-    #' @param matrix An \code{phyDat} discrete character matrix.
+    #' @param data A \code{data.frame} representing a continuous character
+    #'   matrix.
     #' @param inactive A numeric vector indicating which characters to mark as inactive.
-    initialize = function (matrix, inactive = NULL) {
-      val_check <- check_data_frame(matrix, min.rows = 1, min.cols = 1, row.names = "named")
+    initialize = function (data, inactive = NULL) {
+      val_check <- check_data_frame(data, min.rows = 1, min.cols = 1, row.names = "named")
       if (!test_true(val_check)) {
-        cli_abort(c("{.arg matrix} must be a {.cls data.frame}.",
+        cli_abort(c("{.arg data} must be a {.cls data.frame}.",
                     "x" = val_check))
       }
 
-      taxon_col <- names(matrix) == "taxon"
+      taxon_col <- names(data) == "taxon"
       if (sum(taxon_col) != 1) {
-        cli_abort(c("{.arg matrix} must have one column named \"taxon\"."))
+        cli_abort(c("{.arg data} must have one column named \"taxon\"."))
       }
 
-      val_check <- check_data_frame(matrix[-taxon_col], types = "numeric")
+      val_check <- check_data_frame(data[-taxon_col], types = "numeric")
       if (!test_true(val_check)) {
-        cli_abort(c("{.arg matrix} must contain columns of numeric type for all characters.",
+        cli_abort(c("{.arg data} must contain columns of numeric type for all characters.",
                     "x" = val_check))
       }
 
-      matrix[,taxon_col] <- str_replace_all(matrix[,taxon_col], "\\s+", "_")
+      data[,taxon_col] <- str_replace_all(data[,taxon_col], "\\s+", "_")
 
-      if (any(duplicated(matrix[,taxon_col]))) {
-        matrix <- group_by(matrix, "taxon") %>%
+      if (any(duplicated(data[,taxon_col]))) {
+        data <- group_by(data, "taxon") %>%
           summarise(across(everything(), function (x) {
             x <- na.omit(x)
             if (length(x) > 0) {
@@ -101,15 +54,15 @@ ContinuousMatrix <- R6Class("ContinuousMatrix",
           })
         )
       } else {
-        matrix <- mutate(matrix, across(where(is.numeric), ~str_replace_na(.x, "?")))
+        data <- mutate(data, across(where(is.numeric), ~str_replace_na(.x, "?")))
       }
 
-      rownames(matrix) <- matrix[,taxon_col]
-      matrix[,taxon_col] <- NULL
+      rownames(data) <- data[,taxon_col]
+      data[,taxon_col] <- NULL
 
-      private$.matrix <- matrix
-      private$.n_characters <- length(private$.matrix)
-      private$.taxa <- rownames(private$.matrix)
+      private$.data <- data
+      private$.n_characters <- length(private$.data)
+      private$.taxa <- rownames(private$.data)
       self$inactive <- inactive
     },
     #' @param ... Ignored.
@@ -119,7 +72,7 @@ ContinuousMatrix <- R6Class("ContinuousMatrix",
       n_inactive <- self$inactive %>%
         {ifelse(is.null(.), 0, length(.))}
 
-      options <- c("Number of characters:" = length(private$.matrix),
+      options <- c("Number of characters:" = length(private$.data),
                    "Number of inactive characters:" = n_inactive) %>%
         data.frame()
 
@@ -128,15 +81,15 @@ ContinuousMatrix <- R6Class("ContinuousMatrix",
     },
     #' @param ... Ignored.
     queue = function (...) {
-      max_num_len <- sapply(private$.matrix, nchar) %>% max()
+      max_num_len <- sapply(private$.data, nchar) %>% max()
 
-      tax_names <- rownames(private$.matrix)
+      tax_names <- rownames(private$.data)
       max_tax_len <- nchar(tax_names) %>% max()
       tax_names <- str_pad(tax_names, width = max_tax_len, side = "right")
 
       part_len <- floor((254 - max_tax_len + 1) / (max_num_len + 1)) * (max_num_len + 1)
 
-      all_taxa <- apply(private$.matrix, 2, str_pad, width = max_num_len, side = "left") %>%
+      all_taxa <- apply(private$.data, 2, str_pad, width = max_num_len, side = "left") %>%
         apply(1, paste, collapse = " ") %>%
         str_replace_all(glue("(.{{{part_len}}})"), "\\1\n") %>%
         str_split("\n") %>%

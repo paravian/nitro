@@ -2,21 +2,13 @@
 % Please edit documentation in R/ContinuousMatrix-class.R
 \name{ContinuousMatrix}
 \alias{ContinuousMatrix}
-\title{Create a discrete character matrix}
+\title{Continuous character matrix}
 \description{
 \code{ContinuousMatrix} is an R6 class that contains a continuous character
   matrix and functions for modifying character activity.
 }
-\section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{taxa}}{The names of the taxa contained in the matrix.}
-
-\item{\code{n_characters}}{The number of the characters contained in the matrix.}
-
-\item{\code{inactive}}{A numeric vector indicating which characters to mark as inactive.}
-}
-\if{html}{\out{</div>}}
+\section{Super class}{
+\code{\link[nitro:AbstractCharacterMatrix]{nitro::AbstractCharacterMatrix}} -> \code{ContinuousMatrix}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -32,13 +24,14 @@
 \if{latex}{\out{\hypertarget{method-ContinuousMatrix-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$new(matrix, inactive = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$new(data, inactive = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{matrix}}{An \code{phyDat} discrete character matrix.}
+\item{\code{data}}{A \code{data.frame} representing a continuous character
+matrix.}
 
 \item{\code{inactive}}{A numeric vector indicating which characters to mark as inactive.}
 }
