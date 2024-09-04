@@ -1,12 +1,12 @@
-#' Set options common to sectorial searches
+#' Define options common to sectorial searches
 #'
 #' @description
-#' \code{SectorialSearchBaseOptions} is an R6 class that defines the set of
+#' \code{AbstractSectorialSearchOptions} is an R6 class that defines the set of
 #'   options common to all types of sectorial searches in \code{nitro}.
 #' @importFrom checkmate check_int check_flag
 #' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
-SectorialSearchBaseOptions <- R6Class("SectorialSearchBaseOptions",
+AbstractSectorialSearchOptions <- R6Class("AbstractSectorialSearchOptions",
   private = list(
     .buffer = NULL,
     .slack = NULL
