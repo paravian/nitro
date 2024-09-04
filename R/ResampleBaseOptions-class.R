@@ -1,33 +1,21 @@
-#' Set options common to resampling analyses
+#' Define options common to resampling analyses
 #'
 #' @description
-#' \code{ResampleBaseOptions} is an R6 class that defines options common to
-#'   resampling analyses.
+#' \code{AbstractResamplingOptions} is an R6 class that defines options common
+#'   to resampling analyses.
 #' @importFrom checkmate asInt check_character check_int check_multi_class
 #'   check_subset test_true
 #' @importFrom cli cli_abort cli_text
 #' @importFrom R6 R6Class
-ResampleBaseOptions <- R6Class("ResampleBaseOptions",
+AbstractResamplingOptions <- R6Class("AbstractResamplingOptions",
+  inherit = AbstractExtension,
   private = list(
-    .search_method = NULL,
+    .name = "Resampling",
     .replications = NULL,
     .cutoff = NULL,
     .frequency_summary = NULL
   ),
   active = list(
-    #' @field search_method A valid tree search configuration.
-    search_method = function (value) {
-      if (missing(value)) {
-        return(private$.search_method)
-      } else {
-        val_check <- check_multi_class(value, c("BranchSwappingOptions", "ConstraintSectorialSearchOptions", "DrivenSearchOptions", "RandomSectorialSearchOptions", "RatchetOptions"))
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg search_method} must be valid tree search configuration.",
-                      "x" = val_check))
-        }
-        private$.search_method <- value
-      }
-    },
     #' @field replications An integer value indicating the number of resampling
     #'   replications to perform.
     replications = function (value) {
@@ -55,7 +43,6 @@ ResampleBaseOptions <- R6Class("ResampleBaseOptions",
                       "x" = val_check))
         }
         private$.cutoff <- asInt(value)
-        self
       }
     },
     #' @field frequency_summary A character vector indicating which method(s) to
@@ -91,7 +78,6 @@ ResampleBaseOptions <- R6Class("ResampleBaseOptions",
     }
   ),
   public = list(
-    #' @param search_method A valid tree search configuration.
     #' @param replications An integer value indicating the number of resampling
     #'   replications to perform.
     #' @param frequency_summary A character vector indicating which method(s) to
@@ -102,7 +88,7 @@ ResampleBaseOptions <- R6Class("ResampleBaseOptions",
     #'   \item \code{absolute}: absolute frequencies; or
     #'   \item \code{slope}: frequency slopes.
     #' }
-    initialize = function (search_method, replications = 100, frequency_summary = "absolute") {
+    initialize = function (replications = 100, frequency_summary = "absolute") {
       a <- as.list(environment(), all = TRUE)
       for (n in names(a)) {
         self[[n]] <- a[[n]]
