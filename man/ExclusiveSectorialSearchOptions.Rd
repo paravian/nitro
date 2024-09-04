@@ -9,7 +9,7 @@
   \code{nitro}.
 }
 \section{Super class}{
-\code{\link[nitro:SectorialSearchBaseOptions]{nitro::SectorialSearchBaseOptions}} -> \code{ExclusiveSectorialSearchOptions}
+\code{\link[nitro:AbstractSectorialSearchOptions]{nitro::AbstractSectorialSearchOptions}} -> \code{ExclusiveSectorialSearchOptions}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}

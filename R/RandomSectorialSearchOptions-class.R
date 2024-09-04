@@ -10,7 +10,7 @@
 #' @importFrom R6 R6Class
 #' @export
 RandomSectorialSearchOptions <- R6Class("RandomSectorialSearchOptions",
-  inherit = SectorialSearchBaseOptions,
+  inherit = AbstractSectorialSearchOptions,
   private = list(
     .min_size = NULL,
     .max_size = NULL,

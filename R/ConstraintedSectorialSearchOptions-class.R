@@ -11,7 +11,7 @@
 #' @importFrom R6 R6Class
 #' @export
 ConstrainedSectorialSearchOptions <- R6Class("ConstrainedSectorialSearchOptions",
-  inherit = SectorialSearchBaseOptions,
+  inherit = AbstractSectorialSearchOptions,
   private = list(
     .min_fork = NULL,
     .max_fork = NULL,

@@ -11,7 +11,7 @@
 #' @importFrom R6 R6Class
 #' @export
 ExclusiveSectorialSearchOptions <- R6Class("ExclusiveSectorialSearchOptions",
-  inherit = SectorialSearchBaseOptions,
+  inherit = AbstractSectorialSearchOptions,
   private = list(
     .selections = NULL,
     .rounds = NULL

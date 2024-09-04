@@ -8,7 +8,7 @@
   options required to perform sectorial searching analyses in \code{nitro}.
 }
 \section{Super class}{
-\code{\link[nitro:SectorialSearchBaseOptions]{nitro::SectorialSearchBaseOptions}} -> \code{RandomSectorialSearchOptions}
+\code{\link[nitro:AbstractSectorialSearchOptions]{nitro::AbstractSectorialSearchOptions}} -> \code{RandomSectorialSearchOptions}
 }
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
