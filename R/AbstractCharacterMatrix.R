@@ -68,3 +68,23 @@ AbstractCharacterMatrix <- R6Class("AbstractCharacterMatrix",
     }
   )
 )
+
+#' Concatenate character matrices
+#'
+#' @description
+#' Concatenate character matrix objects into a list.
+#'
+#' @param ... Character matrix objects.
+#' @importFrom checkmate check_list test_true
+#' @importFrom cli cli_abort
+#' @export
+c.AbstractCharacterMatrix <- function (...) {
+  objs <- list(...)
+  val_check <- check_list(objs, types = "AbstractCharacterMatrix")
+  if (!test_true(val_check)) {
+    cli_abort(c("All objects must inherit from class {.cls AbstractCharacterMatrix}."),
+              "x" = val_check)
+  }
+  class(objs) <- c("MultiCharacterMatrix", "list")
+  return(objs)
+}
