@@ -88,3 +88,25 @@ c.AbstractCharacterMatrix <- function (...) {
   class(objs) <- c("MultiCharacterMatrix", "list")
   return(objs)
 }
+
+#' Print MultiCharacterMatrix object
+#'
+#' @param x A MultiCharacterMatrix object.
+#' @param ... Ignored.
+#' @importFrom cli cli_text col_red style_italic
+#' @importFrom glue glue
+#' @importFrom stringr str_remove str_to_lower
+#' @export
+print.MultiCharacterMatrix <- function (x, ...) {
+  cli_text(col_grey("# Multiple ", style_italic(col_red("nitro")), " character matrices"))
+
+  which_mtx <- sapply(x, function (x) class(x)[1]) %>%
+    table()
+  names(which_mtx) <- names(which_mtx) %>%
+    str_to_lower() %>%
+    str_replace("(matrix)", " \\1")
+  which_mtx <- glue("* {which_mtx} {names(which_mtx)}") %>%
+    paste(collapse = "\n")
+
+  cat("\n", which_mtx, sep = "")
+}
