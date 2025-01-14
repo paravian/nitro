@@ -9,7 +9,9 @@
 #' @importFrom dplyr across everything group_by mutate where
 #' @importFrom R6 R6Class
 AbstractCharacterMatrix <- R6Class("AbstractCharacterMatrix",
+  inherit = AbstractModule,
   private = list(
+    .name = "CharacterMatrix",
     .data = NULL,
     .is_inactive = NULL,
     .n_characters = NULL,
