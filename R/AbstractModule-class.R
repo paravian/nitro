@@ -1,16 +1,17 @@
-#' Abstract extension
+#' Abstract module
 #'
 #' @description
-#' An abstract extension.
+#' An abstract module.
 #'
 #' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
-AbstractExtension <- R6Class("AbstractExtension",
+AbstractModule <- R6Class("AbstractModule",
+  inherit = QueueGenerator,
   private = list(
     .name = ""
   ),
   active = list(
-    #' @field name The name of the extension.
+    #' @field name The name of the module.
     name = function (value) {
       if (missing(value)) {
         return(private$.name)
