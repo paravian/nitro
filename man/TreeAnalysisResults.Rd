@@ -2,99 +2,194 @@
 % Please edit documentation in R/TreeAnalysisResults-class.R
 \name{TreeAnalysisResults}
 \alias{TreeAnalysisResults}
-\title{Results of a tree analyses}
+\title{Tree Analysis Results}
 \description{
-\code{TreeAnalysisResults} is an R6 class that contains the results of a tree
-  analysis in \code{nitro}.
+An \link[R6:R6Class]{R6} class that stores the results of a \pkg{nitro} tree
+analysis, including the trees, per-tree statistics, node support labels,
+and the command queue that produced them.
+
+\code{TreeAnalysisResults} objects are created automatically by
+\link{TntInterface}\verb{$execute()} and returned by \code{\link[=execute_analysis]{execute_analysis()}}. Users
+do not typically need to instantiate this class directly.
 }
+\details{
+\subsection{Tree storage}{
+
+Trees are stored internally as a list of \link[tidytree:treedata]{treedata}
+objects, one per tree. Each \code{treedata} object carries:
+\itemize{
+\item The tree topology (as a \code{phylo} object).
+\item Per-tree statistics in its \verb{@info} slot (steps, homoplasy scores, CI,
+RI, RC where available).
+\item Node-level support annotations joined from \code{node_labels} (where
+available).
+}
+}
+
+\subsection{Statistics}{
+
+The \verb{$statistics} field computes a summary tibble on demand by
+extracting the \verb{@info} slot from each stored tree. The following
+statistics are included when available:\tabular{ll}{
+   Column \tab Description \cr
+   \verb{Tree steps} \tab Raw parsimony step count. \cr
+   \verb{Adjusted homoplasy scores} \tab Implied weighting fit scores. \cr
+   \code{CI} \tab Consistency index. \cr
+   \code{RI} \tab Retention index. \cr
+   \code{RC} \tab Rescaled consistency index. \cr
+}
+
+
+CI, RI, and RC are computed only when both \code{steps} and \code{possible_steps}
+are available.
+}
+
+\subsection{Conversion}{
+
+Use \code{\link[=as.phylo.TreeAnalysisResults]{as.phylo.TreeAnalysisResults()}} to extract trees as a \code{phylo} or
+\code{multiPhylo} object for use with other packages.
+}
+}
+\examples{
+\dontrun{
+interface <- create_interface("/usr/local/bin/tnt")
+
+nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+ta <- make_tree_analysis(dm, outgroup = "Abelisauridae")
+ta <- set_tree_search(ta, "branch_swapping", replications = 100)
+
+results <- execute_analysis(interface, ta)
+
+# Single tree returned as phylo
+phy <- as.phylo(results)
+
+# Multiple trees returned as multiPhylo
+plot(phy)
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=execute_analysis]{execute_analysis()}} — runs an analysis and returns a
+\code{TreeAnalysisResults} object.
+\item \code{\link[=as.phylo.TreeAnalysisResults]{as.phylo.TreeAnalysisResults()}} — converts results to \code{phylo} or
+\code{multiPhylo}.
+\item \link{TreeAnalysis} — the analysis configuration object.
+}
+}
+\keyword{internal}
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{trees}}{The trees generated from the analysis of \code{queue}.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{trees}}{[\code{list}]\cr
+\emph{(Read-only.)} A list of \link[tidytree:treedata]{treedata} objects,
+one per tree, each carrying topology, statistics, and node
+annotations.}
 
-\item{\code{queue}}{The \code{CommandQueue} object and generated the results.}
+    \item{\code{queue}}{[\code{CommandQueue}]\cr
+\emph{(Read-only.)} A clone of the \link{CommandQueue} that produced these
+results.}
 
-\item{\code{statistics}}{The statistics associated with each tree in \code{trees}.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{statistics}}{[\code{tibble}]\cr
+\emph{(Read-only.)} A \link[tibble:tibble]{tibble} of per-tree statistics
+extracted from the \verb{@info} slot of each stored tree. See
+\strong{Details}.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-TreeAnalysisResults-new}{\code{TreeAnalysisResults$new()}}
-\item \href{#method-TreeAnalysisResults-print}{\code{TreeAnalysisResults$print()}}
-\item \href{#method-TreeAnalysisResults-clone}{\code{TreeAnalysisResults$clone()}}
-}
+  \itemize{
+    \item \href{#method-TreeAnalysisResults-initialize}{\code{TreeAnalysisResults$new()}}
+    \item \href{#method-TreeAnalysisResults-print}{\code{TreeAnalysisResults$print()}}
+    \item \href{#method-TreeAnalysisResults-clone}{\code{TreeAnalysisResults$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TreeAnalysisResults-new"></a>}}
-\if{latex}{\out{\hypertarget{method-TreeAnalysisResults-new}{}}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysisResults$new(
-  phy,
-  queue,
-  lengths = NULL,
-  adjusted_homoplasy_scores = NULL,
-  min_length = NULL,
-  max_length = NULL,
-  tags = NULL
-)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-TreeAnalysisResults-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeAnalysisResults-initialize}{}}}
+\subsection{\code{TreeAnalysisResults$new()}}{
+  Create a new \code{TreeAnalysisResults} object.
+
+This constructor is called automatically by \link{TntInterface}\verb{$execute()}
+after a completed analysis. Direct instantiation is rarely necessary.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysisResults$new(
+  text,
+  trees,
+  homoplasy_scores = NULL,
+  node_labels = NULL,
+  label_legend = NULL,
+  possible_steps = NULL,
+  steps = NULL
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{text}}{[\code{character}]\cr
+Raw text output from the TNT executable.}
+      \item{\code{trees}}{[\code{multiPhylo}]\cr
+The trees produced by the analysis.}
+      \item{\code{homoplasy_scores}}{[\code{numeric} or \code{NULL}]\cr
+Implied weighting fit scores, one per tree (default: \code{NULL}).}
+      \item{\code{node_labels}}{[\code{tibble} or \code{NULL}]\cr
+Node-level support annotations (default: \code{NULL}).}
+      \item{\code{label_legend}}{[\code{tibble} or \code{NULL}]\cr
+Metadata describing the columns of \code{node_labels} (default:
+\code{NULL}).}
+      \item{\code{possible_steps}}{[\code{numeric} or \code{NULL}]\cr
+A named numeric vector with elements \code{"minimum"} and \code{"maximum"}
+giving the step range across all characters (default: \code{NULL}).}
+      \item{\code{steps}}{[\code{numeric} or \code{NULL}]\cr
+Raw step counts, one per tree (default: \code{NULL}).}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{TreeAnalysisResults} object.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{phy}}{A \code{multiPhylo} object.}
-
-\item{\code{queue}}{A \code{"\link{CommandQueue}"} object.}
-
-\item{\code{lengths}}{A numeric vector of lengths for \code{trees}.}
-
-\item{\code{adjusted_homoplasy_scores}}{A numeric vector of adjusted homoplasy scores for \code{trees}.}
-
-\item{\code{min_length}}{A number indicating the minimum possible length for
-\code{trees} given the active characters and taxa.}
-
-\item{\code{max_length}}{A number indicating the maximum possible length for
-\code{trees} given the active characters and taxa.}
-
-\item{\code{tags}}{A data frame containing annotation variables for \code{trees}.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeAnalysisResults-print"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeAnalysisResults-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysisResults$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{TreeAnalysisResults$print()}}{
+  Print a brief summary of the results.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysisResults$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeAnalysisResults-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeAnalysisResults-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysisResults$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{TreeAnalysisResults$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysisResults$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
