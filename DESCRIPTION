@@ -8,12 +8,12 @@ Authors@R: c(
          comment = c(ORCID = "0000-0002-2771-536X"))
          )
 Description: nitro provides an R interface to TNT, a program for phylogenetic
-analysis under maximum parsimony (Goloboff et al., 2008; Goloboff & Catalano,
-2016; Goloboff & Morales, 2023). It interfaces with a locally installed copy of
-the TNT command line executable and provides a clean, pipeable R API for
-configuring and running parsimony analyses, retrieving results as standard R
-phylogenetic objects, and integrating with the broader R phylogenetics
-ecosystem.
+  analysis under maximum parsimony (Goloboff et al., 2008; Goloboff & Catalano,
+  2016; Goloboff & Morales, 2023). It interfaces with a locally installed copy
+  of the TNT command line executable and provides a clean, pipeable R API for
+  configuring and running parsimony analyses, retrieving results as standard R
+  phylogenetic objects, and integrating with the broader R phylogenetics
+  ecosystem.
 Depends: R (>= 3.2.0)
 License: GPL-3
 Encoding: UTF-8
