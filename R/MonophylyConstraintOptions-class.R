@@ -3,14 +3,13 @@
 #' @description
 #' \code{MonophylyConstraintOptions} is an R6 class that sets options for tree
 #'   searches with constraints on monophyly.
-#' @importFrom checkmate assert check_character check_disjunct check_flag
-#'   check_null check_character makeAssertCollection test_true
+#' @importFrom checkmate assert check_character check_disjunct check_flag check_null check_character makeAssertCollection test_true
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
 #' @export
-MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
-  inherit = ConstraintBaseOptions,
+MonophylyConstraintCommand <- R6Class("MonophylyConstraintCommand",
+  inherit = AbstractConstraintCommand,
   private = list(
     .fixed_otus = NULL,
     .floating_otus = NULL
@@ -72,6 +71,37 @@ MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
     }
   ),
   public = list(
+    #' @param .queue A \code{CommandQueue} object.
+    enqueue = function(.queue = NULL) {
+      queue <- super$enqueue(.queue)
+
+      queue$add(self, 401)
+      queue
+    },
+    #' @param ... Optional arguments to be passed on to {.fn format}.
+    format = function(...) {
+      options <- data.frame(
+        c(
+          "Type",
+          "Fixed OTUs"
+        ),
+        c(
+          ifelse(self$is_positive, "positive", "negative"),
+          length(self$fixed_otus)
+        )
+      )
+
+      if (!test_null(self$floating_otus)) {
+        options <- rbind(
+          options,
+          c("Floating OTUs", length(self$floating_otus))
+        )
+      }
+
+      names(options) <- c("", "Value")
+      options[, 1] <- format(options[, 1], justify = "left")
+      options
+    },
     #' @param fixed_otus A character vector indicating which OTUs from the matrix
     #'   to assign as a fixed constraint.
     #' @param floating_otus An character logical vector indicating which OTUs from
@@ -81,37 +111,40 @@ MonophylyConstraintOptions <- R6Class("MonophylyConstraintOptions",
     initialize = function (fixed_otus, floating_otus = NULL,
                            is_positive = TRUE) {
       a <- as.list(environment(), all = TRUE)
+
+      super$initialize(
+        name = "resample",
+        description = "Resampling"
+      )
+
       for (n in names(a)) {
         self[[n]] <- a[[n]]
       }
     },
     #' @param ... Ignored.
     print = function (...) {
-      cli_text("{col_grey(\"# A monophyly constraint\")}")
+      cli_text(col_grey("# A ", style_italic(col_red("nitro")), " monophyly constraint"))
 
-      options <- c("Type:" = ifelse(self$is_positive, "positive", "negative"),
-                   "Fixed OTUs:" = length(self$fixed_otus))
-      if (!is.null(self$floating_otus)) {
-        options <- c(options, "Floating OTUs:" = length(self$floating_otus))
-      }
-      options <- data.frame(c(options))
+      options <- format(self)
       names(options) <- NULL
-
-      print(options)
+      print(options, row.names = FALSE)
     },
     #' @param ... Ignored.
-    queue = function (...) {
-      queue <- CommandQueue$new()
+    render = function (...) {
       force_arg <- paste(self$fixed_otus, collapse = " ")
 
       if (!is.null(self$floating_otus)) {
-        force_arg <- glue("{force_arg} ({floating})", floating = paste(self$floating_otus, collapse = " "))
+        force_arg <- glue(
+          "{force_arg} ({floating})",
+          floating = paste(self$floating_otus, collapse = " ")
+        )
       }
 
       type <- ifelse(self$is_positive, "+", "-")
       force_arg <- glue("{type} [ {force_arg} ]")
-      queue$add("force", force_arg)
-      return(queue)
+
+      cmd <- paste(self$name, " ", force_arg, ";", sep = "")
+      cmd
     }
   )
 )
