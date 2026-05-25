@@ -2,56 +2,87 @@
 % Please edit documentation in R/AbstractCharacterMatrix-class.R
 \name{AbstractCharacterMatrix}
 \alias{AbstractCharacterMatrix}
-\title{Abstract character matrix}
+\title{Abstract Character Matrix Base Class}
 \description{
-\code{AbstractCharacterMatrix} is an R6 class that defines properties common
-  to any type of character matrix. Intended to be inherited, not instantiated
-  directly.
+\code{AbstractCharacterMatrix} is the base \link[R6:R6Class]{R6} class for all
+character–taxon matrix objects in \pkg{nitro}. It defines the common
+interface shared by \link{DiscreteMatrix} and \link{ContinuousMatrix}: taxon names,
+character count, and character activity.
+
+This class is not exported. It is intended to be subclassed by
+\link{DiscreteMatrix} and \link{ContinuousMatrix}, not instantiated directly. Use
+\code{\link[=create_matrix]{create_matrix()}} to create matrix objects.
 }
-\section{Super classes}{
-\code{\link[nitro:QueueGenerator]{nitro::QueueGenerator}} -> \code{\link[nitro:AbstractModule]{nitro::AbstractModule}} -> \code{AbstractCharacterMatrix}
+\details{
+\subsection{Subclassing}{
+
+Subclasses should populate \code{private$.data}, \code{private$.taxa},
+\code{private$.n_characters}, and \code{private$.is_inactive} in their own
+\verb{$data} active binding setter. The \verb{$inactive} binding defined here
+operates on \code{private$.is_inactive} and is available to all subclasses
+without further implementation.
 }
+
+\subsection{Active bindings}{\tabular{llll}{
+   Field \tab Type \tab Mutable \tab Description \cr
+   \code{taxa} \tab \code{character} \tab Read-only \tab Names of the taxa in the matrix. \cr
+   \code{n_characters} \tab \code{integer(1)} \tab Read-only \tab Total number of characters. \cr
+   \code{inactive} \tab \code{numeric} or \code{NULL} \tab Yes \tab Indices of inactive characters. \cr
+}
+
+}
+}
+\seealso{
+\itemize{
+\item \link{DiscreteMatrix} — subclass for discrete character data.
+\item \link{ContinuousMatrix} — subclass for continuous character data.
+\item \code{\link[=create_matrix]{create_matrix()}} — recommended way to create matrix objects.
+}
+}
+\keyword{internal}
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{data}}{The character matrix.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{data_type}}{[\code{character(1)}]\cr
+\emph{(Read-only.)} The type of character data in the matrix.}
 
-\item{\code{taxa}}{The names of the taxa contained in the matrix.}
+    \item{\code{taxa}}{[\code{character}]\cr
+\emph{(Read-only.)} The names of the taxa contained in the matrix.}
 
-\item{\code{n_characters}}{The number of the characters contained in the matrix.}
+    \item{\code{n_characters}}{[\code{integer(1)}]\cr
+\emph{(Read-only.)} The number of characters contained in the matrix.}
 
-\item{\code{inactive}}{A numeric vector indicating which characters to mark as inactive.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{inactive}}{[\code{numeric} or \code{NULL}]\cr
+The indices of characters to mark as inactive (i.e., excluded from
+analysis). Must be unique integer indices between 1 and
+\verb{$n_characters}. Set to \code{NULL} to activate all characters.
+Returns \code{NULL} when no characters are inactive.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-AbstractCharacterMatrix-clone}{\code{AbstractCharacterMatrix$clone()}}
+  \itemize{
+    \item \href{#method-AbstractCharacterMatrix-clone}{\code{AbstractCharacterMatrix$clone()}}
+  }
 }
-}
-\if{html}{\out{
-<details open><summary>Inherited methods</summary>
-<ul>
-<li><span class="pkg-link" data-pkg="nitro" data-topic="QueueGenerator" data-id="queue"><a href='../../nitro/html/QueueGenerator.html#method-QueueGenerator-queue'><code>nitro::QueueGenerator$queue()</code></a></span></li>
-</ul>
-</details>
-}}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-AbstractCharacterMatrix-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-AbstractCharacterMatrix-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AbstractCharacterMatrix$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{AbstractCharacterMatrix$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{AbstractCharacterMatrix$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
