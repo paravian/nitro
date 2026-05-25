@@ -1,210 +1,196 @@
-#' Define tree searches
+#' Tree Analysis Configuration
 #'
-#' \code{TreeAnalysis} is an R6 class that stores the configuration for a
-#'  tree analysis, including the character-taxon matrix, taxon activity,
-#'  character weighting and constraints on monophyly.
+#' @description
+#' An [R6][R6::R6Class] class that stores the complete configuration for a
+#' phylogenetic tree analysis in \pkg{nitro}, including the character–taxon
+#' matrix, taxon activity, outgroup selection, zero-length branch handling,
+#' and all commands to be executed.
+#'
+#' `TreeAnalysis` is the central object in a \pkg{nitro} workflow. Data and
+#' analysis options are set at construction time or via active bindings, and
+#' commands are added with helper functions such as [set_tree_search()],
+#' [set_weighting()], and [set_support()].
+#'
+#' @details
+#' ## Typical workflow
+#' ```r
+#' # 1. Create an analysis with data
+#' ta <- TreeAnalysis$new(data = my_matrix)
+#'
+#' # 2. Optionally configure analysis settings
+#' ta$outgroup <- "Taxon_A"
+#' ta$inactive_taxa <- c("Taxon_X", "Taxon_Y")
+#'
+#' # 3. Add commands
+#' ta <- set_tree_search(ta, "branch_swapping", replications = 100)
+#' ta <- set_weighting(ta, "implied_weighting", weighting_constant = 6)
+#' ta <- set_support(ta, "bootstrap", replications = 1000)
+#'
+#' # 4. Inspect the configuration
+#' ta
+#' ```
+#'
+#' ## Adding commands
+#' Commands are added via helper functions rather than directly through
+#' `$add_command()`. Each command declares what it `$provides` (e.g.,
+#' `"tree search"`), and adding a new command that provides the same thing
+#' replaces the previous one.
+#'
+#' | Helper | Adds |
+#' |--------|------|
+#' | [set_tree_search()] | A tree search command. |
+#' | [set_weighting()] | An implied weighting command. |
+#' | [set_support()] | A resampling support command. |
+#'
+#' ## Zero-length branch rules
+#' The `$zlb_rule` field controls how zero-length branches are handled when
+#' collapsing trees. See [CollapseRuleCommand] for the full list of
+#' available options. Note that resampling analyses require `$zlb_rule` to
+#' be one of `"minimum"`, `"maximum"`, or `"identical_states"`;
+#' [set_support()] validates this automatically.
+#'
+#' @seealso
+#' * [create_matrix()] — create the matrix objects required by `$data`.
+#' * [execute_analysis()] — runs the analysis.
+#' * [make_tree_analysis()] — recommended constructor.
+#' * [set_tree_search()], [new_tree_search()] — add or create tree search
+#'   commands.
+#' * [set_weighting()], [new_weighting()] — add or create weighting
+#'   commands.
+#' * [set_support()], [new_support()] — add or create support analysis
+#'   commands.
+#' * [CollapseRuleCommand] — documents the available zero-length branch
+#'   rules.
+#' * [OutgroupCommand] — documents outgroup configuration.
+#' * [TaxonActivityCommand] — documents taxon activity configuration.
+#' * [TreeAnalysisResults] — the object returned by execution.
+#'
+#' @examples
+#' \dontrun{
+#' nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+#' dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+#'
+#' # Create an analysis
+#' ta <- make_tree_analysis(
+#'   data     = dm,
+#'   outgroup = "Herrerasaurus",
+#'   zlb_rule = "minimum"
+#' )
+#'
+#' # Add a branch swapping search
+#' ta <- set_tree_search(ta, "branch_swapping", replications = 50)
+#'
+#' # Add implied weighting
+#' ta <- set_weighting(ta, "implied_weighting", weighting_constant = 6)
+#'
+#' # View the configuration
+#' ta
+#'
+#' # Check dimensions
+#' ta$n_taxa
+#' ta$n_characters
+#' }
+#'
 #' @importFrom ape write.tree .compressTipLabel
-#' @importFrom checkmate asInt assert check_character check_class check_disjunct
-#'   check_int check_flag check_multi_class check_null check_number
-#'   check_numeric check_r6 check_subset check_false makeAssertCollection
-#'   reportAssertions test_class test_multi_class test_null test_true
-#' @importFrom cli cli_abort cli_text col_grey
-#' @importFrom dplyr if_else
+#' @importFrom checkmate asInt assert check_character check_class check_choice check_disjunct check_int check_flag check_multi_class check_null check_number check_numeric check_subset check_false makeAssertCollection test_class test_disjunct test_list test_multi_class test_null test_true
+#' @importFrom cli cli_abort cli_alert_info cli_text col_grey col_red style_italic symbol
+#' @importFrom dplyr bind_rows if_else
 #' @importFrom glue glue
 #' @importFrom lubridate day hour minute second seconds_to_period
-#' @importFrom magrittr %>% %$% and
+#' @importFrom magrittr %>% %$% add and extract extract2
 #' @importFrom R6 R6Class
-#' @importFrom treeio as.treedata
-#' @importFrom TreeTools PhyDatToMatrix RenumberTips TntOrder
-#' @importFrom stringr str_replace str_replace_all str_split_1 str_starts
-#'   str_to_sentence str_trim str_wrap
+#' @importFrom tibble tibble
+#' @importFrom tidytree as.treedata
+#' @importFrom stringr str_extract_all str_replace str_replace_all str_split_1 str_starts str_to_sentence str_trim str_wrap
 #' @export
-TreeAnalysis <- R6Class("TreeAnalysis",
+TreeAnalysis <- R6Class(
+  "TreeAnalysis",
   private = list(
-    .discrete_matrix = NULL,
-    .continuous_matrix = NULL,
+    .data = NULL,
     .inactive_taxa = NULL,
+    .commands = NULL,
     .outgroup = NULL,
     .zlb_rule = NULL,
-    .constraints = NULL,
-    .method = NULL,
-    .weighting = NULL,
-    .start_trees = NULL,
-    .hold = NULL,
-    .max_ram = NULL,
-    .timeout = NULL
+    deep_clone = function(name, value) {
+      if (name == ".commands") {
+        sapply(value, function (x) x$clone())
+      } else {
+        value
+      }
+    }
   ),
   active = list(
-    #' @field discrete_matrix A \code{"\link{DiscreteMatrix}"} object.
-    discrete_matrix = function (value) {
+    #' @field commands \[`list`\]\cr
+    #'   *(Read-only.)* A named list of [BasicCommand] objects registered
+    #'   for this analysis, keyed by what each command `$provides`.
+    commands = function(value) {
+      if (!missing(value)) {
+        cli_abort(c("{.val commands} is a read-only attribute."))
+      }
+
+      private$.commands
+    },
+    #' @field data \[`AbstractCharacterMatrix` or `MultiCharacterMatrix`\]\cr
+    #'   *(Write-once.)* One or more character–taxon matrix objects
+    #'   containing the data for the analysis.
+    data = function(value) {
       if (missing(value)) {
-        return(private$.discrete_matrix)
+        return(private$.data)
       } else {
-        coll <- makeAssertCollection()
-        val_check <- assert(
-          check_null(value),
-          assert(
-            check_r6(value),
-            check_class(value, "DiscreteMatrix"),
-            combine = "and",
-            add = coll
-          ),
-          add = coll
-        )
-        val_check <- coll$getMessages()
-        if (!coll$isEmpty()) {
-          cli_abort(c("{.arg discrete_matrix} must be a valid matrix object.",
-                      "x" = val_check))
-        }
+        if (is.null(private$.data)) {
+          val_check <- check_multi_class(
+            value,
+            c(
+              "AbstractCharacterMatrix",
+              "MultiCharacterMatrix"
+            )
+          )
 
-        if (!test_null(value)) {
-          if (!test_null(self$continuous_matrix)) {
-            val_check <- check_subset(value$taxa, self$continuous_matrix$taxa)
-            if (!test_true(val_check)) {
-              cli_abort(c("{.arg discrete_matrix} must be compatible with {.arg continuous_matrix}.",
-                          "x" = val_check))
-            }
+          if (!test_true(val_check)) {
+            cli_abort(c("{.arg data} must be a valid matrix object.",
+                        "x" = val_check
+            ))
           }
-        }
 
-        private$.discrete_matrix <- value
+          if (!test_list(value)) {
+            value <- c(value)
+          }
+
+          private$.data <- value
+          read_data_config(self, value)
+        } else {
+          cli_abort(c("{.val data} is a read-only attribute."))
+        }
       }
     },
-    #' @field continuous_matrix A \code{"\link{ContinuousMatrix}"} object.
-    continuous_matrix = function (value) {
-      if (missing(value)) {
-        return(private$.continuous_matrix)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_null(value),
-          assert(
-            check_r6(value),
-            check_class(value, "ContinuousMatrix"),
-            combine = "and", add = coll
-          ),
-          add = coll
-        )
-        val_check <- coll$getMessages()
-        if (!coll$isEmpty()) {
-          cli_abort(c("{.arg continuous_matrix} must be a valid matrix object.",
-                      "x" = val_check))
-        }
-
-        if (!test_null(value)) {
-          if (!test_null(self$discrete_matrix)) {
-            val_check <- check_subset(value$taxa, self$discrete_matrix$taxa)
-            if (!test_true(val_check)) {
-              cli_abort(c("{.arg continuous_matrix} must be compatible with {.arg discrete_matrix}.",
-                          "x" = val_check))
-            }
-          }
-        }
-
-        private$.continuous_matrix <- value
-      }
-    },
-    #' @field method An object that contains configuration options for a tree
-    #' analysis method.
-    method = function (value) {
-      if (missing(value)) {
-        return(private$.method)
-      } else {
-        val_check <- check_multi_class(value, c("BootstrapOptions", "BranchBreakingOptions", "BranchSwappingOptions", "ConstraintSectorialSearchOptions", "DrivenSearchOptions", "ImplicitEnumerationOptions", "JackknifeOptions", "RandomSectorialSearchOptions", "RatchetOptions", "SymmetricResamplingOptions", "BranchSupportOptions"))
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg method} must contain valid tree analysis options.",
-                      "x" = val_check))
-        }
-        set_sel_size <- function (driven_class) {
-          sect_classes <- sapply(driven_class$sectorial_search, class)
-          if ("RandomSectorialSearchOptions" %in% sect_classes) {
-            def_size <- min(c(as.integer(ceiling(nrow(matrix) / 2)), 45L))
-            idx <- which(sect_classes == "RandomSectorialSearchOptions")
-            if (driven_class$sectorial_search[[idx]]$max_size == 0) {
-              driven_class$sectorial_search[[idx]]$max_size <- def_size
-            }
-            if (driven_class$sectorial_search[[idx]]$min_size == 0) {
-              driven_class$sectorial_search[[idx]]$min_size <- def_size
-            }
-          }
-          return(driven_class)
-        }
-
-        if (test_class(value, "DrivenSearchOptions")) {
-          value <- set_sel_size(value)
-        }
-
-        if (test_class(value, c("BranchBreakOptions"))) {
-          val_check <- check_class(private$.start_trees, "multiPhylo")
-          if (!test_true(val_check)) {
-            cli_abort(c("{.arg start_trees} must be a {.cls multiPhylo} object if a {.arg method} is a {.cls {class(value)}} object.",
-                        "x" = val_check))
-          }
-        }
-
-        if (test_multi_class(value, c("ResampleBaseOptions", "BranchSupportOptions"))) {
-          if (test_class(value$search_method, "DrivenSearchOptions")) {
-            value$search_method <- set_sel_size(value$search_method)
-          }
-
-          val_check <- check_class(private$.start_trees, "phylo")
-          if (!test_true(val_check)) {
-            cli_abort(c("{.arg start_trees} must be a {.cls phylo} object if a {.arg method} is a resampling analysis.",
-                        "x" = val_check))
-          }
-
-          valid_zlb_rule <- c("maximum", "identical_states", "minimum")
-          val_check <- check_subset(self$zlb_rule, valid_zlb_rule)
-          if (!test_true(val_check)) {
-            val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-            cli_abort(c("{.arg zlb_rule} must be valid for a resampling {.arg method}.",
-                        "x" = val_check,
-                        "i" = "Set {.arg zlb_rule} to {valid_zlb_rule}."))
-          }
-
-          tree_taxa <- self$start_trees$tip.label
-          all_mtx <- c(continuous = self$continuous_matrix,
-                       discrete = self$discrete_matrix)
-          all_taxa <- all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
-            as.vector() %>%
-            unique()
-          inactive_taxa <- all_taxa[!all_taxa %in% tree_taxa]
-          if (length(inactive_taxa) > 0) {
-            self$inactive_taxa <- inactive_taxa
-          }
-        }
-        private$.method <- value
-      }
-    },
-    #' @field inactive_taxa A character vector indicating the taxa to be
-    #'   inactivated.
-    inactive_taxa = function (value) {
+    #' @field inactive_taxa \[`character` or `NULL`\]\cr
+    #'   A character vector of taxon names to deactivate (exclude from the
+    #'   analysis), or `NULL` to include all taxa. All names must be present
+    #'   in `$data`.
+    inactive_taxa = function(value) {
       if (missing(value)) {
         return(private$.inactive_taxa)
       } else {
-        all_mtx <- c(continuous = self$continuous_matrix,
-                     discrete = self$discrete_matrix)
-        all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
+        all_taxa <- sapply(private$.data, `[[`, "taxa") %>%
           as.vector() %>%
           unique()
 
         coll <- makeAssertCollection()
         assert(
           check_null(value),
-          check_character(value, min.len = 1, max.len = length(all_taxa),
-                          any.missing = FALSE, unique = TRUE),
+          check_character(value,
+                          min.len = 1, max.len = length(all_taxa),
+                          any.missing = FALSE, unique = TRUE
+          ),
           add = coll
         )
 
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg inactive_taxa} must be either a character vector or {.val NULL}.",
-                      "x" = val_check))
+                      "x" = val_check
+          ))
         }
-
-        # if (test_multi_class(value, c("ResampleBaseOptions", "BranchSupportOptions"))) {
-        #   cli_abort(c("{.arg inactive_taxa} can't be modified for resampling analyses."))
-        # }
 
         if (test_null(value)) {
           private$.inactive_taxa <- NULL
@@ -213,35 +199,52 @@ TreeAnalysis <- R6Class("TreeAnalysis",
 
         val_check <- check_subset(value, all_taxa)
         if (!test_true(val_check)) {
-          val_check <- str_replace_all(val_check, "(\\{|\\})", "\\1\\1")
+          val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
           cli_abort(c("{.arg inactive_taxa} must contain taxa present in {.arg matrix}.",
-                      "x" = val_check))
+                      "x" = val_check
+          ))
         }
 
-        all_constrained <- Reduce(or, lapply(private$.constraints, function (c) {
-          unique(c$fixed_otus, c$floating_otus)
-        }))
-        val_check <- check_disjunct(all_constrained, value)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg inactive_taxa} must not contain taxa that are in constraint group(s)",
-                      "x" = inact_constr))
-        }
         private$.inactive_taxa <- value
       }
     },
-    #' @field outgroup A single character vector indicating the taxon to be
-    #'   the outgroup.
-    outgroup = function (value) {
+    #' @field n_characters \[`integer(1)`\]\cr
+    #'   *(Read-only.)* The total number of characters across all matrices
+    #'   in `$data`.
+    n_characters = function(value) {
+      if (missing(value)) {
+        n_char <- sapply(self$data, `[[`, "n_characters") %>%
+          sum()
+      } else {
+        cli_abort(c("{.val n_taxa} is a read-only attribute."))
+      }
+    },
+    #' @field n_taxa \[`integer(1)`\]\cr
+    #'   *(Read-only.)* The number of unique taxa across all matrices in
+    #'   `$data`.
+    n_taxa = function(value) {
+      if (missing(value)) {
+        sapply(self$data, `[[`, "taxa") %>%
+          as.vector() %>%
+          unique() %>%
+          length()
+      } else {
+        cli_abort(c("{.val n_taxa} is a read-only attribute."))
+      }
+    },
+    #' @field outgroup \[`character(1)` or `NULL`\]\cr
+    #'   The name of the taxon to use as the outgroup for rooting. Must be
+    #'   a taxon present in `$data`. If `NULL` is supplied, defaults to the
+    #'   first taxon in the matrix.
+    outgroup = function(value) {
       if (missing(value)) {
         return(private$.outgroup)
       } else {
-        all_mtx <- c(continuous = self$continuous_matrix,
-                     discrete = self$discrete_matrix)
-        all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
+        all_taxa <- sapply(self$data, `[[`, "taxa") %>%
           as.vector() %>%
           unique()
 
-        coll = makeAssertCollection()
+        coll <- makeAssertCollection()
         assert(
           check_null(value),
           assert(
@@ -251,11 +254,12 @@ TreeAnalysis <- R6Class("TreeAnalysis",
           ),
           add = coll
         )
-        val_check <- str_replace_all(coll$getMessages(), "(\\{|\\})", "\\1\\1")
+
         if (!coll$isEmpty()) {
-          mtx_args <- paste(names(all_mtx), "_matrix", sep = "")
-          cli_abort(c("{.arg outgroup} must be a taxon present in {.arg {mtx_args}}.",
-                      "x" = val_check))
+          val_check <- str_replace_all(coll$getMessages(), "(\\{|\\})", "\\1\\1")
+          cli_abort(c("{.arg outgroup} must be a taxon present in the data.",
+                      "x" = val_check
+          ))
         }
 
         if (test_null(value)) {
@@ -264,22 +268,20 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         private$.outgroup <- value
       }
     },
-    #' @field zlb_rule A character vector indicating the rule for handling zero
-    #'   length branches. The options are:
-    #'   \itemize{
-    #'   \item \code{maximum}: collapse an interior branch of the maximum possible
-    #'     length of the branch is zero;
-    #'   \item \code{identical_states}: only collapse zero length branches if ancestor and descendant
-    #'     states are the same;
-    #'   \item \code{minimum}: collapse an interior branch if the minimum possible
-    #'     length of the branch is zero (default);
-    #'   \item \code{discard_tree}: discard all trees that must contain a zero length
-    #'     branch;
-    #'   \item \code{spr}: collapse an interior branch using subtree pruning and reconnection (SPR) operations; and
-    #'   \item \code{tbr}: collapse an interior branch using tree bisection and reconnection (TBR) operations.
-    #'   }
-    zlb_rule = function (value) {
-      options = c("maximum", "identical_states", "minimum", "discard_tree", "spr", "tbr")
+    #' @field zlb_rule \[`character(1)`\]\cr
+    #'   *(Write-once.)* The rule for handling zero-length branches when
+    #'   collapsing trees. See **Details** for the available options.
+    #'   Defaults to `"minimum"`.
+    zlb_rule = function(value) {
+      options <- c(
+        "maximum",
+        "identical_states",
+        "minimum",
+        "discard_tree",
+        "spr",
+        "tbr"
+      )
+
       if (missing(value)) {
         options[private$.zlb_rule]
       } else {
@@ -288,488 +290,131 @@ TreeAnalysis <- R6Class("TreeAnalysis",
         if (!test_true(val_check)) {
           cli_abort(c("{.arg collapse} choice must be valid.",
                       "x" = val_check,
-                      "i" = "Set {.arg zlb_rule} to {options}."))
-        }
-
-        if (test_multi_class(self$method, "ResampleBaseOptions")) {
-          valid_zlb_rule <- c("maximum", "identical_states", "minimum")
-          val_check <- check_subset(value, valid_zlb_rule)
-          if (!test_true(val_check)) {
-            val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-            cli_abort(c("{.arg zlb_rule} must be valid for a resampling {.arg method}.",
-                        "x" = val_check,
-                        "i" = "Set {.arg zlb_rule} to {valid_zlb_rule}."))
-          }
+                      "i" = "Set {.arg zlb_rule} to {options}."
+          ))
         }
 
         value <- which(value == options)
         private$.zlb_rule <- value
       }
-    },
-    #' @field constraints One or more \code{"\link{MonophylyConstraintOptions}"} objects.
-    constraints = function (...) {
-      obj <- list(...)
-      if (length(obj) == 0) {
-        return(private$.constraints)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_null(unlist(obj)),
-          check_list(obj, types = c("MonophylyConstraintOptions", "BackboneConstraintOptions")),
-          add = coll
-        )
-
-        val_check <- coll$getMessages()
-        if (!test_true(coll$isEmpty())) {
-          cli_abort(c("{.arg constraints} must be one or more {.cls MonophylyConstraintOptions} or {.cls BackboneConstraintOptions} objects.",
-                      "x" = val_check))
-        }
-
-        if (test_null(unlist(obj))) {
-          return()
-        }
-
-        all_mtx <- c(self$continuous_matrix, self$discrete_matrix)
-        all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
-          as.vector() %>%
-          unique()
-
-        for (constraint in obj) {
-          if (test_class(obj, "MonophylyConstraintOptions")) {
-            all_const <- c(constraint$fixed_otus, constraint$floating_otus)
-
-            val_check <- check_subset(all_const, all_taxa)
-            if (!test_true(val_check)) {
-              val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-              cli_abort(c("{.arg constraints} must contain taxa that are present in the matrix.",
-                        "x" = val_check))
-            }
-
-            # Check if any constrained taxa are presently inactive
-            val_check <- check_disjunct(constraint$fixed_otus, self$inactive_taxa)
-            if (!test_true(val_check)) {
-              val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-              cli_abort("Fixed constraints must not contain inactive taxa.",
-                        "x" = val_check)
-            }
-            val_check <- check_disjunct(constraint$floating_otus, all_taxa)
-            if (!test_true(val_check)) {
-              val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-              cli_abort("Floating constraints must not contain inactive taxa.",
-                        "x" = val_check)
-            }
-          }
-          if (test_class(obj, "BackboneConstraintOptions")) {
-            val_check <- check_subset(constraint$topology$tip.label, self$inactive_taxa)
-            if (!test_true(val_check)) {
-              val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
-              cli_abort("Backbone constraints must contain taxa that are present in the matrix.",
-                        "x" = val_check)
-            }
-          }
-        }
-
-        private$.constraints <- obj
-      }
-    },
-    #' @field weighting An object containing configuration options for character
-    #'  weighting.
-    weighting = function (value) {
-      if (missing(value)) {
-        return(private$.weighting)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_null(value),
-          check_class(value, "ImpliedWeightingOptions"),
-          add = coll
-        )
-        val_check <- reportAssertions(coll)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg weighting} must contain a valid weighting configuration.",
-                      "x" = val_check))
-        }
-
-        private$.weighting <- value
-      }
-    },
-    #' @field start_trees A \code{phylo} or \code{multiPhylo} of trees to load
-    #'  prior to starting the tree analysis.
-    start_trees = function (value) {
-      if (missing(value)) {
-        return(private$.start_trees)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_null(value),
-          assert(
-            check_class(value, "phylo"),
-            check_class(value, "multiPhylo")
-          ),
-          add = coll
-        )
-        val_check <- coll$getMessages()
-        if (!coll$isEmpty()) {
-          cli_abort(c("{.arg start_trees} must be either {.val NULL}, or a {.cls phylo} or {.cls multiPhylo} object.",
-                      "x" = val_check))
-        }
-
-        if (test_null(value) & test_multi_class(self$method, c("ResampleBaseOptions", "BranchSupportOptions", "BranchBreakOptions"))) {
-          cli_abort(c("{.arg start_trees} can't be {.val null} if {.arg method} is a {.cls {class(self$method)}} object."))
-        }
-
-        if (test_class(value, "phylo")) {
-          value$node.label <- NULL
-        } else if (test_class(value, "multiPhylo")) {
-          value <- lapply(value, function (x) {
-            x$node.label <- NULL
-            return(x)
-          }) %>%
-            .compressTipLabel()
-        }
-
-        private$.start_trees <- value
-      }
-    },
-    #' @field hold An integer indicating the number of trees to hold in TNT's
-    #'   tree buffer.
-    hold = function (value) {
-      if (missing(value)) {
-        return(private$.hold)
-      } else {
-        val_check <- check_int(value, lower = 1)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg hold} must be a valid numeric value.",
-                      "x" = val_check))
-        }
-
-        value <- asInt(value)
-        private$.hold <- value
-      }
-    },
-    #' @field max_ram A numeric indicating the number of (binary) megabytes to
-    #'   allocate for use by TNT.
-    max_ram = function (value) {
-      if (missing(value)) {
-        return(private$.max_ram)
-      } else {
-        val_check <- check_number(value, lower = 0)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.max_ram} must be a valid numeric value.",
-                      "x" = val_check))
-        }
-        private$.max_ram <- value
-      }
-    },
-    #' @field timeout A positive integer indicating the number of seconds to
-    #'   allow a search to run for before terminating.
-    timeout = function (value) {
-      if (missing(value)) {
-        return(private$.timeout)
-      } else {
-        coll <- makeAssertCollection()
-        assert(
-          check_null(value),
-          check_int(value, lower = 1)
-        )
-        val_check <- reportAssertions(coll)
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg timeout} must be a valid numeric value.",
-                      "x" = val_check))
-        }
-        private$.timeout <- value
-      }
     }
   ),
   public = list(
-    #' @param method An object that contains configuration options for the tree
-    #'   analysis method.
-    #' @param discrete_matrix A \code{"\link{DiscreteMatrix}"} object.
-    #' @param continuous_matrix A \code{"\link{ContinuousMatrix}"} object.
-    #' @param inactive_taxa A character vector indicating the taxa to be
-    #'   inactivated.
-    #' @param outgroup A single character vector indicating the taxon to be the
-    #'   outgroup.
-    #' @param zlb_rule An integer indicating the rule for collapsing of zero
-    #'   length branches. The options are:
-    #'   \itemize{
-    #'   \item \code{maximum}: collapse an interior branch of the maximum
-    #'    possible length of the branch is zero;
-    #'   \item \code{identical_states}: only collapse zero length branches if
-    #'    ancestor and descendant states are the same;
-    #'   \item \code{minimum}: collapse an interior branch if the minimum
-    #'    possible length of the branch is zero (the default); and
-    #'   \item \code{discard_tree}: discard all trees that must contain a zero
-    #'    length branch.
-    #'   \item \code{spr}: collapse an interior branch using subtree pruning and
-    #'    reconnection (SPR) operations; and
-    #'   \item \code{tbr}: collapse an interior branch using tree bisection and
-    #'    reconnection (TBR) operations.
-    #'   }
-    #' @param constraints One or more \code{"\link{MonophylyConstraintOptions}"} objects.
-    #' @param weighting An object containing configuration options for character
-    #'  weighting.
-    #' @param start_trees A \code{phylo} or \code{multiPhylo} of trees to load
-    #'  prior to starting the tree analysis.
-    #' @param hold An integer indicating the number of trees to hold in TNTs tree
-    #'   buffer.
-    #' @param max_ram A numeric indicating the number of (binary) megabytes to
-    #'   allocate for use by TNT.
-    #' @param timeout A positive integer indicating the number of seconds to
-    #'   allow a search to run for before terminating.
-    initialize = function (method, discrete_matrix = NULL,
-                           continuous_matrix = NULL, inactive_taxa = NULL,
-                           outgroup = NULL, zlb_rule = "minimum",
-                           constraints = NULL, weighting = NULL,
-                           start_trees = NULL, hold = 100, max_ram = 16,
-                           timeout = NULL) {
+    #' @description
+    #' Register a command for this analysis.
+    #'
+    #' The command is stored under the key returned by its `$provides`
+    #' field. If a command providing the same thing already exists, it is
+    #' replaced. Use [set_tree_search()] as a convenient alternative for
+    #' tree search commands.
+    #'
+    #' @param command A [BasicCommand] object or a `CommandList`.
+    add_command = function(command) {
+      val_check <- check_multi_class(command, c("BasicCommand", "CommandList"))
+
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg command} must be an object inheriting from {.cls BasicCommand}.",
+                    "x" = val_check))
+      }
+
+      if (inherits(command, "BasicCommand")) {
+        command <- c(command)
+      }
+      for (cmd in command) {
+        private$.commands[[cmd$provides]] <- cmd
+      }
+    },
+    #' @description
+    #' Format the analysis configuration as a summary table.
+    #'
+    #' Returns a data frame showing the parameters of every registered
+    #' command, grouped by command with header rows.
+    #'
+    #' @param ... Not used.
+    #'
+    #' @return A `data.frame` with columns for description, current value,
+    #'   and default value.
+    format = function(...) {
+      parse_names <- function(name) {
+        str_extract_all(name, "[A-Z][a-z]+") %>%
+          extract2(1) %>%
+          paste(collapse = " ") %>%
+          str_to_sentence()
+      }
+
+      empty_row <- data.frame(matrix("", 1, 3))
+      names(empty_row) <- c("", "Current value", "Default value")
+
+      options <- NULL
+
+      for (command in self$commands) {
+        cmd_opts <- format(command)
+        names(cmd_opts) <- str_trim(names(cmd_opts))
+        cmd_opts[, 1] <- str_trim(cmd_opts[, 1])
+
+        cmd_header_row <- empty_row
+        cmd_header_row[, 1] <- command$description
+
+        if (ncol(cmd_opts) == 2) {
+          cmd_opts$`Default value` <- ""
+        }
+
+        if (test_null(options)) {
+          options <- rbind(cmd_header_row, cmd_opts)
+        } else {
+          options <- rbind(options, empty_row, cmd_header_row, cmd_opts)
+        }
+      }
+
+      options[, 1] <- format(options[, 1], justify = "left")
+      options
+    },
+    #' @description
+    #' Create a new `TreeAnalysis` object.
+    #'
+    #' Initialises the analysis with a character–taxon matrix and optional
+    #' settings. The outgroup defaults to the first taxon in the matrix if
+    #' not specified.
+    #'
+    #' @param data One or more `DiscreteMatrix` or `ContinuousMatrix`
+    #'   objects. See the `$data` field.
+    #' @param inactive_taxa \[`character` or `NULL`\]\cr
+    #'   Taxa to exclude from the analysis (default: `NULL`). See the
+    #'   `$inactive_taxa` field.
+    #' @param outgroup \[`character(1)` or `NULL`\]\cr
+    #'   The outgroup taxon name (default: `NULL`, uses the first taxon).
+    #'   See the `$outgroup` field.
+    #' @param zlb_rule \[`character(1)`\]\cr
+    #'   Rule for collapsing zero-length branches (default: `"minimum"`).
+    #'   See the `$zlb_rule` field.
+    #'
+    #' @return A new `TreeAnalysis` object.
+    initialize = function(data, inactive_taxa = NULL, outgroup = NULL,
+                          zlb_rule = "minimum") {
       a <- as.list(environment(), all = TRUE)
 
-      # Check that at least one matrix type has been passed
-      coll <- makeAssertCollection()
-      val_check <- assert(
-        check_false(test_null(discrete_matrix)),
-        check_false(test_null(continuous_matrix)),
-        add = coll
-      )
-      val_check <- coll$getMessages()
-      if (!coll$isEmpty()) {
-        val_check <- str_split_1(val_check, "\n") %>% str_trim()
-        is_ul <- str_starts(val_check, "\\*")
-        val_check <- str_replace(val_check, "\\* ", "")
-        names(val_check) <- if_else(is_ul, "*", "x")
-        cli_abort(c("At least one matrix object must be provided.",
-                    val_check))
-      }
-
-      # Check that resampling analyses have a start tree
-      if (test_multi_class(method, c("ResampleBaseOptions", "BranchSupportOptions"))) {
-        val_check <- check_class(start_trees, "phylo")
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg start_trees} must be a {.cls phylo} object when a {.arg method} is a resampling analysis.",
-                      "x" = val_check))
-        }
-        self$start_trees <- start_trees
-        a$start_trees <- NULL
-      }
+      private$.commands <- list()
 
       for (n in names(a)) {
         self[[n]] <- a[[n]]
       }
+
+      if (test_null(outgroup)) {
+        self$outgroup <- self$data %>%
+          extract2(1) %$%
+          taxa %>%
+          extract(1)
+      }
     },
-    #' @param ... Ignored.
-    print = function (...) {
-      cli_text("{col_grey(\"# A TNT tree analysis\")}")
+    #' @description
+    #' Print a summary of the analysis configuration.
+    #'
+    #' @param ... Not used.
+    print = function(...) {
+      cli_text(col_grey("# A ", style_italic(col_red("nitro")), " tree analysis"))
 
-      config <- c()
-      all_mtx <- c(continuous = self$continuous_matrix,
-                   discrete = self$discrete_matrix)
-      which_mtx <- (!sapply(all_mtx, test_null)) %>%
-        {glue("{sum(.)} ({paste(names(all_mtx)[.], collapse = \", \")})")}
-      inactive_taxa <- self$inactive_taxa %>%
-        {ifelse(!test_null(.), as.character(length(.)), "None")}
-
-      n_constraints <- 0
-      if(!test_null(private$.constraints)) {
-        n_constraints <- length(private$.constraints)
-      }
-
-      weighting <- "Equal"
-      if (test_class(self$weighting, "ImpliedWeightingOptions")) {
-        weighting <- "Implied"
-      }
-
-      ta_method <- class(self$method)[1] %>%
-        str_replace_all(c("Options" = "", "([a-z])([A-Z])" = "\\1 \\2")) %>%
-        str_to_sentence()
-
-      config <- c("Character matrices:" = which_mtx,
-                  "Inactive taxa:" = inactive_taxa,
-                  "Outgroup:" = self$outgroup,
-                  "Tree analysis method:" = ta_method,
-                  "Zero-length branch rule:" = str_to_sentence(self$zlb_rule))
-
-      if (n_constraints > 0) {
-        config <- c(config,
-                    "Constraints:" = n_constraints)
-      }
-
-      config <- c(config,
-                  "Weighting:" = weighting) %>%
-        data.frame()
-
-      names(config) <- NULL
-      print(config)
-    },
-    #' @param ... Ignored.
-    queue = function (...) {
-      queue <- CommandQueue$new()
-
-      queue$add("echo", "=")
-      queue$add("screen", "25x10000")
-      queue$add("log", "stdout")
-      queue$add("silent", "=all")
-      queue$add("silent", "-console")
-      queue$add("collapse", private$.zlb_rule)
-
-      weight_queue <- NULL
-      if (test_class(self$weighting, c("ImpliedWeightingOptions", "R6"))) {
-        weight_queue <- self$weighting$queue()
-        weight_cmd <- weight_queue$read_next()
-        queue$add(weight_cmd$name, weight_cmd$arguments)
-      }
-
-      all_mtx <- c(
-        continuous = self$continuous_matrix,
-        discrete = self$discrete_matrix
-      )
-
-      all_taxa <- sapply(all_mtx, `[[`, "taxa") %>%
-        as.vector() %>%
-        unique()
-
-      queue$add("taxname", glue("+{nchar(all_taxa) %>% max() + 1}"))
-
-      mtx_chars <- sapply(all_mtx, `[[`, "n_characters")
-
-      xread <- glue("{n_char} {n_tax}",
-                    n_char = sum(mtx_chars),
-                    n_tax = length(all_taxa))
-
-      ccode <- c()
-
-      n <- 0
-
-      for (n_mtx in seq(all_mtx)) {
-        mtx <- all_mtx[[n_mtx]]
-        is_discrete <- test_class(mtx, c("DiscreteMatrix", "R6"))
-        is_continuous <- test_class(mtx, c("ContinuousMatrix", "R6"))
-
-        if (is_continuous) {
-          queue$add("nstates", "cont")
-        }
-
-        xread <- c(xread, mtx$queue()$read_next()$arguments)
-
-        if (is_discrete) {
-          if (!test_null(mtx$ordered)) {
-            ccode <- c(ccode, glue("+ {paste(mtx$ordered + n - 1, collapse = \" \")}"))
-          }
-        }
-
-        if (!test_null(mtx$inactive)) {
-          ccode <- c(ccode, glue("] {paste(mtx$inactive + n - 1, collapse = \" \")}"))
-        }
-        n <- n + mtx$n_characters
-      }
-
-      queue$add("xread", xread)
-      if (length(ccode) > 0) {
-        queue$add("ccode", paste(ccode, collapse = " "))
-      }
-      if (!test_null(private$.inactive_taxa)) {
-        queue$add("taxcode", glue("-{taxa}", taxa = paste(private$.inactive_taxa, collapse = " ")))
-      }
-      queue$add("hold", private$.hold)
-      queue$add("outgroup", private$.outgroup)
-
-      if (!test_null(weight_queue)) {
-        if (weight_queue$length() > 0) {
-          queue <- c(queue, weight_queue)
-        }
-      }
-
-      if (!test_null(private$.constraints)) {
-        all_args <- sapply(private$.constraints, function (x) x$queue()$read_next()$arguments)
-        queue$add("force", all_args)
-        queue$add("constrain", "=")
-      }
-
-      # if (!test_null(private$.timeout)) {
-      #   td <- seconds_to_period(private$.timeout)
-      #   tstr <- sprintf("%d:%02d:%02d", day(td) * 24 + hour(td), minute(td), second(td))
-      #   tnt_cmds <- c(tnt_cmds, paste("timeout ", tstr, ";", collapse = ""))
-      # }
-
-      start_trees <- NULL
-
-      if (!test_null(self$start_trees)) {
-        start_trees <- write.tree(self$start_trees) %>%
-          paste(collapse = " ") %>%
-          str_replace_all(c("; " = "*;", ";$" = "", "\\),\\(" = "\\)\\(", "(,[^\\)]+)" = "\\1,", "\\)," = "\\)", "," = " ")) %>%
-          str_split_1(";")
-        queue$add("tread", start_trees)
-      }
-
-      if (test_multi_class(private$.method, c("ResampleBaseOptions", "BranchSupportOptions"))) {
-        queue$add("ttags", "=")
-        queue <- c(queue, private$.method$queue())
-        queue$add("ttags", ")")
-        if (test_multi_class(private$.method, "ResampleBaseOptions")) {
-          queue$add("unique")
-        }
-        queue$add("ttags", "/")
-      } else {
-        queue <- c(queue, private$.method$queue())
-        queue$add("condense")
-        queue$add("tplot", "*")
-      }
-
-      queue$add("length")
-      if (test_class(self$weighting, c("ImpliedWeightingOptions", "R6"))) {
-        queue$add("score")
-      }
-      queue$add("minmax", "-<")
-      queue$add("minmax", "->")
-      queue$add("zzz")
-      return(queue)
-    },
-    #' @param .envir The environment that TNT has been attached to.
-    run = function (.envir = parent.frame()) {
-      val_check <- check_environment(.envir)
-      if (!test_true(val_check)) {
-        cli_abort(c("{.arg .envir} must be an environment.",
-                    "x" = val_check))
-      }
-
-      output <- execute_analysis(self, .envir)
-      output$queue <- self$queue()
-
-      all_taxa <- c(continuous = self$continuous_matrix,
-                    discrete = self$discrete_matrix) %>%
-        sapply(`[[`, "taxa") %>%
-        as.vector() %>%
-        unique()
-
-      if (!test_null(output$tags)) {
-        output$phy <- output$tags$phy
-        output$tags <- output$tags$tags
-        output$tags$node <- output$tags$node + 1
-      }
-
-      output$phy <- lapply(output$phy, function (x) {
-        tip_order <- x$tip.label %>%
-          as.numeric() + 1
-        x$tip.label <- all_taxa[tip_order]
-        x <- RenumberTips(x, all_taxa[sort(tip_order)]) %>%
-          TntOrder()
-        return(x)
-      }) %>%
-        .compressTipLabel()
-
-      if (!test_null(output$legend)) {
-        # weight_legend <- ifelse(test_class(self$weighting, "ImpliedWeightingOptions"), "adjusted homoplasy score", "steps")
-        output$legend <- mutate(
-          output$legend,
-          # weight = weight_legend,
-          summary = if (test_class(self$method, "BranchSupportOptions")) ta$method$index_type else summary,
-          legend = glue("{type} ({summary})") %>% str_to_sentence())
-        names(output$tags)[-1] <- output$legend$legend
-        output$legend <- NULL
-      }
-
-      res <- do.call(TreeAnalysisResults$new, output)
-      return(res)
+      options <- format(self)
+      print(options, row.names = FALSE)
     }
   )
 )

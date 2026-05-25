@@ -2,209 +2,279 @@
 % Please edit documentation in R/TreeAnalysis-class.R
 \name{TreeAnalysis}
 \alias{TreeAnalysis}
-\title{Define tree searches}
+\title{Tree Analysis Configuration}
 \description{
-\code{TreeAnalysis} is an R6 class that stores the configuration for a
- tree analysis, including the character-taxon matrix, taxon activity,
- character weighting and constraints on monophyly.
+An \link[R6:R6Class]{R6} class that stores the complete configuration for a
+phylogenetic tree analysis in \pkg{nitro}, including the character–taxon
+matrix, taxon activity, outgroup selection, zero-length branch handling,
+and all commands to be executed.
+
+\code{TreeAnalysis} is the central object in a \pkg{nitro} workflow. Data and
+analysis options are set at construction time or via active bindings, and
+commands are added with helper functions such as \code{\link[=set_tree_search]{set_tree_search()}},
+\code{\link[=set_weighting]{set_weighting()}}, and \code{\link[=set_support]{set_support()}}.
+}
+\details{
+\subsection{Typical workflow}{
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# 1. Create an analysis with data
+ta <- TreeAnalysis$new(data = my_matrix)
+
+# 2. Optionally configure analysis settings
+ta$outgroup <- "Taxon_A"
+ta$inactive_taxa <- c("Taxon_X", "Taxon_Y")
+
+# 3. Add commands
+ta <- set_tree_search(ta, "branch_swapping", replications = 100)
+ta <- set_weighting(ta, "implied_weighting", weighting_constant = 6)
+ta <- set_support(ta, "bootstrap", replications = 1000)
+
+# 4. Inspect the configuration
+ta
+}\if{html}{\out{</div>}}
+}
+
+\subsection{Adding commands}{
+
+Commands are added via helper functions rather than directly through
+\verb{$add_command()}. Each command declares what it \verb{$provides} (e.g.,
+\code{"tree search"}), and adding a new command that provides the same thing
+replaces the previous one.\tabular{ll}{
+   Helper \tab Adds \cr
+   \code{\link[=set_tree_search]{set_tree_search()}} \tab A tree search command. \cr
+   \code{\link[=set_weighting]{set_weighting()}} \tab An implied weighting command. \cr
+   \code{\link[=set_support]{set_support()}} \tab A resampling support command. \cr
+}
+
+}
+
+\subsection{Zero-length branch rules}{
+
+The \verb{$zlb_rule} field controls how zero-length branches are handled when
+collapsing trees. See \link{CollapseRuleCommand} for the full list of
+available options. Note that resampling analyses require \verb{$zlb_rule} to
+be one of \code{"minimum"}, \code{"maximum"}, or \code{"identical_states"};
+\code{\link[=set_support]{set_support()}} validates this automatically.
+}
+}
+\examples{
+\dontrun{
+nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+
+# Create an analysis
+ta <- make_tree_analysis(
+  data     = dm,
+  outgroup = "Herrerasaurus",
+  zlb_rule = "minimum"
+)
+
+# Add a branch swapping search
+ta <- set_tree_search(ta, "branch_swapping", replications = 50)
+
+# Add implied weighting
+ta <- set_weighting(ta, "implied_weighting", weighting_constant = 6)
+
+# View the configuration
+ta
+
+# Check dimensions
+ta$n_taxa
+ta$n_characters
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=create_matrix]{create_matrix()}} — create the matrix objects required by \verb{$data}.
+\item \code{\link[=execute_analysis]{execute_analysis()}} — runs the analysis.
+\item \code{\link[=make_tree_analysis]{make_tree_analysis()}} — recommended constructor.
+\item \code{\link[=set_tree_search]{set_tree_search()}}, \code{\link[=new_tree_search]{new_tree_search()}} — add or create tree search
+commands.
+\item \code{\link[=set_weighting]{set_weighting()}}, \code{\link[=new_weighting]{new_weighting()}} — add or create weighting
+commands.
+\item \code{\link[=set_support]{set_support()}}, \code{\link[=new_support]{new_support()}} — add or create support analysis
+commands.
+\item \link{CollapseRuleCommand} — documents the available zero-length branch
+rules.
+\item \link{OutgroupCommand} — documents outgroup configuration.
+\item \link{TaxonActivityCommand} — documents taxon activity configuration.
+\item \link{TreeAnalysisResults} — the object returned by execution.
+}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{discrete_matrix}}{A \code{"\link{DiscreteMatrix}"} object.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{commands}}{[\code{list}]\cr
+\emph{(Read-only.)} A named list of \link{BasicCommand} objects registered
+for this analysis, keyed by what each command \verb{$provides}.}
 
-\item{\code{continuous_matrix}}{A \code{"\link{ContinuousMatrix}"} object.}
+    \item{\code{data}}{[\code{AbstractCharacterMatrix} or \code{MultiCharacterMatrix}]\cr
+\emph{(Write-once.)} One or more character–taxon matrix objects
+containing the data for the analysis.}
 
-\item{\code{method}}{An object that contains configuration options for a tree
-analysis method.}
+    \item{\code{inactive_taxa}}{[\code{character} or \code{NULL}]\cr
+A character vector of taxon names to deactivate (exclude from the
+analysis), or \code{NULL} to include all taxa. All names must be present
+in \verb{$data}.}
 
-\item{\code{inactive_taxa}}{A character vector indicating the taxa to be
-inactivated.}
+    \item{\code{n_characters}}{[\code{integer(1)}]\cr
+\emph{(Read-only.)} The total number of characters across all matrices
+in \verb{$data}.}
 
-\item{\code{outgroup}}{A single character vector indicating the taxon to be
-the outgroup.}
+    \item{\code{n_taxa}}{[\code{integer(1)}]\cr
+\emph{(Read-only.)} The number of unique taxa across all matrices in
+\verb{$data}.}
 
-\item{\code{zlb_rule}}{A character vector indicating the rule for handling zero
-length branches. The options are:
-\itemize{
-\item \code{maximum}: collapse an interior branch of the maximum possible
-  length of the branch is zero;
-\item \code{identical_states}: only collapse zero length branches if ancestor and descendant
-  states are the same;
-\item \code{minimum}: collapse an interior branch if the minimum possible
-  length of the branch is zero (default);
-\item \code{discard_tree}: discard all trees that must contain a zero length
-  branch;
-\item \code{spr}: collapse an interior branch using subtree pruning and reconnection (SPR) operations; and
-\item \code{tbr}: collapse an interior branch using tree bisection and reconnection (TBR) operations.
-}}
+    \item{\code{outgroup}}{[\code{character(1)} or \code{NULL}]\cr
+The name of the taxon to use as the outgroup for rooting. Must be
+a taxon present in \verb{$data}. If \code{NULL} is supplied, defaults to the
+first taxon in the matrix.}
 
-\item{\code{constraints}}{One or more \code{"\link{MonophylyConstraintOptions}"} objects.}
-
-\item{\code{weighting}}{An object containing configuration options for character
-weighting.}
-
-\item{\code{start_trees}}{A \code{phylo} or \code{multiPhylo} of trees to load
-prior to starting the tree analysis.}
-
-\item{\code{hold}}{An integer indicating the number of trees to hold in TNT's
-tree buffer.}
-
-\item{\code{max_ram}}{A numeric indicating the number of (binary) megabytes to
-allocate for use by TNT.}
-
-\item{\code{timeout}}{A positive integer indicating the number of seconds to
-allow a search to run for before terminating.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{zlb_rule}}{[\code{character(1)}]\cr
+\emph{(Write-once.)} The rule for handling zero-length branches when
+collapsing trees. See \strong{Details} for the available options.
+Defaults to \code{"minimum"}.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-TreeAnalysis-new}{\code{TreeAnalysis$new()}}
-\item \href{#method-TreeAnalysis-print}{\code{TreeAnalysis$print()}}
-\item \href{#method-TreeAnalysis-queue}{\code{TreeAnalysis$queue()}}
-\item \href{#method-TreeAnalysis-run}{\code{TreeAnalysis$run()}}
-\item \href{#method-TreeAnalysis-clone}{\code{TreeAnalysis$clone()}}
-}
+  \itemize{
+    \item \href{#method-TreeAnalysis-add_command}{\code{TreeAnalysis$add_command()}}
+    \item \href{#method-TreeAnalysis-format}{\code{TreeAnalysis$format()}}
+    \item \href{#method-TreeAnalysis-initialize}{\code{TreeAnalysis$new()}}
+    \item \href{#method-TreeAnalysis-print}{\code{TreeAnalysis$print()}}
+    \item \href{#method-TreeAnalysis-clone}{\code{TreeAnalysis$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TreeAnalysis-new"></a>}}
-\if{latex}{\out{\hypertarget{method-TreeAnalysis-new}{}}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$new(
-  method,
-  discrete_matrix = NULL,
-  continuous_matrix = NULL,
+\if{html}{\out{<a id="method-TreeAnalysis-add_command"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeAnalysis-add_command}{}}}
+\subsection{\code{TreeAnalysis$add_command()}}{
+  Register a command for this analysis.
+
+The command is stored under the key returned by its \verb{$provides}
+field. If a command providing the same thing already exists, it is
+replaced. Use \code{\link[=set_tree_search]{set_tree_search()}} as a convenient alternative for
+tree search commands.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysis$add_command(command)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{command}}{A \link{BasicCommand} object or a \code{CommandList}.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeAnalysis-format"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeAnalysis-format}{}}}
+\subsection{\code{TreeAnalysis$format()}}{
+  Format the analysis configuration as a summary table.
+
+Returns a data frame showing the parameters of every registered
+command, grouped by command with header rows.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysis$format(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} with columns for description, current value,
+and default value.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeAnalysis-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeAnalysis-initialize}{}}}
+\subsection{\code{TreeAnalysis$new()}}{
+  Create a new \code{TreeAnalysis} object.
+
+Initialises the analysis with a character–taxon matrix and optional
+settings. The outgroup defaults to the first taxon in the matrix if
+not specified.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysis$new(
+  data,
   inactive_taxa = NULL,
   outgroup = NULL,
-  zlb_rule = "minimum",
-  constraints = NULL,
-  weighting = NULL,
-  start_trees = NULL,
-  hold = 100,
-  max_ram = 16,
-  timeout = NULL
-)}\if{html}{\out{</div>}}
+  zlb_rule = "minimum"
+)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{data}}{One or more \code{DiscreteMatrix} or \code{ContinuousMatrix}
+objects. See the \verb{$data} field.}
+      \item{\code{inactive_taxa}}{[\code{character} or \code{NULL}]\cr
+Taxa to exclude from the analysis (default: \code{NULL}). See the
+\verb{$inactive_taxa} field.}
+      \item{\code{outgroup}}{[\code{character(1)} or \code{NULL}]\cr
+The outgroup taxon name (default: \code{NULL}, uses the first taxon).
+See the \verb{$outgroup} field.}
+      \item{\code{zlb_rule}}{[\code{character(1)}]\cr
+Rule for collapsing zero-length branches (default: \code{"minimum"}).
+See the \verb{$zlb_rule} field.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{TreeAnalysis} object.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{method}}{An object that contains configuration options for the tree
-analysis method.}
-
-\item{\code{discrete_matrix}}{A \code{"\link{DiscreteMatrix}"} object.}
-
-\item{\code{continuous_matrix}}{A \code{"\link{ContinuousMatrix}"} object.}
-
-\item{\code{inactive_taxa}}{A character vector indicating the taxa to be
-inactivated.}
-
-\item{\code{outgroup}}{A single character vector indicating the taxon to be the
-outgroup.}
-
-\item{\code{zlb_rule}}{An integer indicating the rule for collapsing of zero
-length branches. The options are:
-\itemize{
-\item \code{maximum}: collapse an interior branch of the maximum
- possible length of the branch is zero;
-\item \code{identical_states}: only collapse zero length branches if
- ancestor and descendant states are the same;
-\item \code{minimum}: collapse an interior branch if the minimum
- possible length of the branch is zero (the default); and
-\item \code{discard_tree}: discard all trees that must contain a zero
- length branch.
-\item \code{spr}: collapse an interior branch using subtree pruning and
- reconnection (SPR) operations; and
-\item \code{tbr}: collapse an interior branch using tree bisection and
- reconnection (TBR) operations.
-}}
-
-\item{\code{constraints}}{One or more \code{"\link{MonophylyConstraintOptions}"} objects.}
-
-\item{\code{weighting}}{An object containing configuration options for character
-weighting.}
-
-\item{\code{start_trees}}{A \code{phylo} or \code{multiPhylo} of trees to load
-prior to starting the tree analysis.}
-
-\item{\code{hold}}{An integer indicating the number of trees to hold in TNTs tree
-buffer.}
-
-\item{\code{max_ram}}{A numeric indicating the number of (binary) megabytes to
-allocate for use by TNT.}
-
-\item{\code{timeout}}{A positive integer indicating the number of seconds to
-allow a search to run for before terminating.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeAnalysis-print"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeAnalysis-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{TreeAnalysis$print()}}{
+  Print a summary of the analysis configuration.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysis$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TreeAnalysis-queue"></a>}}
-\if{latex}{\out{\hypertarget{method-TreeAnalysis-queue}{}}}
-\subsection{Method \code{queue()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$queue(...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-TreeAnalysis-run"></a>}}
-\if{latex}{\out{\hypertarget{method-TreeAnalysis-run}{}}}
-\subsection{Method \code{run()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$run(.envir = parent.frame())}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{.envir}}{The environment that TNT has been attached to.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeAnalysis-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeAnalysis-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{TreeAnalysis$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{TreeAnalysis$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeAnalysis$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
