@@ -1,23 +1,23 @@
 Package: nitro
 Type: Package
-Title: Integration of TNT in R
+Title: Wrapper for TNT
 Version: 0.2.0
 Authors@R: c(
   person("Sienna A.", "Birch", role = c("aut", "cre", "cph"), 
          email = "sbirch8@une.edu.au",
          comment = c(ORCID = "0000-0002-2771-536X"))
          )
-Description: Integration of the phylogenetics software TNT (Goloboff et al.
-    2008, Goloboff and Catalano 2016) in R. It interfaces with a locally
-    installed copy of the TNT command-line program and provides functions for
-    performing branch swapping, parsimony ratchet and driven (i.e., "New
-    Technology") searches. Each tree search function automatically returns
-    a set of trees for visualisation or use with other R packages.
+Description: nitro provides an R interface to TNT, a program for phylogenetic
+analysis under maximum parsimony (Goloboff et al., 2008; Goloboff & Catalano,
+2016; Goloboff & Morales, 2023). It interfaces with a locally installed copy of
+the TNT command line executable and provides a clean, pipeable R API for
+configuring and running parsimony analyses, retrieving results as standard R
+phylogenetic objects, and integrating with the broader R phylogenetics
+ecosystem.
 Depends: R (>= 3.2.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
 Imports: 
     ape,
     checkmate,
@@ -29,5 +29,10 @@ Imports:
     processx,
     R6,
     stringr,
-    treeio,
+    tibble,
+    tidyr,
+    tidytree,
     TreeTools
+Config/roxygen2/version: 8.0.0
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
