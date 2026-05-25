@@ -204,7 +204,7 @@ BranchBreakingCommand <- R6Class(
     #'
     #' @return A new `BranchBreakingCommand` object.
     initialize = function(swapper, cluster_size, safe_unclip, fill_only,
-                          save_multiple, random_clip, set_only = FALS) {
+                          save_multiple, random_clip, set_only = FALSE){
       super$initialize(
         name = "bbreak",
         description = "Branch swapping using existing trees",
