@@ -2,104 +2,188 @@
 % Please edit documentation in R/DiscreteMatrix-class.R
 \name{DiscreteMatrix}
 \alias{DiscreteMatrix}
-\title{Discrete character matrix}
+\title{Discrete Character Matrix}
 \description{
-\code{DiscreteMatrix} is an R6 class that contains a discrete character
-  matrix and functions for modifying character activity and ordering.
+An \link[R6:R6Class]{R6} class that stores a discrete character–taxon matrix
+and provides options for controlling character activity and ordering.
+
+The matrix is stored internally as a \link[phangorn:phyDat]{phyDat} object.
+The recommended way to create a \code{DiscreteMatrix} is via \code{\link[=create_matrix]{create_matrix()}},
+which automatically selects the correct class based on the input data type.
+}
+\details{
+\subsection{Data types}{
+
+The \verb{$data_type} field is derived automatically from the \code{phyDat} object
+and will be one of:\tabular{ll}{
+   Value \tab Description \cr
+   \code{"dna"} \tab DNA sequence data. \cr
+   \code{"rna"} \tab RNA sequence data. \cr
+   \code{"proteins"} \tab Amino acid sequence data. \cr
+   \code{"numeric"} \tab User-defined numeric states (morphological data). \cr
+}
+
+}
+
+\subsection{Character ordering}{
+
+Character ordering (\verb{$ordered}) is only supported for matrices with
+\code{data_type = "numeric"}. Attempting to set \verb{$ordered} on other data
+types raises an error.
+}
+}
+\examples{
+# Read a discrete character matrix from a Nexus file
+nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+
+# Inspect the matrix
+dm
+
+# Mark characters 3 and 7 as ordered
+dm$ordered <- c(3, 7)
+
+# Deactivate characters 1 and 2
+dm$inactive <- c(1, 2)
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=create_matrix]{create_matrix()}} — recommended constructor; automatically creates a
+\code{DiscreteMatrix} when supplied a \code{phyDat} object.
+\item \code{\link[=make_tree_analysis]{make_tree_analysis()}} — accepts these objects via its \code{data} argument.
+\item \link{ContinuousMatrix} — the equivalent class for continuous characters.
+\item \link{TreeAnalysis} — the analysis container that accepts matrix objects.
+}
 }
 \section{Super class}{
-\code{\link[nitro:AbstractCharacterMatrix]{nitro::AbstractCharacterMatrix}} -> \code{DiscreteMatrix}
+\code{\link[nitro:AbstractCharacterMatrix]{AbstractCharacterMatrix}} -> \code{DiscreteMatrix}
 }
 \section{Active bindings}{
-\if{html}{\out{<div class="r6-active-bindings">}}
-\describe{
-\item{\code{data_type}}{The type of discrete character data contained in the matrix.}
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{data}}{[\code{phyDat}]\cr
+\emph{(Write-once.)} The character matrix as a
+\link[phangorn:phyDat]{phyDat} object. Setting this field also
+populates \verb{$taxa}, \verb{$n_characters}, \verb{$n_states}, \verb{$symbols}, and
+\verb{$data_type} automatically.}
 
-\item{\code{n_states}}{The number of unique states contained in the matrix.}
+    \item{\code{n_states}}{[\code{integer(1)}]\cr
+\emph{(Read-only.)} The number of unique character states in the matrix.}
 
-\item{\code{symbols}}{The unique set of discrete characters contained in the matrix.}
+    \item{\code{symbols}}{[\code{character}]\cr
+\emph{(Read-only.)} The unique character state symbols present in the
+matrix.}
 
-\item{\code{ordered}}{A numeric vector indicating which characters to mark as ordered.}
-}
-\if{html}{\out{</div>}}
+    \item{\code{ordered}}{[\code{numeric} or \code{NULL}]\cr
+The indices of characters to mark as ordered. Must be unique
+integer indices between 1 and \verb{$n_characters}. Only applicable
+when \verb{$data_type} is \code{"numeric"}. Set to \code{NULL} to mark all
+characters as unordered. Returns \code{NULL} when no characters are
+ordered.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-DiscreteMatrix-new}{\code{DiscreteMatrix$new()}}
-\item \href{#method-DiscreteMatrix-print}{\code{DiscreteMatrix$print()}}
-\item \href{#method-DiscreteMatrix-queue}{\code{DiscreteMatrix$queue()}}
-\item \href{#method-DiscreteMatrix-clone}{\code{DiscreteMatrix$clone()}}
-}
+  \itemize{
+    \item \href{#method-DiscreteMatrix-format}{\code{DiscreteMatrix$format()}}
+    \item \href{#method-DiscreteMatrix-initialize}{\code{DiscreteMatrix$new()}}
+    \item \href{#method-DiscreteMatrix-print}{\code{DiscreteMatrix$print()}}
+    \item \href{#method-DiscreteMatrix-clone}{\code{DiscreteMatrix$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-DiscreteMatrix-new"></a>}}
-\if{latex}{\out{\hypertarget{method-DiscreteMatrix-new}{}}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$new(data, ordered = NULL, inactive = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-DiscreteMatrix-format"></a>}}
+\if{latex}{\out{\hypertarget{method-DiscreteMatrix-format}{}}}
+\subsection{\code{DiscreteMatrix$format()}}{
+  Format the matrix as a summary table.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{DiscreteMatrix$format(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} summarising the matrix properties.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data}}{A \code{phyDat} discrete character matrix.}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-DiscreteMatrix-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-DiscreteMatrix-initialize}{}}}
+\subsection{\code{DiscreteMatrix$new()}}{
+  Create a new \code{DiscreteMatrix} object.
 
-\item{\code{ordered}}{A numeric vector indicating which characters to mark as ordered.}
+It is recommended to use \code{\link[=create_matrix]{create_matrix()}} rather than calling this
+constructor directly.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{DiscreteMatrix$new(data, ordered = NULL, inactive = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{data}}{[\code{phyDat}]\cr
+A \link[phangorn:phyDat]{phyDat} discrete character matrix. See the
+\verb{$data} field.}
+      \item{\code{ordered}}{[\code{numeric} or \code{NULL}]\cr
+Indices of characters to mark as ordered (default: \code{NULL}). Only
+applicable for \code{"numeric"} data type. See the \verb{$ordered} field.}
+      \item{\code{inactive}}{[\code{numeric} or \code{NULL}]\cr
+Indices of characters to mark as inactive (default: \code{NULL}). See
+the \verb{$inactive} field.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{DiscreteMatrix} object.
+  }
+}
 
-\item{\code{inactive}}{A numeric vector indicating which characters to mark as inactive.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-DiscreteMatrix-print"></a>}}
 \if{latex}{\out{\hypertarget{method-DiscreteMatrix-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{DiscreteMatrix$print()}}{
+  Print a summary of the matrix.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{DiscreteMatrix$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-DiscreteMatrix-queue"></a>}}
-\if{latex}{\out{\hypertarget{method-DiscreteMatrix-queue}{}}}
-\subsection{Method \code{queue()}}{
-Generate the command queue
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$queue(...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-DiscreteMatrix-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-DiscreteMatrix-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{DiscreteMatrix$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{DiscreteMatrix$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{DiscreteMatrix$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
