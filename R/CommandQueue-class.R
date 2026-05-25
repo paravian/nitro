@@ -1,108 +1,341 @@
 #' Command Queue
 #'
 #' @description
-#' \code{CommandQueue} is an R6 class that stores a list of TNT commands to
-#'   execute in order.
-#' @importFrom checkmate check_character check_number check_string test_number
-#' @importFrom cli cli_abort cli_text col_grey
+#' An [R6][R6::R6Class] class that stores an ordered list of TNT commands
+#' for sequential execution.
+#'
+#' Commands are added via `$add()` with a numeric priority. The queue
+#' maintains commands in ascending priority order (lower numbers execute
+#' first). Commands are consumed one at a time via `$read_next()`.
+#'
+#' Dependency resolution is performed automatically as commands are added.
+#' Each command's required and optional dependencies are matched against
+#' the `$provides` tokens of commands already in the queue, and
+#' `$set_dependency()` is called on the dependent command when a match is
+#' found. The `$is_resolved` field reflects whether all required
+#' dependencies in the queue are currently satisfied.
+#'
+#' `CommandQueue` is the only command-related class that is exported.
+#' Users interact with it primarily through [BasicCommand]`$enqueue()` and
+#' the [as.character.CommandQueue()] method, which renders all queued
+#' commands to a character vector of TNT command strings.
+#'
+#' @details
+#' ## Typical usage
+#' In normal use, a queue is created implicitly by calling `$enqueue()`
+#' on a command object without supplying an existing queue:
+#'
+#' ```r
+#' queue <- my_command$enqueue()
+#' tnt_script <- as.character(queue)
+#' ```
+#'
+#' Commands can also be added manually:
+#'
+#' ```r
+#' queue <- CommandQueue$new()
+#' queue$add(my_command, priority = 500)
+#' ```
+#'
+#' ## Priority ordering
+#' Commands are sorted by priority on insertion. When two commands share
+#' the same priority, they are ordered by insertion order. Lower priority
+#' numbers execute first.
+#'
+#' ## Dependency resolution
+#' Dependency resolution runs incrementally as each command is added via
+#' `$add()`. When a new command is inserted:
+#'
+#' 1. Its required and optional dependencies are checked against the
+#'    `$provides` tokens of all commands currently in the queue.
+#' 2. If a match is found, `$set_dependency()` is called on the dependent
+#'    command immediately.
+#' 3. After insertion, any previously unresolved commands in the queue are
+#'    re-checked in case the newly added command satisfies their
+#'    dependencies.
+#'
+#' The `$is_resolved` field is updated after every insertion and reflects
+#' whether all required dependencies across all commands in the queue are
+#' currently satisfied. [execute_analysis()] checks this field before
+#' passing the queue to [TntInterface]`$execute()` and aborts if any
+#' required dependencies remain unmet.
+#'
+#' In normal use, dependency resolution is handled transparently by each
+#' command's `$enqueue()` method, which adds the command and any
+#' prerequisites to the queue in the correct order.
+#'
+#' @seealso
+#' * [BasicCommand] — all command objects support `$enqueue()`, which
+#'   adds them to a queue and triggers dependency resolution.
+#' * [as.character.CommandQueue()] — renders all queued commands to a
+#'   character vector.
+#' * [execute_analysis()] — checks `$is_resolved` before executing the
+#'   queue.
+#'
+#' @importFrom checkmate check_class check_int check_subset test_null test_true
+#' @importFrom cli cli_abort cli_text col_grey col_red
+#' @importFrom magrittr extract not use_series
 #' @importFrom R6 R6Class
 #' @export
-CommandQueue <- R6Class("CommandQueue",
+CommandQueue <- R6Class(
+  "CommandQueue",
   private = list(
-    .queue = list()
+    .commands = list(),
+    .is_resolved = FALSE,
+    #' @description
+    #' Attempt to resolve the dependencies of a single command against the
+    #' commands currently in the queue.
+    #'
+    #' @param command A [BasicCommand] object whose dependencies are to be
+    #'   resolved.
+    #' @param suppress_errors \[`logical(1)`\]\cr
+    #'   If `TRUE` (default), unmet dependencies return `FALSE` silently.
+    #'   If `FALSE`, an error is raised immediately.
+    #'
+    #' @return `TRUE` if all required dependencies were resolved,
+    #'   `FALSE` otherwise.
+    do_resolve = function (command, suppress_errors = TRUE) {
+      res <- TRUE
+      provides <- sapply(private$.commands, function(x) {
+        x$command[["provides"]]
+      })
+
+      provide_cmds <- sapply(provides, test_null) %>%
+        not() %>%
+        which() %>%
+        private$.commands[.]
+      provides <- unlist(provides)
+
+      all_requires <- command$requires
+      if (!test_null(all_requires)) {
+        val_check <- check_subset(all_requires, unlist(provides))
+        if (!test_true(val_check)) {
+          res <- FALSE
+          if (!suppress_errors) {
+            mask <- all_requires %in% provides
+            cli_abort(c("Failed dependency check for {class(command)[1]}: {all_requires[!mask]}.",
+                        "x" = val_check))
+          }
+        }
+
+        for (requires in all_requires) {
+          mask <- requires == provides
+          if (sum(mask) > 1) {
+            res <- FALSE
+            if (!suppress_errors) {
+              cli_abort(c("More than one command satisfies the dependency"))
+            }
+          } else if (sum(mask) == 1) {
+            dep_cmd <- extract(provide_cmds, mask) %>%
+              unlist() %>%
+              use_series("command")
+            command$set_dependency(requires, dep_cmd)
+          }
+        }
+      }
+
+      all_optional <- command$optional
+      if (!test_null(all_optional)) {
+        for (optional in all_optional) {
+          mask <- optional == provides
+          if (sum(mask) > 1) {
+            res <- FALSE
+            if (!suppress_errors) {
+              cli_abort(c("More than one command satisfies the dependency"))
+            }
+          } else if (sum(mask) == 1) {
+            dep_cmd <- extract(provide_cmds, mask) %>%
+              unlist() %>%
+              use_series("command")
+            command$set_dependency(optional, dep_cmd)
+          }
+        }
+      }
+
+      res
+    }
+  ),
+  active = list(
+    #' @field is_resolved \[`logical(1)`\]\cr
+    #'   *(Read-only.)* Whether all required dependencies across all
+    #'   commands currently in the queue are satisfied. Updated
+    #'   automatically after every call to `$add()`. [execute_analysis()]
+    #'   checks this field before passing the queue to
+    #'   [TntInterface]`$execute()`.
+    is_resolved = function(value) {
+      if (missing(value)) {
+        return(private$.is_resolved)
+      }
+      cli_abort(c("{.arg resolved} is a read-only field."))
+    }
   ),
   public = list(
-    #' @param name The name of the command.
-    #' @param arguments The arguments of the command.
-    add = function (name, arguments = NULL) {
-      name_check <- check_string(name, min.chars = 1)
-      if (!isTRUE(name_check)) {
-        cli_abort("{.arg name} must be a string.",
-                  "x" = name_check)
+    #' @description
+    #' Add a command to the queue and attempt to resolve its dependencies.
+    #'
+    #' After insertion the queue is re-sorted by priority. Dependency
+    #' resolution then runs in two passes:
+    #'
+    #' 1. The newly added command's required and optional dependencies are
+    #'    matched against the `$provides` tokens of all other commands in
+    #'    the queue.
+    #' 2. Any commands that were previously unresolved are re-checked in
+    #'    case the newly added command satisfies their dependencies.
+    #'
+    #' The `$is_resolved` field is updated to reflect whether all required
+    #' dependencies across the entire queue are now satisfied.
+    #'
+    #' @param command \[`BasicCommand`\]\cr
+    #'   An object inheriting from [BasicCommand].
+    #' @param priority \[`integer(1)`\]\cr
+    #'   A non-negative integer controlling execution order. Lower values
+    #'   execute first.
+    add = function(command, priority) {
+      val_check <- check_class(command, "BasicCommand")
+      if (!test_true(val_check)) {
+        cli_abort("{.arg command} must be an object that inherits from {.cls BasicCommand}.",
+                  "x" = val_check)
       }
-      coll <- makeAssertCollection()
-      arg_check <- assert(
-        check_null(arguments),
-        check_number(arguments),
-        check_character(arguments, min.chars = 1),
-        add = coll
+
+      val_check <- check_int(priority, lower = 0)
+      if (!test_true(val_check)) {
+        cli_abort("{.arg priority} must be a positive integer.",
+                  "x" = val_check)
+      }
+
+      new_cmd <- list(
+        command = command,
+        priority = priority,
+        resolved = private$do_resolve(command)
       )
-      val_check <- coll$getMessages()
-      if (!coll$isEmpty()) {
-        cli_abort("{.arg arguments} must be either a number or character vector.",
-                  "x" = arg_check)
-      }
-      if (test_number(arguments)) {
-        arguments <- as.character(arguments)
+
+      private$.commands <- c(
+        private$.commands,
+        list(new_cmd)
+      )
+
+      if (self$length() > 1) {
+        all_priorities <- sapply(private$.commands, getElement, "priority")
+        private$.commands <- private$.commands[order(all_priorities)]
       }
 
-      private$.queue[[self$length() + 1]] <- list(name = name, arguments = arguments)
-    },
-    #' @param ... Ignored.
-    read_next = function (...) {
-      if (self$length() == 0) {
-        cli_abort(c("Queue is empty, no more commands to read."))
-      }
-      item <- private$.queue[[1]]
-      private$.queue[[1]] <- NULL
-      return(item)
-    },
-    #' @param ... Ignored.
-    length = function (...) {
-      return(length(private$.queue))
-    },
-    #' @param ... Ignored.
-    print = function (...) {
-      cli_text("{col_grey(\"# A command queue\")}")
+      unres <- sapply(private$.commands, getElement, "resolved") %>%
+        not()
 
-      config <- c("Queue length:" = self$length()) %>%
+      optional <- sapply(private$.commands, function(x) {
+        cmd <- x$command
+        res <- FALSE
+
+        if (!test_null(cmd$optional)) {
+          res <- sapply(cmd$optional, function (y) {
+            test_null(cmd$get_dependency(y))
+          }) %>%
+            any()
+        }
+
+        res
+      })
+
+      unres <- unres | optional
+
+      if (any(unres)) {
+        for (idx in which(unres)) {
+          unres_cmd <- private$.commands[[idx]]
+          if (!identical(command, unres_cmd$command)) {
+            is_res <- private$do_resolve(unres_cmd$command)
+
+            if (is_res) {
+              unres_cmd$resolved <- TRUE
+              unres[idx] <- FALSE
+            }
+          }
+        }
+      }
+
+      private$.is_resolved <- all(!unres)
+    },
+    #' @description
+    #' Return the number of commands currently in the queue.
+    #'
+    #' @param ... Not used.
+    #'
+    #' @return An integer.
+    length = function(...) {
+      length(private$.commands)
+    },
+    #' @description
+    #' Print a brief summary of the queue.
+    #'
+    #' @param ... Not used.
+    print = function(...) {
+      cli_text(col_grey("# A ", col_red("nitro"), " command queue"))
+
+      config <- c(
+        "Queue length:" = self$length(),
+        "Resolved:" = self$is_resolved
+      ) %>%
         data.frame()
       names(config) <- NULL
       print(config)
+    },
+    #' @description
+    #' Remove and return the next command from the queue.
+    #'
+    #' Commands are returned in priority order (lowest priority number
+    #' first). Raises an error if the queue is empty.
+    #'
+    #' @param ... Not used.
+    #'
+    #' @return A [BasicCommand] object.
+    read_next = function(...) {
+      if (self$length() == 0) {
+        cli_abort(c("Queue is empty, no more commands to read."))
+      }
+      item <- private$.commands[[1]]
+      private$.commands[[1]] <- NULL
+      item$command
     }
   )
 )
 
-#' Concatenate \code{CommandQueue} objects
+#' Render a CommandQueue to a Character Vector
 #'
-#' @param ... One or more \code{"\link{CommandQueue}"} objects.
-#' @importFrom checkmate check_class
-#' @importFrom cli cli_abort
+#' @description
+#' Consumes all commands in a [CommandQueue] in priority order and returns
+#' their rendered TNT command strings as a character vector.
+#'
+#' Note that this operation is **destructive** — all commands are removed
+#' from the queue as they are read. The queue will be empty after this
+#' call.
+#'
+#' It is the caller's responsibility to ensure that `$is_resolved` is
+#' `TRUE` before calling this function. [execute_analysis()] performs this
+#' check automatically.
+#'
+#' @param queue A [CommandQueue] object.
+#'
+#' @return A character vector of TNT command strings, one element per
+#'   command.
+#'
+#' @seealso
+#' * [CommandQueue] — the queue class, including details on dependency
+#'   resolution and `$is_resolved`.
+#' * [BasicCommand]`$render()` — produces the string for each individual
+#'   command.
+#' * [execute_analysis()] — the primary entry point, which checks
+#'   `$is_resolved` before rendering.
+#'
 #' @export
-c.CommandQueue <- function (...) {
-  obj <- list(...)
-  obj <- unlist(obj)
-  val_check <- sapply(obj, check_class, classes = c("CommandQueue", "R6")) %>%
-    sapply(isTRUE)
-
-  if (!all(val_check)) {
-    cli_abort(c("All objects must be {.cls CommandQueue} class objects"))
-  }
-
-  obj <- Reduce(function(q1, q2) {
-    while (q2$length() > 0) {
-      cmd <- q2$read_next()
-      q1$add(cmd$name, cmd$arguments)
-    }
-    return(q1)
-  }, obj)
-
-  return(obj)
-}
-
-#' Convert to character
-#' 
-#' @param queue A \code{CommandQueue} object.
-#' @export
-as.character.CommandQueue <- function (queue) {
+as.character.CommandQueue <- function(queue) {
   all_cmds <- character(0)
+
   while (queue$length() > 0) {
     next_cmd <- queue$read_next()
-    tnt_cmd <- c(next_cmd$name, next_cmd$arguments, ";")
-    if (length(next_cmd$arguments) < 2) {
-      tnt_cmd <- paste(tnt_cmd, collapse = " ")
-    }
-    all_cmds <- c(all_cmds, tnt_cmd)
+    all_cmds <- c(
+      all_cmds,
+      next_cmd$render()
+    )
   }
-  return(all_cmds)
+
+  all_cmds
 }

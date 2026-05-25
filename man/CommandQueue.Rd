@@ -4,100 +4,238 @@
 \alias{CommandQueue}
 \title{Command Queue}
 \description{
-\code{CommandQueue} is an R6 class that stores a list of TNT commands to
-  execute in order.
+An \link[R6:R6Class]{R6} class that stores an ordered list of TNT commands
+for sequential execution.
+
+Commands are added via \verb{$add()} with a numeric priority. The queue
+maintains commands in ascending priority order (lower numbers execute
+first). Commands are consumed one at a time via \verb{$read_next()}.
+
+Dependency resolution is performed automatically as commands are added.
+Each command's required and optional dependencies are matched against
+the \verb{$provides} tokens of commands already in the queue, and
+\verb{$set_dependency()} is called on the dependent command when a match is
+found. The \verb{$is_resolved} field reflects whether all required
+dependencies in the queue are currently satisfied.
+
+\code{CommandQueue} is the only command-related class that is exported.
+Users interact with it primarily through \link{BasicCommand}\verb{$enqueue()} and
+the \code{\link[=as.character.CommandQueue]{as.character.CommandQueue()}} method, which renders all queued
+commands to a character vector of TNT command strings.
+}
+\details{
+\subsection{Typical usage}{
+
+In normal use, a queue is created implicitly by calling \verb{$enqueue()}
+on a command object without supplying an existing queue:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{queue <- my_command$enqueue()
+tnt_script <- as.character(queue)
+}\if{html}{\out{</div>}}
+
+Commands can also be added manually:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{queue <- CommandQueue$new()
+queue$add(my_command, priority = 500)
+}\if{html}{\out{</div>}}
+}
+
+\subsection{Priority ordering}{
+
+Commands are sorted by priority on insertion. When two commands share
+the same priority, they are ordered by insertion order. Lower priority
+numbers execute first.
+}
+
+\subsection{Dependency resolution}{
+
+Dependency resolution runs incrementally as each command is added via
+\verb{$add()}. When a new command is inserted:
+\enumerate{
+\item Its required and optional dependencies are checked against the
+\verb{$provides} tokens of all commands currently in the queue.
+\item If a match is found, \verb{$set_dependency()} is called on the dependent
+command immediately.
+\item After insertion, any previously unresolved commands in the queue are
+re-checked in case the newly added command satisfies their
+dependencies.
+}
+
+The \verb{$is_resolved} field is updated after every insertion and reflects
+whether all required dependencies across all commands in the queue are
+currently satisfied. \code{\link[=execute_analysis]{execute_analysis()}} checks this field before
+passing the queue to \link{TntInterface}\verb{$execute()} and aborts if any
+required dependencies remain unmet.
+
+In normal use, dependency resolution is handled transparently by each
+command's \verb{$enqueue()} method, which adds the command and any
+prerequisites to the queue in the correct order.
+}
+}
+\seealso{
+\itemize{
+\item \link{BasicCommand} — all command objects support \verb{$enqueue()}, which
+adds them to a queue and triggers dependency resolution.
+\item \code{\link[=as.character.CommandQueue]{as.character.CommandQueue()}} — renders all queued commands to a
+character vector.
+\item \code{\link[=execute_analysis]{execute_analysis()}} — checks \verb{$is_resolved} before executing the
+queue.
+}
+}
+\section{Active bindings}{
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{is_resolved}}{[\code{logical(1)}]\cr
+\emph{(Read-only.)} Whether all required dependencies across all
+commands currently in the queue are satisfied. Updated
+automatically after every call to \verb{$add()}. \code{\link[=execute_analysis]{execute_analysis()}}
+checks this field before passing the queue to
+\link{TntInterface}\verb{$execute()}.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-CommandQueue-add}{\code{CommandQueue$add()}}
-\item \href{#method-CommandQueue-read_next}{\code{CommandQueue$read_next()}}
-\item \href{#method-CommandQueue-length}{\code{CommandQueue$length()}}
-\item \href{#method-CommandQueue-print}{\code{CommandQueue$print()}}
-\item \href{#method-CommandQueue-clone}{\code{CommandQueue$clone()}}
-}
+  \itemize{
+    \item \href{#method-CommandQueue-add}{\code{CommandQueue$add()}}
+    \item \href{#method-CommandQueue-length}{\code{CommandQueue$length()}}
+    \item \href{#method-CommandQueue-print}{\code{CommandQueue$print()}}
+    \item \href{#method-CommandQueue-read_next}{\code{CommandQueue$read_next()}}
+    \item \href{#method-CommandQueue-clone}{\code{CommandQueue$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CommandQueue-add"></a>}}
 \if{latex}{\out{\hypertarget{method-CommandQueue-add}{}}}
-\subsection{Method \code{add()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CommandQueue$add(name, arguments = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{CommandQueue$add()}}{
+  Attempt to resolve the dependencies of a single command against the
+commands currently in the queue.
+
+
+  Add a command to the queue and attempt to resolve its dependencies.
+
+After insertion the queue is re-sorted by priority. Dependency
+resolution then runs in two passes:
+\enumerate{
+\item The newly added command's required and optional dependencies are
+matched against the \verb{$provides} tokens of all other commands in
+the queue.
+\item Any commands that were previously unresolved are re-checked in
+case the newly added command satisfies their dependencies.
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{The name of the command.}
+The \verb{$is_resolved} field is updated to reflect whether all required
+dependencies across the entire queue are now satisfied.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$add(command, priority)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{command}}{A \link{BasicCommand} object whose dependencies are to be
+resolved.}
+      \item{\code{command}}{[\code{BasicCommand}]\cr
+An object inheriting from \link{BasicCommand}.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+      \item{\code{suppress_errors}}{[\code{logical(1)}]\cr
+If \code{TRUE} (default), unmet dependencies return \code{FALSE} silently.
+If \code{FALSE}, an error is raised immediately.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    \code{TRUE} if all required dependencies were resolved,
+\code{FALSE} otherwise.
+  }
+}
 
-\item{\code{arguments}}{The arguments of the command.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CommandQueue-read_next"></a>}}
-\if{latex}{\out{\hypertarget{method-CommandQueue-read_next}{}}}
-\subsection{Method \code{read_next()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CommandQueue$read_next(...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CommandQueue-length"></a>}}
 \if{latex}{\out{\hypertarget{method-CommandQueue-length}{}}}
-\subsection{Method \code{length()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CommandQueue$length(...)}\if{html}{\out{</div>}}
+\subsection{\code{CommandQueue$length()}}{
+  Return the number of commands currently in the queue.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$length(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    An integer.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CommandQueue-print"></a>}}
 \if{latex}{\out{\hypertarget{method-CommandQueue-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CommandQueue$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{CommandQueue$print()}}{
+  Print a brief summary of the queue.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CommandQueue-read_next"></a>}}
+\if{latex}{\out{\hypertarget{method-CommandQueue-read_next}{}}}
+\subsection{\code{CommandQueue$read_next()}}{
+  Remove and return the next command from the queue.
+
+Commands are returned in priority order (lowest priority number
+first). Raises an error if the queue is empty.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$read_next(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \link{BasicCommand} object.
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CommandQueue-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-CommandQueue-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{CommandQueue$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{CommandQueue$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
