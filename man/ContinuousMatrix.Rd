@@ -2,89 +2,162 @@
 % Please edit documentation in R/ContinuousMatrix-class.R
 \name{ContinuousMatrix}
 \alias{ContinuousMatrix}
-\title{Continuous character matrix}
+\title{Continuous Character Matrix}
 \description{
-\code{ContinuousMatrix} is an R6 class that contains a continuous character
-  matrix and functions for modifying character activity.
+An \link[R6:R6Class]{R6} class that stores a continuous character–taxon matrix
+and provides options for controlling character activity.
+
+The matrix is stored internally as a \code{data.frame} with one row per taxon
+and one column per character. The recommended way to create a
+\code{ContinuousMatrix} is via \code{\link[=create_matrix]{create_matrix()}}, which automatically selects
+the correct class based on the input data type.
+}
+\details{
+\subsection{Input format}{
+
+The \code{data.frame} supplied to \verb{$data} must have:
+\itemize{
+\item A column named \code{"taxon"} containing taxon names.
+\item All remaining columns numeric, each representing one character.
+}
+
+Whitespace in taxon names is replaced with underscores. Where a taxon
+appears in multiple rows, values are summarised as a range
+(e.g., \code{"1.2-3.4"}); missing values are encoded as \code{"?"}.
+}
+}
+\examples{
+# Read a continuous character matrix from a CSV file
+csv_path <- system.file("extdata", "raven_2017.csv", package = "nitro")
+cm <- read.table(csv_path, sep = ",", header = TRUE) |> create_matrix()
+
+# Inspect the matrix
+cm
+
+# Deactivate character 1
+cm$inactive <- 1
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=create_matrix]{create_matrix()}} — recommended constructor; automatically creates a
+\code{ContinuousMatrix} when supplied a \code{data.frame}.
+\item \code{\link[=make_tree_analysis]{make_tree_analysis()}} — accepts these objects via its \code{data} argument.
+\item \link{DiscreteMatrix} — the equivalent class for discrete characters.
+\item \link{TreeAnalysis} — the analysis container that accepts matrix objects.
+}
 }
 \section{Super class}{
-\code{\link[nitro:AbstractCharacterMatrix]{nitro::AbstractCharacterMatrix}} -> \code{ContinuousMatrix}
+\code{\link[nitro:AbstractCharacterMatrix]{AbstractCharacterMatrix}} -> \code{ContinuousMatrix}
+}
+\section{Active bindings}{
+  \if{html}{\out{<div class="r6-active-bindings">}}
+  \describe{
+    \item{\code{data}}{[\code{data.frame}]\cr
+\emph{(Write-once.)} The character matrix as a \code{data.frame} with taxon
+names as row names and one column per character. Setting this field
+also populates \verb{$taxa} and \verb{$n_characters} automatically.}
+  }
+  \if{html}{\out{</div>}}
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-ContinuousMatrix-new}{\code{ContinuousMatrix$new()}}
-\item \href{#method-ContinuousMatrix-print}{\code{ContinuousMatrix$print()}}
-\item \href{#method-ContinuousMatrix-queue}{\code{ContinuousMatrix$queue()}}
-\item \href{#method-ContinuousMatrix-clone}{\code{ContinuousMatrix$clone()}}
-}
+  \itemize{
+    \item \href{#method-ContinuousMatrix-format}{\code{ContinuousMatrix$format()}}
+    \item \href{#method-ContinuousMatrix-initialize}{\code{ContinuousMatrix$new()}}
+    \item \href{#method-ContinuousMatrix-print}{\code{ContinuousMatrix$print()}}
+    \item \href{#method-ContinuousMatrix-clone}{\code{ContinuousMatrix$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ContinuousMatrix-new"></a>}}
-\if{latex}{\out{\hypertarget{method-ContinuousMatrix-new}{}}}
-\subsection{Method \code{new()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$new(data, inactive = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-ContinuousMatrix-format"></a>}}
+\if{latex}{\out{\hypertarget{method-ContinuousMatrix-format}{}}}
+\subsection{\code{ContinuousMatrix$format()}}{
+  Format the matrix as a summary table.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{ContinuousMatrix$format(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} summarising the matrix properties.
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data}}{A \code{data.frame} representing a continuous character
-matrix.}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-ContinuousMatrix-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-ContinuousMatrix-initialize}{}}}
+\subsection{\code{ContinuousMatrix$new()}}{
+  Create a new \code{ContinuousMatrix} object.
 
-\item{\code{inactive}}{A numeric vector indicating which characters to mark as inactive.}
+It is recommended to use \code{\link[=create_matrix]{create_matrix()}} rather than calling this
+constructor directly.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{ContinuousMatrix$new(data, inactive = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{data}}{[\code{data.frame}]\cr
+A \code{data.frame} representing a continuous character matrix, with a
+\code{"taxon"} column and one numeric column per character. See the
+\verb{$data} field.}
+      \item{\code{inactive}}{[\code{numeric} or \code{NULL}]\cr
+Indices of characters to mark as inactive (default: \code{NULL}). See
+the \verb{$inactive} field.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{ContinuousMatrix} object.
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ContinuousMatrix-print"></a>}}
 \if{latex}{\out{\hypertarget{method-ContinuousMatrix-print}{}}}
-\subsection{Method \code{print()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$print(...)}\if{html}{\out{</div>}}
+\subsection{\code{ContinuousMatrix$print()}}{
+  Print a summary of the matrix.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{ContinuousMatrix$print(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ContinuousMatrix-queue"></a>}}
-\if{latex}{\out{\hypertarget{method-ContinuousMatrix-queue}{}}}
-\subsection{Method \code{queue()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$queue(...)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{...}}{Ignored.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-ContinuousMatrix-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-ContinuousMatrix-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{ContinuousMatrix$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{ContinuousMatrix$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{ContinuousMatrix$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }
