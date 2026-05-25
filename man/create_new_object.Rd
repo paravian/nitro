@@ -2,15 +2,29 @@
 % Please edit documentation in R/create_new_object.R
 \name{create_new_object}
 \alias{create_new_object}
-\title{Create a new object}
+\title{Create a New R6 Object by Name}
 \usage{
 create_new_object(name, object_choice, ...)
 }
 \arguments{
-\item{name}{The name of the object to create.}
+\item{name}{[\code{character(1)}]\cr
+The name of the object to create. Partial unambiguous matches are
+accepted (case-insensitive, underscores ignored).}
 
-\item{object_choice}{The possible options for object creation.}
+\item{object_choice}{[\code{character}]\cr
+A character vector of valid R6 class names to match against.}
+
+\item{...}{Additional named arguments passed to the matched class's
+\verb{$new()} method.}
+}
+\value{
+An R6 object of the matched class.
 }
 \description{
-Create a new R6 object from a set of possible options.
+Matches a user-supplied name (with partial matching) against a set of
+available R6 class names and instantiates the corresponding object.
+
+This function is not exported. It is used internally by factory functions
+such as \code{\link[=new_tree_search]{new_tree_search()}}.
 }
+\keyword{internal}
