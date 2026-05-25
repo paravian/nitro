@@ -2,15 +2,122 @@
 % Please edit documentation in R/execute_analysis.R
 \name{execute_analysis}
 \alias{execute_analysis}
-\title{Execute CommandQueue}
+\title{Execute a Tree Analysis}
 \usage{
-execute_analysis(tree_analysis, .envir)
+execute_analysis(
+  interface,
+  tree_analysis,
+  hold = 100,
+  max_ram = 16,
+  reference_tree = NULL,
+  starting_trees = NULL,
+  timeout = NULL
+)
 }
 \arguments{
-\item{tree_analysis}{A \code{"\link{TreeAnalysis}"} object.}
+\item{interface}{[\code{TntInterface}]\cr
+A \link{TntInterface} object created by \code{\link[=create_interface]{create_interface()}}.}
 
-\item{.envir}{The environment that TNT has been attached to.}
+\item{tree_analysis}{[\code{TreeAnalysis}]\cr
+A \link{TreeAnalysis} object configured with data, search settings, and
+optional weighting or support commands.}
+
+\item{hold}{[\code{integer(1)}]\cr
+The number of trees to hold in TNT's tree buffer (default: \code{100}).
+Passed to \link{TreeBufferCommand}.}
+
+\item{max_ram}{[\code{numeric(1)}]\cr
+The number of binary megabytes to allocate for TNT (default: \code{16}).
+Passed to \link{MemoryAllocationCommand}.}
+
+\item{reference_tree}{[\code{phylo}]\cr
+Optional tree to read into TNT before the analysis begins. Used for
+annotating node labels in analyses of group supports or as a backbone
+constraint. When supplied, a \link{ReadTreesCommand} is added to the queue.}
+
+\item{starting_trees}{[\code{phylo}, \code{multiPhylo}, or \code{NULL}]\cr
+Optional starting trees to read into TNT before the analysis begins. Used
+as a starting point for tree searches. When supplied, a \link{ReadTreesCommand}
+is added to the queue.}
+
+\item{timeout}{[\code{integer(1)} or \code{NULL}]\cr
+The number of seconds to allow the analysis to run before
+terminating. Currently reserved for future use (default: \code{NULL}).}
+}
+\value{
+A \link{TreeAnalysisResults} object containing the trees and
+associated statistics.
 }
 \description{
-Execute CommandQueue
+Run a configured \link{TreeAnalysis} using a \link{TntInterface} and return the
+results.
+
+This is the primary entry point for running a \pkg{nitro} analysis. It
+assembles all commands from the \link{TreeAnalysis} and supporting
+infrastructure into a \link{CommandQueue}, verifies that all required
+dependencies are satisfied, and passes the queue to
+\link{TntInterface}\verb{$execute()}.
+}
+\details{
+\subsection{Queue assembly}{
+
+The following commands are always added to the queue in addition to
+those configured in \code{tree_analysis}:
+\itemize{
+\item \link{EchoCommand} — enables TNT output echoing.
+\item \link{ScreenSizeCommand} — sets the output buffer dimensions.
+\item \link{MemoryAllocationCommand} — allocates RAM (controlled by \code{max_ram}).
+\item \link{TreeBufferCommand} — sets the tree buffer size (controlled by
+\code{hold}).
+\item \link{TreeStepsCommand} and \link{PossibleStepsCommand} — collect tree length
+statistics after the search.
+}
+
+If \code{reference_tree} is supplied, a \link{ReadTreesCommand} is added for the
+target tree. If \code{starting_trees} is supplied, a separate
+\link{ReadTreesCommand} is added for the starting trees.
+}
+
+\subsection{Dependency resolution}{
+
+Dependency resolution is performed incrementally by \link{CommandQueue} as
+each command is added via \verb{$enqueue()}. By the time the queue is fully
+assembled, all required dependencies should be satisfied. If any remain
+unmet — indicated by \verb{$is_resolved} being \code{FALSE} — \code{execute_analysis()}
+aborts with an informative error before passing the queue to TNT.
+
+In normal use this check will not fail, as each command's \verb{$enqueue()}
+method is responsible for adding its own prerequisites. The check exists
+as a safeguard against incomplete manual queue construction.
+}
+}
+\examples{
+\dontrun{
+interface <- create_interface("/usr/local/bin/tnt")
+
+nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+
+ta <- make_tree_analysis(dm, outgroup = "Herrerasaurus")
+ta <- set_tree_search(ta, "branch_swapping", replications = 100)
+
+results <- execute_analysis(interface, ta, hold = 200, max_ram = 32)
+
+# Extract trees
+trees <- as.phylo(results)
+
+# View per-tree statistics
+results$statistics
+}
+
+}
+\seealso{
+\itemize{
+\item \code{\link[=create_interface]{create_interface()}} — creates the required \link{TntInterface}.
+\item \code{\link[=make_tree_analysis]{make_tree_analysis()}} — creates a \link{TreeAnalysis} configuration.
+\item \link{TreeAnalysis} — the analysis configuration class.
+\item \link{TreeAnalysisResults} — the results class returned by this function.
+\item \code{\link[=as.phylo.TreeAnalysisResults]{as.phylo.TreeAnalysisResults()}} — converts results to \code{phylo} or
+\code{multiPhylo}.
+}
 }

@@ -1,135 +1,155 @@
-#' Execute CommandQueue
+#' Execute a Tree Analysis
 #'
-#' @importFrom checkmate check_class check_environment test_true
-#' @importFrom cli cli_abort cli_progress_bar cli_progress_done
-#'   cli_progress_update pb_bar pb_eta_str pb_name pb_percent
-#' @importFrom stringr str_replace str_replace_all str_split str_trim str_wrap
+#' @description
+#' Run a configured [TreeAnalysis] using a [TntInterface] and return the
+#' results.
+#'
+#' This is the primary entry point for running a \pkg{nitro} analysis. It
+#' assembles all commands from the [TreeAnalysis] and supporting
+#' infrastructure into a [CommandQueue], verifies that all required
+#' dependencies are satisfied, and passes the queue to
+#' [TntInterface]`$execute()`.
+#'
+#' @details
+#' ## Queue assembly
+#' The following commands are always added to the queue in addition to
+#' those configured in `tree_analysis`:
+#'
+#' * [EchoCommand] — enables TNT output echoing.
+#' * [ScreenSizeCommand] — sets the output buffer dimensions.
+#' * [MemoryAllocationCommand] — allocates RAM (controlled by `max_ram`).
+#' * [TreeBufferCommand] — sets the tree buffer size (controlled by
+#'   `hold`).
+#' * [TreeStepsCommand] and [PossibleStepsCommand] — collect tree length
+#'   statistics after the search.
+#'
+#' If `reference_tree` is supplied, a [ReadTreesCommand] is added for the
+#' target tree. If `starting_trees` is supplied, a separate
+#' [ReadTreesCommand] is added for the starting trees.
+#'
+#' ## Dependency resolution
+#' Dependency resolution is performed incrementally by [CommandQueue] as
+#' each command is added via `$enqueue()`. By the time the queue is fully
+#' assembled, all required dependencies should be satisfied. If any remain
+#' unmet — indicated by `$is_resolved` being `FALSE` — `execute_analysis()`
+#' aborts with an informative error before passing the queue to TNT.
+#'
+#' In normal use this check will not fail, as each command's `$enqueue()`
+#' method is responsible for adding its own prerequisites. The check exists
+#' as a safeguard against incomplete manual queue construction.
+#'
+#' @param interface \[`TntInterface`\]\cr
+#'   A [TntInterface] object created by [create_interface()].
+#' @param tree_analysis \[`TreeAnalysis`\]\cr
+#'   A [TreeAnalysis] object configured with data, search settings, and
+#'   optional weighting or support commands.
+#' @param hold \[`integer(1)`\]\cr
+#'   The number of trees to hold in TNT's tree buffer (default: `100`).
+#'   Passed to [TreeBufferCommand].
+#' @param max_ram \[`numeric(1)`\]\cr
+#'   The number of binary megabytes to allocate for TNT (default: `16`).
+#'   Passed to [MemoryAllocationCommand].
+#' @param reference_tree \[`phylo`]\cr
+#'   Optional tree to read into TNT before the analysis begins. Used for
+#'   annotating node labels in analyses of group supports or as a backbone
+#'   constraint. When supplied, a [ReadTreesCommand] is added to the queue.
+#' @param starting_trees \[`phylo`, `multiPhylo`, or `NULL`\]\cr
+#'   Optional starting trees to read into TNT before the analysis begins. Used
+#'   as a starting point for tree searches. When supplied, a [ReadTreesCommand]
+#'   is added to the queue.
+#' @param timeout \[`integer(1)` or `NULL`\]\cr
+#'   The number of seconds to allow the analysis to run before
+#'   terminating. Currently reserved for future use (default: `NULL`).
+#'
+#' @return A [TreeAnalysisResults] object containing the trees and
+#'   associated statistics.
+#'
+#' @seealso
+#' * [create_interface()] — creates the required [TntInterface].
+#' * [make_tree_analysis()] — creates a [TreeAnalysis] configuration.
+#' * [TreeAnalysis] — the analysis configuration class.
+#' * [TreeAnalysisResults] — the results class returned by this function.
+#' * [as.phylo.TreeAnalysisResults()] — converts results to `phylo` or
+#'   `multiPhylo`.
+#'
+#' @examples
+#' \dontrun{
+#' interface <- create_interface("/usr/local/bin/tnt")
+#'
+#' nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
+#' dm <- ReadAsPhyDat(nex_path) |> create_matrix()
+#'
+#' ta <- make_tree_analysis(dm, outgroup = "Herrerasaurus")
+#' ta <- set_tree_search(ta, "branch_swapping", replications = 100)
+#'
+#' results <- execute_analysis(interface, ta, hold = 200, max_ram = 32)
+#'
+#' # Extract trees
+#' trees <- as.phylo(results)
+#'
+#' # View per-tree statistics
+#' results$statistics
+#' }
+#'
+#' @importFrom checkmate check_class check_null test_null test_true
+#' @importFrom cli cli_abort
+#' @importFrom stringr str_replace str_replace_all str_split str_trim
 #' @importFrom utils head tail
-#' @param tree_analysis A \code{"\link{TreeAnalysis}"} object.
-#' @param .envir The environment that TNT has been attached to.
-execute_analysis <- function (tree_analysis, .envir) {
-  val_check <- check_class(tree_analysis, c("TreeAnalysis", "R6"))
+#' @export
+execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
+                             reference_tree = NULL, starting_trees = NULL,
+                             timeout = NULL) {
+  val_check <- check_class(interface, "TntInterface")
+  if (!test_true(val_check)) {
+    cli_abort(c("{.arg interface} must be a {.arg TntInterface} object.",
+                "x" = val_check))
+  }
+
+  val_check <- check_class(tree_analysis, "TreeAnalysis")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg tree_analysis} must be a {.arg TreeAnalysis} object.",
                 "x" = val_check))
   }
 
-  val_check <- check_environment(.envir)
-  if (!test_true(val_check)) {
-    cli_abort(c("{.arg .envir} must be an environment.",
-                "x" = val_check))
-  }
-  
-  target <- list()
-  if (test_class(tree_analysis$method, "DrivenSearchOptions")) {
-    progress_re <- "(?<round>[0-9]+) +[A-Z]+ +(?<count>[0-9]+)"
-    target$rounds <- tree_analysis$method$hits
-    target$count <- tree_analysis$method$replications
-  } else if (test_class(tree_analysis$method, "ResampleBaseOptions")) {
-    progress_re <- "[A-Za-z]+ \\(rep\\. (?<count>[0-9]+) of [0-9]+\\)"
-    target$count <- tree_analysis$method$replications
-  } else {
-    progress_re <- "(?<count>[0-9]+) +[A-Z]+ +[0-9]+ of [0-9]+"
-    if (test_class(tree_analysis$method, "RatchetOptions")) {
-      target$count <- tree_analysis$method$iterations
-    } else {
-      target$count <- tree_analysis$method$replications
-    }
-  }
-  
-  pb_envir <- parent.frame()
-  cli_progress_bar(
-    name = "Progress",
-    total = 100,
-    .envir = pb_envir
+  all_cmds <- c(
+    tree_analysis$commands,
+    EchoCommand$new(enable = TRUE),
+    ScreenSizeCommand$new(columns = 50000, rows = 25),
+    MemoryAllocationCommand$new(size = max_ram),
+    TreeBufferCommand$new(size = hold),
+    TreeStepsCommand$new(),
+    PossibleStepsCommand$new(active_taxa = TRUE)
   )
 
-  cli_alert_info("Starting tree analysis...")
-  
-  tnt_process_start(.envir, tree_analysis$queue())
-  
-  tnt_info <- get("tnt_info", .envir)
-  tnt_process <- tnt_info$process
-  
-  cmd_name <- "start"
-  buffer <- character()
-  cmd_re <- "COMMAND: (?<cmdname>[A-Z]+)"
-  err_re <- "\a+(.+)"
-  
-  raw_out <- c()
-  
-  done <- FALSE
-  while (tnt_process$is_alive() | !done) {
-    proc_poll <- tnt_process$poll_io(5000)
-    
-    if (proc_poll[2] == "ready") {
-      proc_out <- tnt_process$read_error()
-      
-      has_cmd <- str_detect(proc_out, cmd_re)
-      has_counter <- str_detect(proc_out, progress_re)
-      
-      err_check <- str_detect(proc_out, err_re)
-      if (any(err_check)) {
-        tnt_process$kill()
-        tnt_err <- str_match(proc_out[which(err_check)], err_re) %>%
-          extract(2)
-        cli_abort(c("A TNT error occurred, cannot continue.",
-                    "x" = tnt_err))
-      }
-      
-      if (has_cmd) {
-        # Merge the buffer with the process output; split by command and write
-        # last command back to the buffer
-        proc_out <- paste(buffer, proc_out, sep = "")
-        cmd_out <- str_split_1(proc_out, cmd_re)
-        
-        raw_out <- c(raw_out, head(cmd_out, -1))
-        buffer <- tail(cmd_out, 1)
-      } else if (has_counter) {
-        progress <- str_match(proc_out, progress_re) %>%
-          extract(1,) %>%
-          extract(-1) %>%
-          as.list() %>%
-          lapply(as.numeric)
-        
-        if ("round" %in% names(progress)) {
-          denominator <- with(target, rounds * count)
-          numerator <- progress$round * target$count + (progress$count - 1)
-          if ((numerator / denominator) > 1) {
-            numerator <- (progress$round - 1) * target$count + (progress$count - 1)
-          }
-        } else {
-          denominator <- target$count
-          numerator <- progress$count
-        }
-        percent <- numerator / denominator * 100
-        cli_progress_update(set = percent, .envir = pb_envir)
-      } else {
-        buffer <- paste(buffer, proc_out, sep = "")
-      }
-      
-      buff_size <- nchar(str_trim(buffer))
-      if (!tnt_process$is_alive() & buff_size == 0) {
-        done <- TRUE
-      }
-    }
+  if (!test_null(reference_tree)) {
+    all_cmds <- c(
+      all_cmds,
+      ReadTreesCommand$new(
+        trees = reference_tree,
+        provides = "reference tree"
+      )
+    )
   }
 
-  cli_progress_done(.envir = pb_envir)
-  cli_alert_success("Tree analysis complete.")
- 
-  output_type <- sapply(raw_out, tnt_info$parser$content_detect)
-  
-  output <- list()
-  not_text <- output_type != "text"
-  if (any(not_text)) {
-    raw_out <- raw_out[not_text]
-    output_type <- output_type[not_text]
-    for (n in seq(sum(not_text))) {
-      obj <- tnt_info$parser$transform(raw_out[[n]], output_type[n])
-      output[[output_type[n]]] <- obj
-    }
+  if (!test_null(starting_trees)) {
+    all_cmds <- c(
+      all_cmds,
+      ReadTreesCommand$new(
+        trees = starting_trees,
+        inline = FALSE,
+        provides = "starting trees")
+    )
   }
 
-  return(output)
+  queue <- CommandQueue$new()
+
+  for (cmd in rev(all_cmds)) {
+    cmd$enqueue(queue)
+  }
+
+  if (!queue$is_resolved) (
+    cli_abort(c("Dependencies in the command queue not resolved, cannot proceed"))
+  )
+
+  interface$execute(queue)
 }
