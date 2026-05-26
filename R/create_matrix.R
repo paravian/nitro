@@ -28,6 +28,8 @@
 #' * [TreeAnalysis] — the analysis container that accepts matrix objects.
 #'
 #' @examples
+#' library(TreeTools)
+#'
 #' # --- Discrete matrix ---
 #' nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
 #' dm <- ReadAsPhyDat(nex_path) |> create_matrix()

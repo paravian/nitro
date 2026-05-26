@@ -33,6 +33,8 @@ types raises an error.
 }
 }
 \examples{
+library(TreeTools)
+
 # Read a discrete character matrix from a Nexus file
 nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
 dm <- ReadAsPhyDat(nex_path) |> create_matrix()

@@ -27,6 +27,8 @@ a \link[phangorn:phyDat]{phyDat} object produces a \link{DiscreteMatrix}, and a
 \code{data.frame} produces a \link{ContinuousMatrix}.
 }
 \examples{
+library(TreeTools)
+
 # --- Discrete matrix ---
 nex_path <- system.file("extdata", "canale_2022.nex", package = "nitro")
 dm <- ReadAsPhyDat(nex_path) |> create_matrix()
