@@ -4,10 +4,12 @@
 \alias{as.character.CommandQueue}
 \title{Render a CommandQueue to a Character Vector}
 \usage{
-\method{as.character}{CommandQueue}(queue)
+\method{as.character}{CommandQueue}(x, ...)
 }
 \arguments{
-\item{queue}{A \link{CommandQueue} object.}
+\item{x}{A \link{CommandQueue} object.}
+
+\item{...}{Not used.}
 }
 \value{
 A character vector of TNT command strings, one element per

@@ -312,7 +312,8 @@ CommandQueue <- R6Class(
 #' `TRUE` before calling this function. [execute_analysis()] performs this
 #' check automatically.
 #'
-#' @param queue A [CommandQueue] object.
+#' @param x A [CommandQueue] object.
+#' @param ... Not used.
 #'
 #' @return A character vector of TNT command strings, one element per
 #'   command.
@@ -326,11 +327,11 @@ CommandQueue <- R6Class(
 #'   `$is_resolved` before rendering.
 #'
 #' @export
-as.character.CommandQueue <- function(queue) {
+as.character.CommandQueue <- function(x, ...) {
   all_cmds <- character(0)
 
-  while (queue$length() > 0) {
-    next_cmd <- queue$read_next()
+  while (x$length() > 0) {
+    next_cmd <- x$read_next()
     all_cmds <- c(
       all_cmds,
       next_cmd$render()
