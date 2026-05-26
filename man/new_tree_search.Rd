@@ -48,8 +48,8 @@ bs <- new_tree_search("branch_swap")
 bs <- new_tree_search("branch_swapping", replications = 100,
                        hold_rep = 25)
 
-# Create an extra methods (driven) search
-xm <- new_tree_search("extra_methods")
+# Create an extra search methods search
+xm <- new_tree_search("extra_search_methods")
 
 }
 \seealso{

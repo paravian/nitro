@@ -52,8 +52,8 @@
 #' bs <- new_tree_search("branch_swapping", replications = 100,
 #'                        hold_rep = 25)
 #'
-#' # Create an extra methods (driven) search
-#' xm <- new_tree_search("extra_methods")
+#' # Create an extra search methods search
+#' xm <- new_tree_search("extra_search_methods")
 #'
 #' @importFrom checkmate check_list check_string test_null test_true
 #' @importFrom cli cli_abort
