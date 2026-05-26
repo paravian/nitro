@@ -22,3 +22,4 @@ Combines one or more \link{BasicCommand} objects into a \code{CommandList}.
 \item \link{TreeAnalysis}\verb{$add_command()} — accepts \code{CommandList} objects.
 }
 }
+\keyword{internal}

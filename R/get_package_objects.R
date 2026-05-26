@@ -1,6 +1,7 @@
 #' Get package objects
 #'
 #' @importFrom magrittr %>%
+#' @keywords internal
 get_package_objects <- function () {
   fn_name <- sys.call() %>%
     as.character()

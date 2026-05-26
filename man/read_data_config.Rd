@@ -61,3 +61,4 @@ read_data_config(ta2, c(dm2, cm))
 ordered characters.
 }
 }
+\keyword{internal}

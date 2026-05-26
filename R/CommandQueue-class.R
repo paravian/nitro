@@ -76,7 +76,7 @@
 #' @importFrom cli cli_abort cli_text col_grey col_red
 #' @importFrom magrittr extract not use_series
 #' @importFrom R6 R6Class
-#' @export
+#' @keywords internal
 CommandQueue <- R6Class(
   "CommandQueue",
   private = list(
@@ -326,7 +326,8 @@ CommandQueue <- R6Class(
 #' * [execute_analysis()] — the primary entry point, which checks
 #'   `$is_resolved` before rendering.
 #'
-#' @export
+#' @exportS3Method
+#' @keywords internal
 as.character.CommandQueue <- function(x, ...) {
   all_cmds <- character(0)
 

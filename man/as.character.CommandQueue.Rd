@@ -37,3 +37,4 @@ command.
 \verb{$is_resolved} before rendering.
 }
 }
+\keyword{internal}

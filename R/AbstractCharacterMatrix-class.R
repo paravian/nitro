@@ -153,7 +153,8 @@ c.AbstractCharacterMatrix <- function(...) {
 #' @importFrom cli cli_text col_grey col_red style_italic
 #' @importFrom glue glue
 #' @importFrom stringr str_remove str_to_lower str_replace
-#' @export
+#' @exportS3Method
+#' @keywords internal
 print.MultiCharacterMatrix <- function(x, ...) {
   cli_text(col_grey("# Multiple ", style_italic(col_red("nitro")), " character matrices"))
 

@@ -16,3 +16,4 @@ A \code{CommandList} object.
 Flattens and combines one or more \code{CommandList} objects into a single
 \code{CommandList}.
 }
+\keyword{internal}

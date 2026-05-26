@@ -82,6 +82,7 @@ character vector.
 queue.
 }
 }
+\keyword{internal}
 \section{Active bindings}{
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{

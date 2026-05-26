@@ -51,7 +51,7 @@
 #'
 #' @importFrom checkmate check_class test_class test_list test_null test_true
 #' @importFrom cli cli_abort
-#' @export
+#' @keywords internal
 read_data_config <- function(tree_analysis, data) {
   val_check <- check_class(tree_analysis, "TreeAnalysis")
 

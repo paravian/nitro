@@ -9,3 +9,4 @@ get_package_objects()
 \description{
 Get package objects
 }
+\keyword{internal}

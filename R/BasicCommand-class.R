@@ -476,7 +476,8 @@ BasicCommand <- R6Class(
 #'
 #' @importFrom checkmate check_list test_true
 #' @importFrom cli cli_abort
-#' @export
+#' @exportS3Method
+#' @keywords internal
 c.BasicCommand <- function(...) {
   objs <- list(...)
   val_check <- check_list(objs, types = "BasicCommand")
@@ -501,7 +502,8 @@ c.BasicCommand <- function(...) {
 #'
 #' @importFrom checkmate check_list test_true
 #' @importFrom cli cli_abort
-#' @export
+#' @exportS3Method
+#' @keywords internal
 c.CommandList <- function(...) {
   objs <- list(...)
   objs <- unlist(objs)
@@ -514,7 +516,8 @@ c.CommandList <- function(...) {
 #' @param ... Ignored.
 #'
 #' @importFrom cli cli_text col_grey col_red style_italic
-#' @export
+#' @exportS3Method
+#' @keywords internal
 print.CommandList <- function(x, ...) {
   cli_text(col_grey("# A list of ", style_italic(col_red("nitro")), " TNT commands"))
 
