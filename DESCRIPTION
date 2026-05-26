@@ -14,10 +14,9 @@ Description: nitro provides an R interface to TNT, a program for phylogenetic
   configuring and running parsimony analyses, retrieving results as standard R
   phylogenetic objects, and integrating with the broader R phylogenetics
   ecosystem.
-Depends: R (>= 3.2.0)
+Depends: R (>= 4.1.0)
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Imports: 
     ape,
     checkmate,
