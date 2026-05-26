@@ -37,7 +37,7 @@
 #' iw <- new_weighting("implied")
 #'
 #' # Pass arguments to the constructor
-#' iw <- new_weighting("implied_weighting", weighting_constant = 6)
+#' iw <- new_weighting("implied_weighting", concavity_constant = 6)
 #'
 #' # Extended implied weighting
 #' eiw <- new_weighting("extended_implied_weighting")
