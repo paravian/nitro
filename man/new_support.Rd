@@ -11,25 +11,24 @@ new_support(name, ...)
 also accepted. The valid options are:
 \itemize{
 \item \code{branch}: Calculates branch (i.e. Bremer) support statistics.
-Attaches a \code{\link{BranchSupportOptions}} object.
+Attaches a \code{\link{BranchSupportCommand}} object.
 \item \code{bootstrap}: Calculates bootstrap resampling support
-statistics. Attaches a \code{\link{BootstrapOptions}} object.
+statistics. Attaches a \code{\link{ResamplingCommand}} object.
 \item \code{jackknife}: Calculates jackknife resmpling support
-statistics. Attaches a \code{\link{JackknifeOptions}} object.
+statistics. Attaches a \code{\link{ResamplingCommand}} object.
 \item \code{symmetric}: Calculate symmetric resampling support
-statistics. Attaches a \code{\link{SymmetricResamplingOptions}} object.
+statistics. Attaches a \code{\link{ResamplingCommand}} object.
 }}
 
 \item{...}{Arguments to be passed on to the weighting method.}
 }
 \value{
-A \code{\link{ResamplingOptions}} object.
+A \code{\link{ResamplingCommand}} object.
 }
 \description{
 Creates a new support method configuration.
 }
 \seealso{
-The \code{new} method of \code{\link{BranchSupportOptions}},
-\code{\link{BootstrapOptions}}, \code{\link{JackknifeOptions}} and
-\code{\link{SymmetricResamplingOptions}}.
+The \code{new} method of \code{\link{BranchSupportCommand}} and
+\code{\link{ResamplingCommand}}.
 }
