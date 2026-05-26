@@ -67,7 +67,8 @@ AbstractImpliedWeightingCommand <- R6Class(
     initialize = function(name, description) {
       super$initialize(
         name = name,
-        description = description
+        description = description,
+        provides = "implied weighting"
       )
 
       self$new_argument(
