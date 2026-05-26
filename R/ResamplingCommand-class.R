@@ -368,8 +368,8 @@ ResamplingCommand <- R6Class(
                       "x" = val_check))
         }
 
-        tree_search$set_only <- TRUE
-        ts <- tree_search$clone(deep = TRUE)
+        value$set_only <- TRUE
+        ts <- value$clone(deep = TRUE)
 
         ts
       }
