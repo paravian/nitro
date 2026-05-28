@@ -106,7 +106,7 @@ ImpliedWeightingCommand <- R6Class(
       a <- as.list(environment(), all = TRUE)
 
       super$initialize(
-        name        = "piwe",
+        name = "piwe",
         description = "Implied weighting"
       )
 
