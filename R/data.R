@@ -93,3 +93,48 @@ NULL
 #' @name raven_2017
 #' @aliases raven_2017.nex raven_2017.csv
 NULL
+
+#' Lee (2013) Discrete Character-Taxon Matrix
+#'
+#' @description
+#' A discrete morphological character-taxon matrix for diapsid reptiles,
+#' originally published by Lee (2013) as the Diapsid 189 matrix. Provided
+#' as a Nexus file. This dataset is used in \pkg{nitro} to demonstrate
+#' backbone constraint functionality.
+#'
+#' @details
+#' ## File
+#' `lee_2013.nex` — a Nexus-format file readable by
+#' [TreeTools::ReadAsPhyDat()].
+#'
+#' ## Contents
+#' * **Taxa:** 27 diapsid and 11 outgroup amniote taxa.
+#' * **Characters:** 189 discrete morphological characters.
+#'
+#' ## Usage
+#' ```r
+#' nex_path <- system.file("extdata", "lee_2013.nex", package = "nitro")
+#' dm <- TreeTools::ReadAsPhyDat(nex_path) |> create_matrix()
+#' ```
+#'
+#' @format A Nexus file containing a discrete morphological character matrix
+#'   with taxa as rows and 189 characters as columns.
+#'
+#' @source Lee, M. S. Y. (2013). Turtle origins: insights from phylogenetic
+#'   retrofitting and molecular scaffolds. *Journal of Evolutionary
+#'   Biology*, 26(12), 2729--2738. \doi{10.1111/jeb.12268}
+#'
+#' @seealso
+#' * [create_matrix()] — converts the parsed data into a [DiscreteMatrix].
+#' * [make_tree_analysis()] — uses a [DiscreteMatrix] to configure an
+#'   analysis.
+#' * [set_constraint()] — attaches topological constraints to a
+#'   [TreeAnalysis].
+#' * [BackboneConstraint] — the constraint class used to enforce a
+#'   reference topology.
+#' * [`canale_2022`] — the discrete-only example dataset.
+#' * [`raven_2017`] — the combined discrete and continuous example dataset.
+#'
+#' @name lee_2013
+#' @aliases lee_2013.nex
+NULL
