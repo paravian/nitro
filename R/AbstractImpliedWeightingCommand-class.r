@@ -72,10 +72,10 @@ AbstractImpliedWeightingCommand <- R6Class(
       )
 
       self$new_argument(
-        label          = "concavity_constant",
-        description    = "Concavity constant",
+        label = "concavity_constant",
+        description = "Concavity constant",
         command_format = "={value}",
-        default_value  = 3
+        default_value = 3
       )
     }
   )
