@@ -96,9 +96,19 @@ and a comparison with equal weights results.
 | Symmetric resampling | `SymmetricResamplingCommand` | `resample sym` |
 
 Resampling is configured via `set_support()`. Analyses can be run with or
-without a target tree. See the
+without a reference tree. See the
 [Resampling Analyses](articles/resampling-analyses.html) article for
 details.
+
+### Topological constraints
+
+| Type | Class | TNT command |
+|---|---|---|
+| Monophyly constraint | `MonophylyConstraint` | `force` |
+| Backbone constraint | `BackboneConstraint` | `force` |
+
+Constraints are configured via `set_constraint()` or `new_constraint()`.
+Backbone constraints require a reference tree.
 
 ### Combined discrete and continuous characters
 
