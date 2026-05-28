@@ -13,7 +13,8 @@
 #' ## Subclassing
 #' Subclasses should call `super$initialize(name, description)` in their
 #' own `initialize()` method. The `$name` and `$description` fields become
-#' read-only after the first assignment.
+#' read-only after the first assignment. All other fields, including
+#' `$provides`, can be reassigned freely after construction.
 #'
 #' The following methods are designed to be overridden:
 #' * **`$render()`** — must return a character string containing the
@@ -175,8 +176,13 @@ BasicCommand <- R6Class(
         }
       }
     },
-    #' @field provides \[`character`\]\cr
-    #'   *(Read-only.)* The dependency satisfied by the command.
+    #' @field provides \[`character(1)` or `NULL`\]\cr
+    #'   The dependency token satisfied by this command. Used by
+    #'   [CommandQueue] during dependency resolution to match against the
+    #'   `$requires` and `$optional` fields of other commands in the queue.
+    #'
+    #'   Must be a non-empty string or `NULL`. Can be set at any time;
+    #'   reassignment replaces the previous value.
     provides = function(value) {
       if (missing(value)) {
         return(private$.provides)
@@ -322,6 +328,15 @@ BasicCommand <- R6Class(
     #'   The TNT command name. See the `$name` field.
     #' @param description \[`character(1)`\]\cr
     #'   A human-readable description. See the `$description` field.
+    #' @param inline \[`logical(1)`\]\cr
+    #'   Whether to write this command to a separate file during script
+    #'   assembly (default: `FALSE`). See the `$inline` field.
+    #' @param outputs \[`character(1)`\]\cr
+    #'   The type of output produced by the command (default: `"text"`).
+    #'   See the `$outputs` field.
+    #' @param provides \[`character(1)` or `NULL`\]\cr
+    #'   The dependency token satisfied by this command (default: `NULL`).
+    #'   See the `$provides` field.
     #'
     #' @return A new `BasicCommand` object.
     initialize = function(name, description, inline = FALSE, outputs = "text",

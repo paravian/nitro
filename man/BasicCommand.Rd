@@ -17,7 +17,8 @@ This class is not exported. It is intended to be subclassed by
 
 Subclasses should call \code{super$initialize(name, description)} in their
 own \code{initialize()} method. The \verb{$name} and \verb{$description} fields become
-read-only after the first assignment.
+read-only after the first assignment. All other fields, including
+\verb{$provides}, can be reassigned freely after construction.
 
 The following methods are designed to be overridden:
 \itemize{
@@ -98,8 +99,13 @@ command. Derived from dependencies where \code{required} is \code{FALSE}.}
     \item{\code{outputs}}{[\code{character}]\cr
 \emph{(Read-only.)} The type of output produced by the command.}
 
-    \item{\code{provides}}{[\code{character}]\cr
-\emph{(Read-only.)} The dependency satisfied by the command.}
+    \item{\code{provides}}{[\code{character(1)} or \code{NULL}]\cr
+The dependency token satisfied by this command. Used by
+\link{CommandQueue} during dependency resolution to match against the
+\verb{$requires} and \verb{$optional} fields of other commands in the queue.
+
+Must be a non-empty string or \code{NULL}. Can be set at any time;
+reassignment replaces the previous value.}
 
     \item{\code{requires}}{[\code{character}]\cr
 \emph{(Read-only.)} The names of dependencies required by the command.
@@ -229,20 +235,14 @@ The TNT command name. See the \verb{$name} field.}
       \item{\code{description}}{[\code{character(1)}]\cr
 A human-readable description. See the \verb{$description} field.}
       \item{\code{inline}}{[\code{logical(1)}]\cr
-Whether this command should be written to a separate temporary file
-during TNT script generation, with a \verb{proc <filename>;} call
-substituted in its place.
-
-Set to \code{TRUE} for commands that produce very long output (e.g.,
-\link{ReadTreesCommand}) to keep the main TNT script readable. When
-\code{FALSE} (default), the command is written directly into the script.
-
-This field is read by \link{TntInterface}\verb{$execute()} during script
-assembly.}
-      \item{\code{outputs}}{[\code{character}]\cr
-\emph{(Read-only.)} The type of output produced by the command.}
-      \item{\code{provides}}{[\code{character}]\cr
-\emph{(Read-only.)} The dependency satisfied by the command.}
+Whether to write this command to a separate file during script
+assembly (default: \code{FALSE}). See the \verb{$inline} field.}
+      \item{\code{outputs}}{[\code{character(1)}]\cr
+The type of output produced by the command (default: \code{"text"}).
+See the \verb{$outputs} field.}
+      \item{\code{provides}}{[\code{character(1)} or \code{NULL}]\cr
+The dependency token satisfied by this command (default: \code{NULL}).
+See the \verb{$provides} field.}
     }
     \if{html}{\out{</div>}}
   }
