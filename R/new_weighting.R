@@ -153,7 +153,8 @@ set_weighting <- function(tree_analysis, name, ...) {
 
   weighting_obj <- new_weighting(name, ...)
 
-  tree_analysis$add_command(weighting_obj)
+  ta <- tree_analysis$clone(deep = TRUE)
+  ta$add_command(weighting_obj)
 
-  tree_analysis
+  ta
 }
