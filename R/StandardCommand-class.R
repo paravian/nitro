@@ -67,7 +67,14 @@ StandardCommand <- R6Class(
   "StandardCommand",
   inherit = BasicCommand,
   private = list(
-    .arguments = NULL
+    .arguments = NULL,
+    deep_clone = function(name, value) {
+      if (name == ".arguments") {
+        sapply(value, function (x) x$clone())
+      } else {
+        value
+      }
+    }
   ),
   public = list(
     #' @description
