@@ -88,11 +88,10 @@ AbstractGroupSupportCommand <- R6Class(
       super$initialize(
         name = name,
         description = description,
+        provides = "group support",
+        outputs = "label legend",
         ...
       )
-
-      private$.provides <- "support"
-      private$.outputs <- "label legend"
     }
   )
 )

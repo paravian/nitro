@@ -133,10 +133,9 @@ TreeSearchCommand <- R6Class(
 
       super$initialize(
         name = name,
-        description = description
+        description = description,
+        provides = "tree search"
       )
-
-      private$.provides <- "tree search"
 
       self$set_only <- set_only
     },

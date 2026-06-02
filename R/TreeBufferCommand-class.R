@@ -76,7 +76,8 @@ TreeBufferCommand <- R6Class(
 
       super$initialize(
         name = "hold",
-        description = "Tree buffer control"
+        description = "Tree buffer control",
+        provides = "tree buffer"
       )
 
       for (n in names(a)) {
