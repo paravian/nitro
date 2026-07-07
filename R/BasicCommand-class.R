@@ -122,6 +122,28 @@ BasicCommand <- R6Class(
         private$.inline <- value
       }
     },
+    #' @field is_resolved \[`logical(1)`]\cr
+    #'
+    #'   Whether the command's dependencies are resolved. Returns `TRUE` if they
+    #'   are resolved; otherwise returns `FALSE`.
+    is_resolved = function(value) {
+      if (missing(value)) {
+        resolved <- TRUE
+        for (dep in self$dependencies) {
+          if (dep$required == TRUE) {
+            if (test_null(dep$value)) {
+              resolved <- resolved & FALSE
+            } else {
+              resolved <- resolved & dep$value$is_resolved
+            }
+          }
+        }
+
+        resolved
+      } else {
+        cli_abort(c("{.arg description} is a read-only attribute."))
+      }
+    },
     #' @field name \[`character(1)`\]\cr
     #'   *(Write-once.)* The name of the command.
     name = function(value) {

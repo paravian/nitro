@@ -89,6 +89,11 @@ Set to \code{TRUE} for commands that produce very long output (e.g.,
 This field is read by \link{TntInterface}\verb{$execute()} during script
 assembly.}
 
+    \item{\code{is_resolved}}{[\code{logical(1)}]\cr
+
+Whether the command's dependencies are resolved. Returns \code{TRUE} if they
+are resolved; otherwise returns \code{FALSE}.}
+
     \item{\code{name}}{[\code{character(1)}]\cr
 \emph{(Write-once.)} The name of the command.}
 
