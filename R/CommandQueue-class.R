@@ -81,18 +81,16 @@ CommandQueue <- R6Class(
   "CommandQueue",
   private = list(
     .commands = list(),
-    .is_resolved = FALSE,
   ),
   active = list(
     #' @field is_resolved \[`logical(1)`\]\cr
     #'   *(Read-only.)* Whether all required dependencies across all
-    #'   commands currently in the queue are satisfied. Updated
-    #'   automatically after every call to `$add()`. [execute_analysis()]
-    #'   checks this field before passing the queue to
-    #'   [TntInterface]`$execute()`.
+    #'   commands currently in the queue are satisfied.
     is_resolved = function(value) {
       if (missing(value)) {
-        return(private$.is_resolved)
+        is_resolved <- sapply(private$.commands, function (x) x$command$is_resolved) %>%
+          all()
+        return(is_resolved)
       }
       cli_abort(c("{.arg resolved} is a read-only field."))
     }
