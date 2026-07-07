@@ -131,7 +131,7 @@ TaxonNameCommand <- R6Class(
         default_value = 32
       )
 
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")
 
       for (argument in private$.arguments) {

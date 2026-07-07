@@ -87,7 +87,7 @@ ReadDataCommand <- R6Class(
           }
         }
 
-        is_continuous <- sapply(value, `[[`, "data_type") %>%
+        is_continuous <- sapply(value, getElement, "data_type") %>%
           equals("continuous")
         if (any(is_continuous)) {
           mtx_idx <- not(is_continuous) %>%
@@ -119,7 +119,7 @@ ReadDataCommand <- R6Class(
       )
       tax_name$enqueue(.queue)
 
-      max_states <- sapply(self$data, `[[`, "n_states") %>%
+      max_states <- sapply(self$data, getElement, "n_states") %>%
         unlist()
       if (!test_null(max_states)) {
         max_states <- max(max_states)
@@ -197,11 +197,11 @@ ReadDataCommand <- R6Class(
     #'
     #' @return A character vector of TNT command lines.
     render = function(...) {
-      all_taxa <- sapply(self$data, `[[`, "taxa") %>%
+      all_taxa <- sapply(self$data, getElement, "taxa") %>%
         as.vector() %>%
         unique()
 
-      n_char <- sapply(self$data, `[[`, "n_characters") %>%
+      n_char <- sapply(self$data, getElement, "n_characters") %>%
         sum()
 
       args <- paste(n_char, length(all_taxa))

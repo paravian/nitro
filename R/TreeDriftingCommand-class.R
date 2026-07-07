@@ -223,7 +223,7 @@ TreeDriftingCommand <- R6Class(
        }
        self$new_argument("autoconstrain_cycles", "Autoconstrain cycles", autoconst_cmd_fmt, 0)
 
-       all_labels <- sapply(private$.arguments, `[[`, "label")
+       all_labels <- sapply(private$.arguments, getElement, "label")
        self$template <- paste("{", all_labels, "}", sep = "")
 
        validate_topology <- function(value) {

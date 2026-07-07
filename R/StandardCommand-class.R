@@ -25,7 +25,7 @@
 #'   default_value  = 5
 #' )
 #'
-#' all_labels <- sapply(private$.arguments, `[[`, "label")
+#' all_labels <- sapply(private$.arguments, getElement, "label")
 #' self$template <- paste("{", all_labels, "}", sep = "")
 #' ```
 #'
@@ -110,7 +110,7 @@ StandardCommand <- R6Class(
     #'
     #' @return The current value of the argument.
     get_argument_value = function(label) {
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
 
       val_check <- check_character(all_labels, min.chars = 1, min.len = 1, any.missing = FALSE)
       if (!test_true(val_check)) {
@@ -154,7 +154,7 @@ StandardCommand <- R6Class(
     new_argument = function(label, description, command_format,
                             default_value = NULL, pretty_format = NULL) {
       args <- as.list(environment(), all = TRUE)
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       if (length(all_labels) > 0) {
         val_check <- check_disjunct(label, all_labels)
         if (!test_true(val_check)) {
@@ -188,12 +188,12 @@ StandardCommand <- R6Class(
           res <- try(obj$render(), silent = TRUE)
           ifelse(test_class(res, "try-error"), NA, res)
         })
-        names(arguments) <- sapply(private$.arguments, `[[`, "label")
+        names(arguments) <- sapply(private$.arguments, getElement, "label")
         arguments <- arguments[!is.na(arguments)]
 
         if (test_function(self$template)) {
-          data_obj <- lapply(private$.arguments, `[[`, "value")
-          names(data_obj) <- sapply(private$.arguments, `[[`, "label")
+          data_obj <- lapply(private$.arguments, getElement, "value")
+          names(data_obj) <- sapply(private$.arguments, getElement, "label")
 
           arguments <- do.call(self$template, data_obj)
         } else {
@@ -221,7 +221,7 @@ StandardCommand <- R6Class(
     #'   The unique label identifying the argument.
     #' @param value The value to assign.
     set_argument_value = function(label, value) {
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
 
       val_check <- check_character(all_labels, min.chars = 1, any.missing = FALSE, min.len = 1)
       if (!test_true(val_check)) {

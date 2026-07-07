@@ -517,7 +517,7 @@ ExtraSearchMethodsCommand <- R6Class(
        ratchet_default <- RatchetCommand$new(iterations = 0)
        self$new_argument("ratchet", "Ratchet", ratchet_cmd_fmt, ratchet_default, iter_pty_fmt)
 
-       all_labels <- sapply(private$.arguments, `[[`, "label")
+       all_labels <- sapply(private$.arguments, getElement, "label")
        self$template <- paste("{", all_labels, "}", sep = "")
 
        for (argument in private$.arguments) {

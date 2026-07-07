@@ -120,7 +120,7 @@ TreePlottingCommand <- R6Class(
 
       self$new_dependency("matrix", TRUE, validate_matrix)
 
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")
 
       for (argument in private$.arguments) {
@@ -161,7 +161,7 @@ TreePlottingCommand <- R6Class(
 
       matrix <- self$get_dependency("matrix")
 
-      all_taxa <- sapply(matrix$data, `[[`, "taxa") %>%
+      all_taxa <- sapply(matrix$data, getElement, "taxa") %>%
         as.vector() %>%
         unique()
 

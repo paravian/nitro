@@ -207,7 +207,7 @@ RatchetCommand <- R6Class(
 
       self$new_dependency("starting trees", FALSE, validate_topology)
 
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")
 
       for (argument in private$.arguments) {

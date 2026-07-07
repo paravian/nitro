@@ -147,7 +147,7 @@ BasicCommand <- R6Class(
     optional = function(value) {
       if (missing(value)) {
         optional <- NULL
-        dep_mask <- sapply(self$dependencies, `[[`, "required")
+        dep_mask <- sapply(self$dependencies, getElement, "required")
         if (length(dep_mask) > 0) {
           if (sum(!dep_mask) > 0) {
             optional <- names(dep_mask)[!dep_mask]
@@ -214,7 +214,7 @@ BasicCommand <- R6Class(
     requires = function(value) {
       if (missing(value)) {
         requires <- NULL
-        dep_mask <- sapply(self$dependencies, `[[`, "required")
+        dep_mask <- sapply(self$dependencies, getElement, "required")
         if (length(dep_mask) > 0) {
           if (sum(dep_mask) > 0) {
             requires <- names(dep_mask)[dep_mask]
@@ -362,7 +362,7 @@ BasicCommand <- R6Class(
     new_dependency = function(name, required, callback) {
       coll <- makeAssertCollection()
 
-      all_names <- sapply(self$dependencies, `[[`, "name") %>%
+      all_names <- sapply(self$dependencies, getElement, "name") %>%
         names()
       if (length(all_names) == 0) {
         all_names <- character(0)

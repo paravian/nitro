@@ -140,7 +140,7 @@ CollapseRuleCommand <- R6Class(
         pretty_format = "{value}"
       )
 
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")
 
       for (argument in private$.arguments) {

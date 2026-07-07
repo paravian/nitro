@@ -257,7 +257,7 @@ RandomSectorialSearchCommand <- R6Class(
       }
       self$new_argument("buffer", "Using independent buffer", buffer_cmd_fmt, FALSE, buffer_pty_fmt)
 
-      all_labels <- sapply(private$.arguments, `[[`, "label")
+      all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- c(
         "rss",
         paste("{", all_labels, "}", sep = "")

@@ -171,7 +171,7 @@ TreeAnalysis <- R6Class(
       if (missing(value)) {
         return(private$.inactive_taxa)
       } else {
-        all_taxa <- sapply(private$.data, `[[`, "taxa") %>%
+        all_taxa <- sapply(private$.data, getElement, "taxa") %>%
           as.vector() %>%
           unique()
 
@@ -213,7 +213,7 @@ TreeAnalysis <- R6Class(
     #'   in `$data`.
     n_characters = function(value) {
       if (missing(value)) {
-        n_char <- sapply(self$data, `[[`, "n_characters") %>%
+        n_char <- sapply(self$data, getElement, "n_characters") %>%
           sum()
       } else {
         cli_abort(c("{.val n_taxa} is a read-only attribute."))
@@ -224,7 +224,7 @@ TreeAnalysis <- R6Class(
     #'   `$data`.
     n_taxa = function(value) {
       if (missing(value)) {
-        sapply(self$data, `[[`, "taxa") %>%
+        sapply(self$data, getElement, "taxa") %>%
           as.vector() %>%
           unique() %>%
           length()
@@ -240,7 +240,7 @@ TreeAnalysis <- R6Class(
       if (missing(value)) {
         return(private$.outgroup)
       } else {
-        all_taxa <- sapply(self$data, `[[`, "taxa") %>%
+        all_taxa <- sapply(self$data, getElement, "taxa") %>%
           as.vector() %>%
           unique()
 
