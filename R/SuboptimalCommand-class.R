@@ -87,10 +87,10 @@ SuboptimalCommand <- R6Class(
     #'
     #' @return A [CommandQueue] object.
     enqueue = function(.queue = NULL) {
-      queue <- super$enqueue(.queue)
+      .queue <- super$enqueue(.queue)
 
-      queue$add(self, 400)
-      queue
+      .queue$add(self, 400)
+      .queue
     },
     #' @description
     #' Create a new `SuboptimalCommand` object.
