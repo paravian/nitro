@@ -101,13 +101,9 @@ resolve_dependencies <- function (commands,  suppress_errors = TRUE) {
     for (cmd in commands) {
       is_resolved <- cmd$is_resolved
       if (!is_resolved) {
-        # Snapshot resolved commands before attempting resolution so that
-        # any side effects on previously resolved commands can be detected.
         old_resolved <- lapply(resolved, function (x) x$clone(deep = TRUE))
         is_resolved <- resolve_command(cmd, resolved, "required")
 
-        # Detect side effects: if resolving cmd mutated a previously
-        # resolved command, rebuild that command's cached queue.
         cmd_diff <- sapply(seq(resolved), function (x) {
           !identical(resolved[[x]]$format(), old_resolved[[x]]$format())
         })
@@ -117,10 +113,6 @@ resolve_dependencies <- function (commands,  suppress_errors = TRUE) {
       }
 
       if (is_resolved) {
-        # Check whether commands spawned inside $enqueue() are themselves
-        # resolved. If not, attempt to resolve them against the union of
-        # the global resolved list and the commands already resolved within
-        # the queue.
         tmp_queue <- cmd$enqueue()
         is_resolved <- tmp_queue$is_resolved
         if (!is_resolved) {
