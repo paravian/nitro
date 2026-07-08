@@ -12,8 +12,8 @@
 #'
 #' @details
 #' ## Queue assembly
-#' The following commands are always added to the queue in addition to
-#' those configured in `tree_analysis`:
+#' The following commands are always added to the command list in addition
+#' to those configured in `tree_analysis`:
 #'
 #' * [EchoCommand] — enables TNT output echoing.
 #' * [ScreenSizeCommand] — sets the output buffer dimensions.
@@ -23,20 +23,23 @@
 #' * [TreeStepsCommand] and [PossibleStepsCommand] — collect tree length
 #'   statistics after the search.
 #'
-#' If `reference_tree` is supplied, a [ReadTreesCommand] is added for the
-#' target tree. If `starting_trees` is supplied, a separate
-#' [ReadTreesCommand] is added for the starting trees.
+#' If `reference_tree` is supplied, a [ReadTreesCommand] with
+#' `provides = "reference tree"` is added. If `starting_trees` is
+#' supplied, a [ReadTreesCommand] with `provides = "starting trees"` is
+#' added. The latter is required when a [BranchSupportCommand] is present,
+#' as it provides the optimal trees that are reloaded into the buffer
+#' after suboptimal sampling completes.
 #'
 #' ## Dependency resolution
-#' Dependency resolution is performed incrementally by [CommandQueue] as
-#' each command is added via `$enqueue()`. By the time the queue is fully
-#' assembled, all required dependencies should be satisfied. If any remain
-#' unmet — indicated by `$is_resolved` being `FALSE` — `execute_analysis()`
-#' aborts with an informative error before passing the queue to TNT.
+#' Once the full command list is assembled, it is passed to
+#' [resolve_dependencies()], which resolves all required dependencies,
+#' detects and repairs side effects on previously resolved commands, and
+#' returns a single [CommandQueue] in dependency-safe order. Resolution of
+#' optional dependencies is deferred to [TntInterface]`$execute()`.
 #'
-#' In normal use this check will not fail, as each command's `$enqueue()`
-#' method is responsible for adding its own prerequisites. The check exists
-#' as a safeguard against incomplete manual queue construction.
+#' If any required dependency cannot be satisfied — because a providing
+#' command is absent or a deadlock is detected — [resolve_dependencies()]
+#' raises an informative error before any commands are executed.
 #'
 #' @param interface \[`TntInterface`\]\cr
 #'   A [TntInterface] object created by [create_interface()].
@@ -49,14 +52,18 @@
 #' @param max_ram \[`numeric(1)`\]\cr
 #'   The number of binary megabytes to allocate for TNT (default: `16`).
 #'   Passed to [MemoryAllocationCommand].
-#' @param reference_tree \[`phylo`]\cr
-#'   Optional tree to read into TNT before the analysis begins. Used for
-#'   annotating node labels in analyses of group supports or as a backbone
-#'   constraint. When supplied, a [ReadTreesCommand] is added to the queue.
+#' @param reference_tree \[`phylo` or `NULL`\]\cr
+#'   An optional reference tree to read into TNT before the analysis
+#'   begins. Used as a backbone constraint when a [BackboneConstraint] is
+#'   present, or for annotating node labels in group support analyses.
+#'   When supplied, a [ReadTreesCommand] with `provides = "reference tree"`
+#'   is added to the queue (default: `NULL`).
 #' @param starting_trees \[`phylo`, `multiPhylo`, or `NULL`\]\cr
-#'   Optional starting trees to read into TNT before the analysis begins. Used
-#'   as a starting point for tree searches. When supplied, a [ReadTreesCommand]
-#'   is added to the queue.
+#'   Optional starting trees to read into TNT before the analysis begins.
+#'   When supplied, a [ReadTreesCommand] with `provides = "starting trees"`
+#'   is added to the queue. Required when a [BranchSupportCommand] is
+#'   present, as the optimal trees must be reloaded into the buffer after
+#'   suboptimal sampling completes (default: `NULL`).
 #' @param timeout \[`integer(1)` or `NULL`\]\cr
 #'   The number of seconds to allow the analysis to run before
 #'   terminating. Currently reserved for future use (default: `NULL`).
@@ -93,6 +100,7 @@
 #'
 #' @importFrom checkmate check_class check_null test_null test_true
 #' @importFrom cli cli_abort
+#' @importFrom magrittr set_colnames set_rownames
 #' @importFrom stringr str_replace str_replace_all str_split str_trim
 #' @importFrom utils head tail
 #' @export

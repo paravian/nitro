@@ -30,15 +30,19 @@ Passed to \link{TreeBufferCommand}.}
 The number of binary megabytes to allocate for TNT (default: \code{16}).
 Passed to \link{MemoryAllocationCommand}.}
 
-\item{reference_tree}{[\code{phylo}]\cr
-Optional tree to read into TNT before the analysis begins. Used for
-annotating node labels in analyses of group supports or as a backbone
-constraint. When supplied, a \link{ReadTreesCommand} is added to the queue.}
+\item{reference_tree}{[\code{phylo} or \code{NULL}]\cr
+An optional reference tree to read into TNT before the analysis
+begins. Used as a backbone constraint when a \link{BackboneConstraint} is
+present, or for annotating node labels in group support analyses.
+When supplied, a \link{ReadTreesCommand} with \code{provides = "reference tree"}
+is added to the queue (default: \code{NULL}).}
 
 \item{starting_trees}{[\code{phylo}, \code{multiPhylo}, or \code{NULL}]\cr
-Optional starting trees to read into TNT before the analysis begins. Used
-as a starting point for tree searches. When supplied, a \link{ReadTreesCommand}
-is added to the queue.}
+Optional starting trees to read into TNT before the analysis begins.
+When supplied, a \link{ReadTreesCommand} with \code{provides = "starting trees"}
+is added to the queue. Required when a \link{BranchSupportCommand} is
+present, as the optimal trees must be reloaded into the buffer after
+suboptimal sampling completes (default: \code{NULL}).}
 
 \item{timeout}{[\code{integer(1)} or \code{NULL}]\cr
 The number of seconds to allow the analysis to run before
@@ -61,8 +65,8 @@ dependencies are satisfied, and passes the queue to
 \details{
 \subsection{Queue assembly}{
 
-The following commands are always added to the queue in addition to
-those configured in \code{tree_analysis}:
+The following commands are always added to the command list in addition
+to those configured in \code{tree_analysis}:
 \itemize{
 \item \link{EchoCommand} — enables TNT output echoing.
 \item \link{ScreenSizeCommand} — sets the output buffer dimensions.
@@ -73,22 +77,25 @@ those configured in \code{tree_analysis}:
 statistics after the search.
 }
 
-If \code{reference_tree} is supplied, a \link{ReadTreesCommand} is added for the
-target tree. If \code{starting_trees} is supplied, a separate
-\link{ReadTreesCommand} is added for the starting trees.
+If \code{reference_tree} is supplied, a \link{ReadTreesCommand} with
+\code{provides = "reference tree"} is added. If \code{starting_trees} is
+supplied, a \link{ReadTreesCommand} with \code{provides = "starting trees"} is
+added. The latter is required when a \link{BranchSupportCommand} is present,
+as it provides the optimal trees that are reloaded into the buffer
+after suboptimal sampling completes.
 }
 
 \subsection{Dependency resolution}{
 
-Dependency resolution is performed incrementally by \link{CommandQueue} as
-each command is added via \verb{$enqueue()}. By the time the queue is fully
-assembled, all required dependencies should be satisfied. If any remain
-unmet — indicated by \verb{$is_resolved} being \code{FALSE} — \code{execute_analysis()}
-aborts with an informative error before passing the queue to TNT.
+Once the full command list is assembled, it is passed to
+\code{\link[=resolve_dependencies]{resolve_dependencies()}}, which resolves all required dependencies,
+detects and repairs side effects on previously resolved commands, and
+returns a single \link{CommandQueue} in dependency-safe order. Resolution of
+optional dependencies is deferred to \link{TntInterface}\verb{$execute()}.
 
-In normal use this check will not fail, as each command's \verb{$enqueue()}
-method is responsible for adding its own prerequisites. The check exists
-as a safeguard against incomplete manual queue construction.
+If any required dependency cannot be satisfied — because a providing
+command is absent or a deadlock is detected — \code{\link[=resolve_dependencies]{resolve_dependencies()}}
+raises an informative error before any commands are executed.
 }
 }
 \examples{
