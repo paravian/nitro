@@ -229,43 +229,30 @@ CommandQueue <- R6Class(
 #' Render a CommandQueue to a Character Vector
 #'
 #' @description
-#' Consumes all commands in a [CommandQueue] in priority order and returns
-#' their rendered TNT command strings as a character vector.
-#'
-#' Note that this operation is **destructive** — all commands are removed
-#' from the queue as they are read. The queue will be empty after this
-#' call.
+#' Renders all commands in a [CommandQueue] in priority order and returns
+#' their TNT command strings as a character vector. The queue is not
+#' modified by this operation.
 #'
 #' It is the caller's responsibility to ensure that `$is_resolved` is
 #' `TRUE` before calling this function. [execute_analysis()] performs this
-#' check automatically.
+#' check automatically via [resolve_dependencies()].
 #'
 #' @param x A [CommandQueue] object.
 #' @param ... Not used.
 #'
 #' @return A character vector of TNT command strings, one element per
-#'   command.
+#'   command, in priority order.
 #'
 #' @seealso
-#' * [CommandQueue] — the queue class, including details on dependency
-#'   resolution and `$is_resolved`.
+#' * [CommandQueue] — the queue class.
 #' * [BasicCommand]`$render()` — produces the string for each individual
 #'   command.
-#' * [execute_analysis()] — the primary entry point, which checks
-#'   `$is_resolved` before rendering.
+#' * [execute_analysis()] — the primary entry point.
 #'
 #' @exportS3Method
 #' @keywords internal
 as.character.CommandQueue <- function(x, ...) {
-  all_cmds <- character(0)
-
-  while (x$length() > 0) {
-    next_cmd <- x$read_next()
-    all_cmds <- c(
-      all_cmds,
-      next_cmd$render()
-    )
-  }
+  all_cmds <- sapply(x$commands, function(x) x$render())
 
   all_cmds
 }
