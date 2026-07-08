@@ -80,7 +80,7 @@
 CommandQueue <- R6Class(
   "CommandQueue",
   private = list(
-    .commands = list(),
+    .commands = list()
   ),
   active = list(
     #' @field is_resolved \[`logical(1)`\]\cr
