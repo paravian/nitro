@@ -91,7 +91,7 @@ and a comparison with equal weights results.
 
 | Method | Class | TNT command |
 |---|---|---|
-| Branch support | `BranchSupportCommand` | `resample boot` |
+| Branch support | `BranchSupportCommand` | |
 | Bootstrap | `ResamplingCommand` | `resample boot` |
 | Jackknife | `ResamplingCommand` | `resample jak` |
 | Symmetric resampling | `ResamplingCommand` | `resample sym` |
