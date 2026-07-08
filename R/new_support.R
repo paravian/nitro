@@ -162,8 +162,7 @@ set_support <- function(tree_analysis, name, ...) {
     cli_abort(c("{.arg tree_analysis} must be a {.obj TreeAnalysis} object."))
   }
 
-  args <- list(...)
-  support_obj <- new_support(name)
+  support_obj <- new_support(name, ...)
 
   ta <- tree_analysis$clone(deep = TRUE)
   ta$add_command(support_obj)
