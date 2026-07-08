@@ -111,15 +111,15 @@ execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
                 "x" = val_check))
   }
 
-  all_cmds <- c(
-    tree_analysis$commands,
-    EchoCommand$new(enable = TRUE),
-    ScreenSizeCommand$new(columns = 50000, rows = 25),
-    MemoryAllocationCommand$new(size = max_ram),
-    TreeBufferCommand$new(size = hold),
-    TreeStepsCommand$new(),
-    PossibleStepsCommand$new(active_taxa = TRUE)
-  )
+  all_cmds <- Reduce(c, tree_analysis$commands) %>%
+    c(
+      EchoCommand$new(enable = TRUE),
+      ScreenSizeCommand$new(columns = 50000, rows = 25),
+      MemoryAllocationCommand$new(size = max_ram),
+      TreeBufferCommand$new(size = hold),
+      TreeStepsCommand$new(),
+      PossibleStepsCommand$new(active_taxa = TRUE)
+    )
 
   if (!test_null(reference_tree)) {
     all_cmds <- c(
@@ -141,15 +141,7 @@ execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
     )
   }
 
-  queue <- CommandQueue$new()
-
-  for (cmd in rev(all_cmds)) {
-    cmd$enqueue(queue)
-  }
-
-  if (!queue$is_resolved) (
-    cli_abort(c("Dependencies in the command queue not resolved, cannot proceed"))
-  )
+  queue <- resolve_dependencies(all_cmds)
 
   interface$execute(queue)
 }
