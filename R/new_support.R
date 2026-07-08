@@ -1,25 +1,50 @@
-#' New support method configuration
+#' Create a Group Support Command
 #'
 #' @description
-#' Creates a new support method configuration.
-#' @param name The name of a support method. Partial unambiguous matches are
-#'   also accepted. The valid options are:
-#'   \itemize{
-#'     \item \code{branch}: Calculates branch (i.e. Bremer) support statistics.
-#'       Attaches a \code{\link{BranchSupportCommand}} object.
-#'     \item \code{bootstrap}: Calculates bootstrap resampling support
-#'       statistics. Attaches a \code{\link{ResamplingCommand}} object.
-#'     \item \code{jackknife}: Calculates jackknife resmpling support
-#'       statistics. Attaches a \code{\link{ResamplingCommand}} object.
-#'     \item \code{symmetric}: Calculate symmetric resampling support
-#'       statistics. Attaches a \code{\link{ResamplingCommand}} object.
-#'   }
-#' @param ... Arguments to be passed on to the weighting method.
-#' @returns A \code{\link{ResamplingCommand}} object.
-#' @seealso The \code{new} method of \code{\link{BranchSupportCommand}} and
-#'   \code{\link{ResamplingCommand}}.
-#' @importFrom checkmate check_class check_string test_null test_true
+#' Create a new group support command object by name. This is the
+#' recommended way to instantiate support command objects in \pkg{nitro},
+#' rather than calling R6 constructors directly.
+#'
+#' @param name \[`character(1)`\]\cr
+#'   The name of the support method. Partial unambiguous matches are
+#'   accepted (case-insensitive). The available methods are:
+#'
+#'   | Name | Creates | Support type |
+#'   |------|---------|--------------|
+#'   | `"branch"` | [BranchSupportCommand] | Bremer (branch) support |
+#'   | `"bootstrap"` | [ResamplingCommand] | Bootstrap resampling |
+#'   | `"jackknife"` | [ResamplingCommand] | Jackknife resampling |
+#'   | `"symmetric"` | [ResamplingCommand] | Symmetric resampling |
+#'
+#' @param ... Optional named arguments passed to the constructor of the
+#'   selected command class. For [BranchSupportCommand], the
+#'   `suboptimal_steps` argument is required. See [BranchSupportCommand]
+#'   and [ResamplingCommand] for the full list of available parameters.
+#'
+#' @return A [BranchSupportCommand] or [ResamplingCommand] object,
+#'   depending on `name`.
+#'
+#' @seealso
+#' * [set_support()] — create a support command and attach it to a
+#'   [TreeAnalysis] in one step.
+#' * [BranchSupportCommand] — branch (Bremer) support configuration,
+#'   including details of the suboptimal sampling approach.
+#' * [ResamplingCommand] — resampling-based support configuration.
+#'
+#' @examples
+#' # Branch (Bremer) support with a five-step suboptimality schedule
+#' bs <- new_support("branch", suboptimal_steps = 1:5)
+#'
+#' # Bootstrap resampling
+#' boot <- new_support("bootstrap", replications = 1000)
+#'
+#' # Jackknife resampling
+#' jack <- new_support("jackknife", replications = 1000)
+#'
+#' @importFrom checkmate check_list check_string test_null test_true
 #' @importFrom cli cli_abort
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_to_lower
 #' @export
 new_support <- function (name, ...) {
   val_check <- check_string(name, min.chars = 1)

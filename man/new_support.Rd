@@ -2,33 +2,52 @@
 % Please edit documentation in R/new_support.R
 \name{new_support}
 \alias{new_support}
-\title{New support method configuration}
+\title{Create a Group Support Command}
 \usage{
 new_support(name, ...)
 }
 \arguments{
-\item{name}{The name of a support method. Partial unambiguous matches are
-also accepted. The valid options are:
-\itemize{
-\item \code{branch}: Calculates branch (i.e. Bremer) support statistics.
-Attaches a \code{\link{BranchSupportCommand}} object.
-\item \code{bootstrap}: Calculates bootstrap resampling support
-statistics. Attaches a \code{\link{ResamplingCommand}} object.
-\item \code{jackknife}: Calculates jackknife resmpling support
-statistics. Attaches a \code{\link{ResamplingCommand}} object.
-\item \code{symmetric}: Calculate symmetric resampling support
-statistics. Attaches a \code{\link{ResamplingCommand}} object.
+\item{name}{[\code{character(1)}]\cr
+The name of the support method. Partial unambiguous matches are
+accepted (case-insensitive). The available methods are:\tabular{lll}{
+   Name \tab Creates \tab Support type \cr
+   \code{"branch"} \tab \link{BranchSupportCommand} \tab Bremer (branch) support \cr
+   \code{"bootstrap"} \tab \link{ResamplingCommand} \tab Bootstrap resampling \cr
+   \code{"jackknife"} \tab \link{ResamplingCommand} \tab Jackknife resampling \cr
+   \code{"symmetric"} \tab \link{ResamplingCommand} \tab Symmetric resampling \cr
 }}
 
-\item{...}{Arguments to be passed on to the weighting method.}
+\item{...}{Optional named arguments passed to the constructor of the
+selected command class. For \link{BranchSupportCommand}, the
+\code{suboptimal_steps} argument is required. See \link{BranchSupportCommand}
+and \link{ResamplingCommand} for the full list of available parameters.}
 }
 \value{
-A \code{\link{ResamplingCommand}} object.
+A \link{BranchSupportCommand} or \link{ResamplingCommand} object,
+depending on \code{name}.
 }
 \description{
-Creates a new support method configuration.
+Create a new group support command object by name. This is the
+recommended way to instantiate support command objects in \pkg{nitro},
+rather than calling R6 constructors directly.
+}
+\examples{
+# Branch (Bremer) support with a five-step suboptimality schedule
+bs <- new_support("branch", suboptimal_steps = 1:5)
+
+# Bootstrap resampling
+boot <- new_support("bootstrap", replications = 1000)
+
+# Jackknife resampling
+jack <- new_support("jackknife", replications = 1000)
+
 }
 \seealso{
-The \code{new} method of \code{\link{BranchSupportCommand}} and
-\code{\link{ResamplingCommand}}.
+\itemize{
+\item \code{\link[=set_support]{set_support()}} — create a support command and attach it to a
+\link{TreeAnalysis} in one step.
+\item \link{BranchSupportCommand} — branch (Bremer) support configuration,
+including details of the suboptimal sampling approach.
+\item \link{ResamplingCommand} — resampling-based support configuration.
+}
 }
