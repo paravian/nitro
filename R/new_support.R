@@ -95,26 +95,27 @@ new_support <- function (name, ...) {
   resampling_obj
 }
 
-#' Add a Support Analysis to a Tree Analysis
+#' Add a Group Support Analysis to a Tree Analysis
 #'
 #' @description
-#' Create a support analysis command object by name and add it to an
-#' existing [TreeAnalysis]. This is a convenience wrapper around
-#' [new_support()] that handles creation, validation, and attachment in
-#' one step.
+#' Create a group support command object by name and add it to an existing
+#' [TreeAnalysis]. This is a convenience wrapper around [new_support()]
+#' that handles creation, validation, and attachment in one step.
 #'
 #' @details
-#' ## Zero-length branch rule validation
-#' Resampling analyses (bootstrap, jackknife, symmetric) require a
-#' compatible zero-length branch rule. The `$zlb_rule` of the supplied
-#' [TreeAnalysis] must be one of `"maximum"`, `"identical_states"`, or
-#' `"minimum"`. An informative error is raised if an incompatible rule is
-#' set.
+#' ## Zero-length branch rule
+#' Resampling analyses (bootstrap, jackknife, symmetric resampling)
+#' require a compatible zero-length branch rule. The `$zlb_rule` of the
+#' supplied [TreeAnalysis] must be one of `"maximum"`,
+#' `"identical_states"`, or `"minimum"`. An informative error is raised
+#' if an incompatible rule is set.
 #'
-#' ## Branch support
-#' When `name` resolves to `"branch"`, any arguments not recognised by
-#' `BranchSupportCommand` are automatically routed to a
-#' `SuboptimalCommand`, which is also added to the analysis.
+#' ## Branch support dependencies
+#' When `name` resolves to `"branch"`, the [BranchSupportCommand] requires
+#' a [BranchBreakingCommand] and a [TreeBufferCommand] to be present in
+#' the [TreeAnalysis] as resolved dependencies. These are typically added
+#' automatically when a tree search is configured and executed via
+#' [set_tree_search()] and [execute_analysis()] respectively.
 #'
 #' @param tree_analysis \[`TreeAnalysis`\]\cr
 #'   A [TreeAnalysis] object to add the support analysis to.
@@ -130,7 +131,8 @@ new_support <- function (name, ...) {
 #' @seealso
 #' * [new_support()] — create a support command without attaching it to
 #'   an analysis.
-#' * [ResamplingCommand] — the command class for resampling analyses.
+#' * [BranchSupportCommand] — branch (Bremer) support configuration.
+#' * [ResamplingCommand] — resampling-based support configuration.
 #' * [TreeAnalysis] — the analysis container class.
 #'
 #' @examples
@@ -140,6 +142,9 @@ new_support <- function (name, ...) {
 #' ta <- make_tree_analysis(dm, outgroup = "Abelisauridae")
 #' ta <- set_tree_search(ta, "branch_swapping", replications = 100)
 #'
+#' # Branch (Bremer) support with a five-step suboptimality schedule
+#' ta <- set_support(ta, "branch", suboptimal_steps = 1:5)
+#'
 #' # Bootstrap resampling
 #' ta <- set_support(ta, "bootstrap", replications = 1000)
 #'
@@ -148,13 +153,12 @@ new_support <- function (name, ...) {
 #'
 #' # Symmetric resampling with multiple frequency summaries
 #' ta <- set_support(ta, "symmetric",
-#'                   replications       = 500,
-#'                   frequency_summary  = c("absolute", "difference"))
+#'                   replications      = 500,
+#'                   frequency_summary = c("absolute", "difference"))
 #' }
 #'
-#' @importFrom checkmate check_class check_subset test_true
+#' @importFrom checkmate check_class test_true
 #' @importFrom cli cli_abort
-#' @importFrom stringr str_replace_all
 #' @export
 set_support <- function(tree_analysis, name, ...) {
   val_check <- check_class(tree_analysis, "TreeAnalysis")

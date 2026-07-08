@@ -2,7 +2,7 @@
 % Please edit documentation in R/new_support.R
 \name{set_support}
 \alias{set_support}
-\title{Add a Support Analysis to a Tree Analysis}
+\title{Add a Group Support Analysis to a Tree Analysis}
 \usage{
 set_support(tree_analysis, name, ...)
 }
@@ -22,26 +22,27 @@ A \strong{copy} of \code{tree_analysis} with the support command added.
 The original object is not modified.
 }
 \description{
-Create a support analysis command object by name and add it to an
-existing \link{TreeAnalysis}. This is a convenience wrapper around
-\code{\link[=new_support]{new_support()}} that handles creation, validation, and attachment in
-one step.
+Create a group support command object by name and add it to an existing
+\link{TreeAnalysis}. This is a convenience wrapper around \code{\link[=new_support]{new_support()}}
+that handles creation, validation, and attachment in one step.
 }
 \details{
-\subsection{Zero-length branch rule validation}{
+\subsection{Zero-length branch rule}{
 
-Resampling analyses (bootstrap, jackknife, symmetric) require a
-compatible zero-length branch rule. The \verb{$zlb_rule} of the supplied
-\link{TreeAnalysis} must be one of \code{"maximum"}, \code{"identical_states"}, or
-\code{"minimum"}. An informative error is raised if an incompatible rule is
-set.
+Resampling analyses (bootstrap, jackknife, symmetric resampling)
+require a compatible zero-length branch rule. The \verb{$zlb_rule} of the
+supplied \link{TreeAnalysis} must be one of \code{"maximum"},
+\code{"identical_states"}, or \code{"minimum"}. An informative error is raised
+if an incompatible rule is set.
 }
 
-\subsection{Branch support}{
+\subsection{Branch support dependencies}{
 
-When \code{name} resolves to \code{"branch"}, any arguments not recognised by
-\code{BranchSupportCommand} are automatically routed to a
-\code{SuboptimalCommand}, which is also added to the analysis.
+When \code{name} resolves to \code{"branch"}, the \link{BranchSupportCommand} requires
+a \link{BranchBreakingCommand} and a \link{TreeBufferCommand} to be present in
+the \link{TreeAnalysis} as resolved dependencies. These are typically added
+automatically when a tree search is configured and executed via
+\code{\link[=set_tree_search]{set_tree_search()}} and \code{\link[=execute_analysis]{execute_analysis()}} respectively.
 }
 }
 \examples{
@@ -51,6 +52,9 @@ dm <- ReadAsPhyDat(nex_path) |> create_matrix()
 ta <- make_tree_analysis(dm, outgroup = "Abelisauridae")
 ta <- set_tree_search(ta, "branch_swapping", replications = 100)
 
+# Branch (Bremer) support with a five-step suboptimality schedule
+ta <- set_support(ta, "branch", suboptimal_steps = 1:5)
+
 # Bootstrap resampling
 ta <- set_support(ta, "bootstrap", replications = 1000)
 
@@ -59,8 +63,8 @@ ta <- set_support(ta, "jackknife", replications = 500, probability = 25)
 
 # Symmetric resampling with multiple frequency summaries
 ta <- set_support(ta, "symmetric",
-                  replications       = 500,
-                  frequency_summary  = c("absolute", "difference"))
+                  replications      = 500,
+                  frequency_summary = c("absolute", "difference"))
 }
 
 }
@@ -68,7 +72,8 @@ ta <- set_support(ta, "symmetric",
 \itemize{
 \item \code{\link[=new_support]{new_support()}} — create a support command without attaching it to
 an analysis.
-\item \link{ResamplingCommand} — the command class for resampling analyses.
+\item \link{BranchSupportCommand} — branch (Bremer) support configuration.
+\item \link{ResamplingCommand} — resampling-based support configuration.
 \item \link{TreeAnalysis} — the analysis container class.
 }
 }
