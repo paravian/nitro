@@ -28,7 +28,7 @@ self$new_argument(
   default_value  = 5
 )
 
-all_labels <- sapply(private$.arguments, `[[`, "label")
+all_labels <- sapply(private$.arguments, getElement, "label")
 self$template <- paste("\{", all_labels, "\}", sep = "")
 }\if{html}{\out{</div>}}
 }
