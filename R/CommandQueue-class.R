@@ -131,8 +131,7 @@ CommandQueue <- R6Class(
 
       new_cmd <- list(
         command = command,
-        priority = priority,
-        resolved = private$do_resolve(command)
+        priority = priority
       )
 
       private$.commands <- c(
@@ -144,41 +143,9 @@ CommandQueue <- R6Class(
         all_priorities <- sapply(private$.commands, getElement, "priority")
         private$.commands <- private$.commands[order(all_priorities)]
       }
-
-      unres <- sapply(private$.commands, getElement, "resolved") %>%
-        not()
-
-      optional <- sapply(private$.commands, function(x) {
-        cmd <- x$command
-        res <- FALSE
-
-        if (!test_null(cmd$optional)) {
-          res <- sapply(cmd$optional, function (y) {
-            test_null(cmd$get_dependency(y))
-          }) %>%
-            any()
-        }
-
-        res
-      })
-
-      unres <- unres | optional
-
-      if (any(unres)) {
-        for (idx in which(unres)) {
-          unres_cmd <- private$.commands[[idx]]
-          if (!identical(command, unres_cmd$command)) {
-            is_res <- private$do_resolve(unres_cmd$command)
-
-            if (is_res) {
-              unres_cmd$resolved <- TRUE
-              unres[idx] <- FALSE
-            }
-          }
         }
       }
 
-      private$.is_resolved <- all(!unres)
     },
     #' @description
     #' Return the number of commands currently in the queue.
