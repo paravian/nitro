@@ -74,10 +74,7 @@ queue.
   \describe{
     \item{\code{is_resolved}}{[\code{logical(1)}]\cr
 \emph{(Read-only.)} Whether all required dependencies across all
-commands currently in the queue are satisfied. Updated
-automatically after every call to \verb{$add()}. \code{\link[=execute_analysis]{execute_analysis()}}
-checks this field before passing the queue to
-\link{TntInterface}\verb{$execute()}.}
+commands currently in the queue are satisfied.}
   }
   \if{html}{\out{</div>}}
 }
@@ -133,9 +130,6 @@ execute first.}
 \if{latex}{\out{\hypertarget{method-CommandQueue-commands}{}}}
 \subsection{\code{CommandQueue$commands()}}{
   Return the commands in the queue in priority order.
-
-Unlike the previous \verb{$read_next()} approach, this method is
-non-destructive — the queue is not modified.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{CommandQueue$commands(show_priorities = FALSE)}
