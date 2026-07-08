@@ -81,6 +81,7 @@ execution command (\verb{mult=}).}
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-TreeSearchCommand-enqueue}{\code{TreeSearchCommand$enqueue()}}
+    \item \href{#method-TreeSearchCommand-format}{\code{TreeSearchCommand$format()}}
     \item \href{#method-TreeSearchCommand-initialize}{\code{TreeSearchCommand$new()}}
     \item \href{#method-TreeSearchCommand-render}{\code{TreeSearchCommand$render()}}
     \item \href{#method-TreeSearchCommand-clone}{\code{TreeSearchCommand$clone()}}
@@ -93,7 +94,6 @@ execution command (\verb{mult=}).}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="print"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-print'><code>BasicCommand$print()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="set_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-set_dependency'><code>BasicCommand$set_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="transform"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-transform'><code>BasicCommand$transform()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="format"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-format'><code>StandardCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="get_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-get_argument_value'><code>StandardCommand$get_argument_value()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="new_argument"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-new_argument'><code>StandardCommand$new_argument()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
@@ -122,6 +122,29 @@ also enqueues a \link{CollapseTreesCommand} (priority \code{600}) and a
   }
   \subsection{Returns}{
     A \link{CommandQueue} object.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeSearchCommand-format"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeSearchCommand-format}{}}}
+\subsection{\code{TreeSearchCommand$format()}}{
+  Format the command as a summary table.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeSearchCommand$format(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} showing the configuration options for tree
+searching.
   }
 }
 

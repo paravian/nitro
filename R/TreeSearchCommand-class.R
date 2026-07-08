@@ -114,6 +114,29 @@ TreeSearchCommand <- R6Class(
       .queue
     },
     #' @description
+    #' Format the command as a summary table.
+    #'
+    #' @param ... Not used.
+    #'
+    #' @return A `data.frame` showing the configuration options for tree
+    #'   searching.
+    format = function(...) {
+      options <- super$format()
+
+      set_tbl <- data.frame(
+        "Set search options only:", ifelse(self$set_only, "yes", "no"), ""
+      )
+      names(set_tbl) <- c("", "Current value", "Default value")
+
+      options <- rbind(
+        options,
+        set_tbl
+      )
+      options[, 1] <- format(options[, 1], justify = "left")
+
+      options
+    },
+    #' @description
     #' Create a new `TreeSearchCommand` object.
     #'
     #' Sets `$provides` to `"tree search"` and initialises `$set_only`.
