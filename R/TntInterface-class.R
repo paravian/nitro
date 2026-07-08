@@ -6,7 +6,7 @@
 #'
 #' `TntInterface` is created via [create_interface()] and passed to
 #' [execute_analysis()] to run a configured [TreeAnalysis]. Users do not
-#' interact with the subprocess directly — command execution is handled
+#' interact with the subprocess directly; command execution is handled
 #' internally by `$execute()`.
 #'
 #' @details
@@ -22,11 +22,11 @@
 #'    `$execute()`).
 #'
 #' ## Execution model
-#' `$execute()` writes all queued commands to a temporary `.tnt` script
-#' file and starts a new TNT subprocess with that file as its argument.
-#' Output is read incrementally until the TNT prompt is detected, then
-#' parsed and dispatched to each command's `$transform()` method. The
-#' result is returned as a [TreeAnalysisResults] object.
+#' `$execute()` writes all queued commands to a temporary `.tnt` script file and
+#' starts a new TNT subprocess with that file as its argument. Output is read
+#' incrementally until the TNT prompt is detected, then parsed and dispatched to
+#' each command's `$transform()` method. The result is returned as a
+#' [TreeAnalysisResults] object.
 #'
 #' ## Platform differences
 #' On Unix, TNT is run in a pseudo-terminal (PTY) to handle interactive
@@ -34,9 +34,9 @@
 #' `$platform` field is set automatically from `.Platform$OS.type`.
 #'
 #' ## Write-once fields
-#' `$path`, `$platform`, and `$version` are write-once — they are set
-#' during initialisation and cannot be changed afterwards. `$process` is
-#' mutable and holds the current [processx::process] object.
+#' `$path`, `$platform`, and `$version` are write-once: they are set during
+#' initialisation and cannot be changed afterwards. `$process` is mutable and
+#' holds the current [processx::process] object.
 #'
 #' @seealso
 #' * [create_interface()] — recommended way to create a `TntInterface`.
@@ -88,6 +88,8 @@ TntInterface <- R6Class(
     #'   Path to the TNT executable.
     #' @param argument \[`character(1)` or `NULL`\]\cr
     #'   Optional argument to pass to the executable (e.g., a script path).
+    #'
+    #' @returns `TRUE` invisibly, if process started correctly.
     process_start = function(path, argument = NULL) {
       val_check <- check_string(path, min.chars = 1)
       if (!test_true(val_check)) {

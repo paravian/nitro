@@ -9,7 +9,7 @@ low-level interface for sending commands and receiving output.
 
 \code{TntInterface} is created via \code{\link[=create_interface]{create_interface()}} and passed to
 \code{\link[=execute_analysis]{execute_analysis()}} to run a configured \link{TreeAnalysis}. Users do not
-interact with the subprocess directly — command execution is handled
+interact with the subprocess directly; command execution is handled
 internally by \verb{$execute()}.
 }
 \details{
@@ -30,11 +30,11 @@ before calling \code{\link[=create_interface]{create_interface()}}).
 
 \subsection{Execution model}{
 
-\verb{$execute()} writes all queued commands to a temporary \code{.tnt} script
-file and starts a new TNT subprocess with that file as its argument.
-Output is read incrementally until the TNT prompt is detected, then
-parsed and dispatched to each command's \verb{$transform()} method. The
-result is returned as a \link{TreeAnalysisResults} object.
+\verb{$execute()} writes all queued commands to a temporary \code{.tnt} script file and
+starts a new TNT subprocess with that file as its argument. Output is read
+incrementally until the TNT prompt is detected, then parsed and dispatched to
+each command's \verb{$transform()} method. The result is returned as a
+\link{TreeAnalysisResults} object.
 }
 
 \subsection{Platform differences}{
@@ -46,9 +46,9 @@ prompts. On Windows, stdout and stderr are captured via pipes. The
 
 \subsection{Write-once fields}{
 
-\verb{$path}, \verb{$platform}, and \verb{$version} are write-once — they are set
-during initialisation and cannot be changed afterwards. \verb{$process} is
-mutable and holds the current \link[processx:process]{processx::process} object.
+\verb{$path}, \verb{$platform}, and \verb{$version} are write-once: they are set during
+initialisation and cannot be changed afterwards. \verb{$process} is mutable and
+holds the current \link[processx:process]{processx::process} object.
 }
 }
 \seealso{
