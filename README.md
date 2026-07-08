@@ -87,16 +87,17 @@ Weighting is configured via `set_weighting()`. See the
 [Implied Weighting](articles/implied-weighting.html) article for details
 and a comparison with equal weights results.
 
-### Resampling support
+### Group support
 
 | Method | Class | TNT command |
 |---|---|---|
-| Bootstrap | `BootstrapCommand` | `resample boot` |
-| Jackknife | `JackknifeCommand` | `resample jak` |
-| Symmetric resampling | `SymmetricResamplingCommand` | `resample sym` |
+| Branch support | `BranchSupportCommand` | `resample boot` |
+| Bootstrap | `ResamplingCommand` | `resample boot` |
+| Jackknife | `ResamplingCommand` | `resample jak` |
+| Symmetric resampling | `ResamplingCommand` | `resample sym` |
 
-Resampling is configured via `set_support()`. Analyses can be run with or
-without a reference tree. See the
+Group supports are configured via `set_support()`. Resampling analyses can be
+run with or without a reference tree. See the
 [Resampling Analyses](articles/resampling-analyses.html) article for
 details.
 
