@@ -79,7 +79,7 @@ TntInterface <- R6Class(
       cleaned <- str_split_1(value, private$newline) %>%
         str_trim() %>%
         .[nchar(.) > 0]
-      return(cleaned)
+      cleaned
     },
     #' @description
     #' Start a TNT subprocess.
