@@ -186,7 +186,7 @@ CommandQueue <- R6Class(
 
       config <- c(
         "Queue length:" = self$length(),
-        "Resolved:" = self$is_resolved
+        "Resolved:" = ifelse(self$is_resolved, "yes", "no")
       ) %>%
         data.frame()
       names(config) <- NULL
