@@ -193,10 +193,35 @@ CommandQueue <- R6Class(
       print(config)
     },
     #' @description
+    #' Remove a specific command from the queue.
     #'
+    #' The command is identified by object identity (`identical()`). Raises
+    #' an error if the command is not present in the queue.
     #'
+    #' @param command \[`BasicCommand`\]\cr
+    #'   The command object to remove. Must be the same object (by
+    #'   identity) as one currently in the queue.
     #'
+    #' @return A list with elements `$command` and `$priority` for the
+    #'   removed entry.
+    remove = function(command) {
+      val_check <- check_class(command, "BasicCommand")
+      if (!test_true(val_check)) {
+        cli_abort("{.arg command} must be an object that inherits from {.cls BasicCommand}.",
+                  "x" = val_check)
       }
+
+      mask <- sapply(private$.commands, function (x) {
+        identical(x$command, command)
+      })
+
+      if (!any(mask)) {
+        cli_abort(c("{.arg command} must be a command object present in the queue."))
+      }
+
+      removed <- private$.commands[[which(mask)]]
+      private$.commands <- private$.commands[!mask]
+      removed
     }
   )
 )
