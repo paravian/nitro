@@ -479,6 +479,8 @@ ResamplingCommand <- R6Class(
           frequency = str_replace_all(frequency, summ_pattern),
           method = str_replace_all(method, type_pattern) %>%
             str_to_lower(),
+          label = glue("{method} ({frequency})") %>%
+            str_to_sentence(),
           across(all_of(c("replicates", "cutoff", "probability")), as.numeric)
         )
 
