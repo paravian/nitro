@@ -193,21 +193,10 @@ CommandQueue <- R6Class(
       print(config)
     },
     #' @description
-    #' Remove and return the next command from the queue.
     #'
-    #' Commands are returned in priority order (lowest priority number
-    #' first). Raises an error if the queue is empty.
     #'
-    #' @param ... Not used.
     #'
-    #' @return A [BasicCommand] object.
-    read_next = function(...) {
-      if (self$length() == 0) {
-        cli_abort(c("Queue is empty, no more commands to read."))
       }
-      item <- private$.commands[[1]]
-      private$.commands[[1]] <- NULL
-      item$command
     }
   )
 )
