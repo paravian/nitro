@@ -13,28 +13,23 @@
 }
 \value{
 A character vector of TNT command strings, one element per
-command.
+command, in priority order.
 }
 \description{
-Consumes all commands in a \link{CommandQueue} in priority order and returns
-their rendered TNT command strings as a character vector.
-
-Note that this operation is \strong{destructive} — all commands are removed
-from the queue as they are read. The queue will be empty after this
-call.
+Renders all commands in a \link{CommandQueue} in priority order and returns
+their TNT command strings as a character vector. The queue is not
+modified by this operation.
 
 It is the caller's responsibility to ensure that \verb{$is_resolved} is
 \code{TRUE} before calling this function. \code{\link[=execute_analysis]{execute_analysis()}} performs this
-check automatically.
+check automatically via \code{\link[=resolve_dependencies]{resolve_dependencies()}}.
 }
 \seealso{
 \itemize{
-\item \link{CommandQueue} — the queue class, including details on dependency
-resolution and \verb{$is_resolved}.
+\item \link{CommandQueue} — the queue class.
 \item \link{BasicCommand}\verb{$render()} — produces the string for each individual
 command.
-\item \code{\link[=execute_analysis]{execute_analysis()}} — the primary entry point, which checks
-\verb{$is_resolved} before rendering.
+\item \code{\link[=execute_analysis]{execute_analysis()}} — the primary entry point.
 }
 }
 \keyword{internal}

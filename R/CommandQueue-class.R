@@ -4,16 +4,14 @@
 #' An [R6][R6::R6Class] class that stores an ordered list of TNT commands
 #' for sequential execution.
 #'
-#' Commands are added via `$add()` with a numeric priority. The queue
-#' maintains commands in ascending priority order (lower numbers execute
-#' first). Commands are consumed one at a time via `$read_next()`.
+#' Commands are added via `$add()` with a numeric priority and removed via
+#' `$remove()`. The queue maintains commands in ascending priority order
+#' (lower numbers execute first). The full ordered command list can be
+#' retrieved at any time via `$commands()` without consuming the queue.
 #'
-#' Dependency resolution is performed automatically as commands are added.
-#' Each command's required and optional dependencies are matched against
-#' the `$provides` tokens of commands already in the queue, and
-#' `$set_dependency()` is called on the dependent command when a match is
-#' found. The `$is_resolved` field reflects whether all required
-#' dependencies in the queue are currently satisfied.
+#' The `$is_resolved` field reflects whether all commands currently in the
+#' queue have their required dependencies satisfied. It is recomputed on
+#' access by checking `$is_resolved` on each command object in the queue.
 #'
 #' `CommandQueue` is the only command-related class that is exported.
 #' Users interact with it primarily through [BasicCommand]`$enqueue()` and
@@ -22,19 +20,18 @@
 #'
 #' @details
 #' ## Typical usage
-#' In normal use, a queue is created implicitly by calling `$enqueue()`
-#' on a command object without supplying an existing queue:
+#' In normal use, queue assembly and dependency resolution are handled
+#' entirely by [resolve_dependencies()], which builds and caches a
+#' separate [CommandQueue] for each command and concatenates them at the
+#' end using [c.CommandQueue()]. The resulting queue is passed directly to
+#' [TntInterface]`$execute()`.
 #'
-#' ```r
-#' queue <- my_command$enqueue()
-#' tnt_script <- as.character(queue)
-#' ```
-#'
-#' Commands can also be added manually:
+#' A queue can also be assembled manually for testing or advanced use:
 #'
 #' ```r
 #' queue <- CommandQueue$new()
 #' queue$add(my_command, priority = 500)
+#' tnt_script <- as.character(queue)
 #' ```
 #'
 #' ## Priority ordering
@@ -43,26 +40,15 @@
 #' numbers execute first.
 #'
 #' ## Dependency resolution
-#' Dependency resolution runs incrementally as each command is added via
-#' `$add()`. When a new command is inserted:
+#' The `$is_resolved` field is computed on access by calling `$is_resolved`
+#' on each command object currently in the queue. It does not trigger any
+#' resolution logic — resolution is performed externally by
+#' [resolve_dependencies()] before the queue is assembled.
 #'
-#' 1. Its required and optional dependencies are checked against the
-#'    `$provides` tokens of all commands currently in the queue.
-#' 2. If a match is found, `$set_dependency()` is called on the dependent
-#'    command immediately.
-#' 3. After insertion, any previously unresolved commands in the queue are
-#'    re-checked in case the newly added command satisfies their
-#'    dependencies.
-#'
-#' The `$is_resolved` field is updated after every insertion and reflects
-#' whether all required dependencies across all commands in the queue are
-#' currently satisfied. [execute_analysis()] checks this field before
-#' passing the queue to [TntInterface]`$execute()` and aborts if any
-#' required dependencies remain unmet.
-#'
-#' In normal use, dependency resolution is handled transparently by each
-#' command's `$enqueue()` method, which adds the command and any
-#' prerequisites to the queue in the correct order.
+#' [resolve_dependencies()] builds one queue per command by calling
+#' `$enqueue()`, caches the queues, detects and repairs side effects on
+#' previously cached queues, and concatenates all queues into a single
+#' [CommandQueue] using [c.CommandQueue()].
 #'
 #' @seealso
 #' * [BasicCommand] — all command objects support `$enqueue()`, which

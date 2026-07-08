@@ -7,16 +7,14 @@
 An \link[R6:R6Class]{R6} class that stores an ordered list of TNT commands
 for sequential execution.
 
-Commands are added via \verb{$add()} with a numeric priority. The queue
-maintains commands in ascending priority order (lower numbers execute
-first). Commands are consumed one at a time via \verb{$read_next()}.
+Commands are added via \verb{$add()} with a numeric priority and removed via
+\verb{$remove()}. The queue maintains commands in ascending priority order
+(lower numbers execute first). The full ordered command list can be
+retrieved at any time via \verb{$commands()} without consuming the queue.
 
-Dependency resolution is performed automatically as commands are added.
-Each command's required and optional dependencies are matched against
-the \verb{$provides} tokens of commands already in the queue, and
-\verb{$set_dependency()} is called on the dependent command when a match is
-found. The \verb{$is_resolved} field reflects whether all required
-dependencies in the queue are currently satisfied.
+The \verb{$is_resolved} field reflects whether all commands currently in the
+queue have their required dependencies satisfied. It is recomputed on
+access by checking \verb{$is_resolved} on each command object in the queue.
 
 \code{CommandQueue} is the only command-related class that is exported.
 Users interact with it primarily through \link{BasicCommand}\verb{$enqueue()} and
@@ -26,17 +24,17 @@ commands to a character vector of TNT command strings.
 \details{
 \subsection{Typical usage}{
 
-In normal use, a queue is created implicitly by calling \verb{$enqueue()}
-on a command object without supplying an existing queue:
+In normal use, queue assembly and dependency resolution are handled
+entirely by \code{\link[=resolve_dependencies]{resolve_dependencies()}}, which builds and caches a
+separate \link{CommandQueue} for each command and concatenates them at the
+end using \code{\link[=c.CommandQueue]{c.CommandQueue()}}. The resulting queue is passed directly to
+\link{TntInterface}\verb{$execute()}.
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{queue <- my_command$enqueue()
-tnt_script <- as.character(queue)
-}\if{html}{\out{</div>}}
-
-Commands can also be added manually:
+A queue can also be assembled manually for testing or advanced use:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{queue <- CommandQueue$new()
 queue$add(my_command, priority = 500)
+tnt_script <- as.character(queue)
 }\if{html}{\out{</div>}}
 }
 
@@ -49,27 +47,15 @@ numbers execute first.
 
 \subsection{Dependency resolution}{
 
-Dependency resolution runs incrementally as each command is added via
-\verb{$add()}. When a new command is inserted:
-\enumerate{
-\item Its required and optional dependencies are checked against the
-\verb{$provides} tokens of all commands currently in the queue.
-\item If a match is found, \verb{$set_dependency()} is called on the dependent
-command immediately.
-\item After insertion, any previously unresolved commands in the queue are
-re-checked in case the newly added command satisfies their
-dependencies.
-}
+The \verb{$is_resolved} field is computed on access by calling \verb{$is_resolved}
+on each command object currently in the queue. It does not trigger any
+resolution logic — resolution is performed externally by
+\code{\link[=resolve_dependencies]{resolve_dependencies()}} before the queue is assembled.
 
-The \verb{$is_resolved} field is updated after every insertion and reflects
-whether all required dependencies across all commands in the queue are
-currently satisfied. \code{\link[=execute_analysis]{execute_analysis()}} checks this field before
-passing the queue to \link{TntInterface}\verb{$execute()} and aborts if any
-required dependencies remain unmet.
-
-In normal use, dependency resolution is handled transparently by each
-command's \verb{$enqueue()} method, which adds the command and any
-prerequisites to the queue in the correct order.
+\code{\link[=resolve_dependencies]{resolve_dependencies()}} builds one queue per command by calling
+\verb{$enqueue()}, caches the queues, detects and repairs side effects on
+previously cached queues, and concatenates all queues into a single
+\link{CommandQueue} using \code{\link[=c.CommandQueue]{c.CommandQueue()}}.
 }
 }
 \seealso{
@@ -99,9 +85,10 @@ checks this field before passing the queue to
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-CommandQueue-add}{\code{CommandQueue$add()}}
+    \item \href{#method-CommandQueue-commands}{\code{CommandQueue$commands()}}
     \item \href{#method-CommandQueue-length}{\code{CommandQueue$length()}}
     \item \href{#method-CommandQueue-print}{\code{CommandQueue$print()}}
-    \item \href{#method-CommandQueue-read_next}{\code{CommandQueue$read_next()}}
+    \item \href{#method-CommandQueue-remove}{\code{CommandQueue$remove()}}
     \item \href{#method-CommandQueue-clone}{\code{CommandQueue$clone()}}
   }
 }
@@ -109,10 +96,6 @@ checks this field before passing the queue to
 \if{html}{\out{<a id="method-CommandQueue-add"></a>}}
 \if{latex}{\out{\hypertarget{method-CommandQueue-add}{}}}
 \subsection{\code{CommandQueue$add()}}{
-  Attempt to resolve the dependencies of a single command against the
-commands currently in the queue.
-
-
   Add a command to the queue and attempt to resolve its dependencies.
 
 After insertion the queue is re-sorted by priority. Dependency
@@ -135,22 +118,43 @@ dependencies across the entire queue are now satisfied.
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{command}}{A \link{BasicCommand} object whose dependencies are to be
-resolved.}
       \item{\code{command}}{[\code{BasicCommand}]\cr
 An object inheriting from \link{BasicCommand}.}
       \item{\code{priority}}{[\code{integer(1)}]\cr
 A non-negative integer controlling execution order. Lower values
 execute first.}
-      \item{\code{suppress_errors}}{[\code{logical(1)}]\cr
-If \code{TRUE} (default), unmet dependencies return \code{FALSE} silently.
-If \code{FALSE}, an error is raised immediately.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CommandQueue-commands"></a>}}
+\if{latex}{\out{\hypertarget{method-CommandQueue-commands}{}}}
+\subsection{\code{CommandQueue$commands()}}{
+  Return the commands in the queue in priority order.
+
+Unlike the previous \verb{$read_next()} approach, this method is
+non-destructive — the queue is not modified.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CommandQueue$commands(show_priorities = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{show_priorities}}{[\code{logical(1)}]\cr
+If \code{FALSE} (default), returns a \code{CommandList} of command objects.
+If \code{TRUE}, returns a list of lists, each containing a \verb{$command}
+element and a \verb{$priority} element, which is the form required by
+\code{\link[=c.CommandQueue]{c.CommandQueue()}} when merging queues.}
     }
     \if{html}{\out{</div>}}
   }
   \subsection{Returns}{
-    \code{TRUE} if all required dependencies were resolved,
-\code{FALSE} otherwise.
+    A \code{CommandList} if \code{show_priorities} is \code{FALSE}; otherwise
+a list of named lists with elements \code{command} and \code{priority}.
   }
 }
 
@@ -196,27 +200,30 @@ If \code{FALSE}, an error is raised immediately.}
 }
 
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-CommandQueue-read_next"></a>}}
-\if{latex}{\out{\hypertarget{method-CommandQueue-read_next}{}}}
-\subsection{\code{CommandQueue$read_next()}}{
-  Remove and return the next command from the queue.
+\if{html}{\out{<a id="method-CommandQueue-remove"></a>}}
+\if{latex}{\out{\hypertarget{method-CommandQueue-remove}{}}}
+\subsection{\code{CommandQueue$remove()}}{
+  Remove a specific command from the queue.
 
-Commands are returned in priority order (lowest priority number
-first). Raises an error if the queue is empty.
+The command is identified by object identity (\code{identical()}). Raises
+an error if the command is not present in the queue.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CommandQueue$read_next(...)}
+    \preformatted{CommandQueue$remove(command)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{...}}{Not used.}
+      \item{\code{command}}{[\code{BasicCommand}]\cr
+The command object to remove. Must be the same object (by
+identity) as one currently in the queue.}
     }
     \if{html}{\out{</div>}}
   }
   \subsection{Returns}{
-    A \link{BasicCommand} object.
+    A list with elements \verb{$command} and \verb{$priority} for the
+removed entry.
   }
 }
 
