@@ -143,9 +143,30 @@ CommandQueue <- R6Class(
         all_priorities <- sapply(private$.commands, getElement, "priority")
         private$.commands <- private$.commands[order(all_priorities)]
       }
+    },
+    #' @description
+    #' Return the commands in the queue in priority order.
+    #'
+    #' @param show_priorities \[`logical(1)`\]\cr
+    #'   If `FALSE` (default), returns a `CommandList` of command objects.
+    #'   If `TRUE`, returns a list of lists, each containing a `$command`
+    #'   element and a `$priority` element, which is the form required by
+    #'   [c.CommandQueue()] when merging queues.
+    #'
+    #' @return A `CommandList` if `show_priorities` is `FALSE`; otherwise
+    #'   a list of named lists with elements `command` and `priority`.
+    commands = function (show_priorities = FALSE) {
+      cmds <- private$.commands
+      if (!show_priorities) {
+        cmds <- lapply(cmds, function (x) x$command)
+        if (length(cmds) > 1) {
+          cmds <- Reduce(c, cmds)
+        } else {
+          cmds <- c(cmds)
         }
       }
 
+      cmds
     },
     #' @description
     #' Return the number of commands currently in the queue.
