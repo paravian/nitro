@@ -278,8 +278,7 @@ ResamplingCommand <- R6Class(
                           replications) {
       super$initialize(
         name = "resample",
-        description = "Resampling",
-        provides = "resampling"
+        description = "Resampling"
       )
 
       resampling_cmd_fmt <- function(value) {
