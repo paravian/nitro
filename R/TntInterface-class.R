@@ -384,13 +384,15 @@ TntInterface <- R6Class(
         glue("proc {tnt_tempfile};")
       }
 
-      queue_out <- queue$clone(deep = TRUE)
+      queue_cmds <- queue$commands()
 
-      while (queue_out$length() > 0) {
-        next_cmd <- queue_out$read_next()
-        cmd_render <- next_cmd$render()
+      for (cmd in queue_cmds) {
+        if (!test_null(cmd$optional)) {
+          resolve_command(cmd, queue_cmds, "optional")
+        }
+        cmd_render <- cmd$render()
 
-        if (next_cmd$inline) {
+        if (cmd$inline) {
           cmd_render <- write_proc(cmd_render)
         }
 
@@ -462,9 +464,10 @@ TntInterface <- R6Class(
 
       output <- list()
 
+      cmd_idx <- 1
       for (cmd_name in unique(cmd_names)) {
         while (TRUE) {
-          cmd <- queue$read_next()
+          cmd <- queue_cmds[[cmd_idx]]
 
           if (cmd$name == cmd_name) {
             cmd_match <- cmd_out[cmd$name == cmd_names] %>%
@@ -483,6 +486,7 @@ TntInterface <- R6Class(
 
             break
           }
+          cmd_idx <- cmd_idx + 1
         }
       }
 
