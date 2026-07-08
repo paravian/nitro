@@ -525,8 +525,6 @@ TntInterface <- R6Class(
       options <- format(self)
       names(options) <- NULL
 
-      cat("\n")
-      cli_text("\u00a0{symbol$bullet} TNT interface properties:")
       print(options, row.names = FALSE)
     },
     #' @description
