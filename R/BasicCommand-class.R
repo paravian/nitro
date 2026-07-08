@@ -519,8 +519,8 @@ c.BasicCommand <- function(...) {
   objs <- list(...)
   val_check <- check_list(objs, types = "BasicCommand")
   if (!test_true(val_check)) {
-    cli_abort(c("All objects must inherit from class {.cls BasicCommand}."),
-              "x" = val_check
+    cli_abort(c("All objects must inherit from class {.cls BasicCommand}.",
+              "x" = val_check)
     )
   }
   class(objs) <- c("CommandList", "list")
