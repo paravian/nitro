@@ -169,6 +169,8 @@ ReadDataCommand <- R6Class(
     #'
     #' @param data \[`AbstractCharacterMatrix` or `MultiCharacterMatrix`\]\cr
     #'   One or more character matrix objects. See the `$data` field.
+    #' @param ... Optional named arguments passed to the constructor of
+    #'   `ReadDataCommand`.
     #'
     #' @return A new `ReadDataCommand` object.
     initialize = function(data, ...) {

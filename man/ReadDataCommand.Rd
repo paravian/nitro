@@ -152,6 +152,8 @@ is assigned. Direct instantiation is rarely necessary.
     \describe{
       \item{\code{data}}{[\code{AbstractCharacterMatrix} or \code{MultiCharacterMatrix}]\cr
 One or more character matrix objects. See the \verb{$data} field.}
+      \item{\code{...}}{Optional named arguments passed to the constructor of
+\code{ReadDataCommand}.}
     }
     \if{html}{\out{</div>}}
   }
