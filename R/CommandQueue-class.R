@@ -256,3 +256,43 @@ as.character.CommandQueue <- function(x, ...) {
 
   all_cmds
 }
+
+#' Combine CommandQueue Objects
+#'
+#' @description
+#' Merges two or more [CommandQueue] objects into a single queue by
+#' inserting all commands from each queue into the first, preserving their
+#' original priorities.
+#'
+#' This is used by [resolve_dependencies()] to concatenate the per-command
+#' cached queues into the final queue returned to [execute_analysis()].
+#'
+#' @param ... Two or more [CommandQueue] objects.
+#'
+#' @return A single [CommandQueue] containing all commands from the input
+#'   queues, sorted by priority.
+#'
+#' @seealso
+#' * [CommandQueue] — the queue class.
+#' * [resolve_dependencies()] — the primary caller of this function.
+#'
+#' @exportS3Method
+#' @keywords internal
+c.CommandQueue <- function(...) {
+  objs <- list(...)
+  val_check <- check_list(objs, types = "CommandQueue", any.missing = FALSE, min.len = 2)
+  if (!test_true(val_check)) {
+    cli_abort(c("All objects must inherit from class {.cls BasicCommand}.",
+              "x" = val_check))
+  }
+
+  obj <- Reduce(f = function(x1, x2) {
+    cmds <- x2$commands(show_priorities = TRUE)
+    for (cmd in cmds) {
+      do.call(x1$add, cmd)
+    }
+    x1
+  }, x = objs)
+
+  obj
+}
