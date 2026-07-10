@@ -54,7 +54,8 @@ CharacterCodingCommand <- R6Class(
         if (!coll$isEmpty()) {
           err <- coll$getMessages()
           cli_abort(c("{.arg inactive_indices} must be either {.val NULL} or a valid numeric vector.",
-                      "x" = err))
+            "x" = err
+          ))
         }
 
         if (test_numeric(value)) {
@@ -81,7 +82,8 @@ CharacterCodingCommand <- R6Class(
         if (!coll$isEmpty()) {
           err <- coll$getMessages()
           cli_abort(c("{.arg ordered_indices} must be either {.val NULL} or a valid numeric vector.",
-                      "x" = err))
+            "x" = err
+          ))
         }
 
         if (test_numeric(value)) {

@@ -59,10 +59,11 @@
 #' # Preferred: use set_weighting() which handles both commands
 #' \dontrun{
 #' ta <- set_weighting(ta, "extended",
-#'                     concavity_constant = 6,
-#'                     multi_constant     = TRUE,
-#'                     proportion         = 0.5,
-#'                     max_ratio          = 5)
+#'   concavity_constant = 6,
+#'   multi_constant     = TRUE,
+#'   proportion         = 0.5,
+#'   max_ratio          = 5
+#' )
 #' }
 #'
 #' # Direct construction
@@ -97,7 +98,8 @@ ExtendedImpliedWeightingCommand <- R6Class(
         val_check <- check_number(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg max_ratio} must be a number.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -116,7 +118,8 @@ ExtendedImpliedWeightingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg multi_constant} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)
@@ -135,7 +138,8 @@ ExtendedImpliedWeightingCommand <- R6Class(
         val_check <- check_number(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg proportion} must be a number.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

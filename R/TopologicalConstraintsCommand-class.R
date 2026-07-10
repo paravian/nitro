@@ -80,7 +80,8 @@ TopologicalConstraintsCommand <- R6Class(
         if (!coll$isEmpty()) {
           val_check <- coll$getMessages()
           cli_abort(c("{.arg constraints} must be either {.cls BackboneConstraint} object a (list of) {.cls MonophylyConstraint} object(s).",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.constraints <- value
@@ -145,7 +146,8 @@ TopologicalConstraintsCommand <- R6Class(
         val_check <- check_class(value, "ReadDataCommand")
         if (!test_true(val_check)) {
           cli_abort(c("{.arg value} must be a {.cls ReadDataCommand} object.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         all_taxa <- value$data %>%
@@ -155,18 +157,21 @@ TopologicalConstraintsCommand <- R6Class(
 
         for (constraint in self$constraints) {
           if (test_class(constraint, "MonophylyConstraint")) {
-            constraint_taxa <- c(constraint$fixed_otus,
-                                 constraint$floating_otus)
+            constraint_taxa <- c(
+              constraint$fixed_otus,
+              constraint$floating_otus
+            )
           } else if (test_class(constraint, "BackboneConstraint")) {
             ref_tree <- self$get_dependency("reference tree")
             constraint_taxa <- ref_tree$trees %>%
-                use_series("tip.label")
+              use_series("tip.label")
           }
 
           val_check <- check_subset(constraint_taxa, all_taxa)
           if (!test_true(val_check)) {
             cli_abort(c("{.arg constraints} contains taxa not present in the matrix.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
         }
 
@@ -180,7 +185,8 @@ TopologicalConstraintsCommand <- R6Class(
           val_check <- check_class(value, "ReadTreesCommand")
           if (!test_true(val_check)) {
             cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
         }
         value
@@ -197,8 +203,10 @@ TopologicalConstraintsCommand <- R6Class(
     #'
     #' @param ... Not used.
     print = function(...) {
-      cli_text(col_grey("# A ", style_italic(col_red("nitro")),
-                        " topological constraints command"))
+      cli_text(col_grey(
+        "# A ", style_italic(col_red("nitro")),
+        " topological constraints command"
+      ))
       options <- format(self)
       names(options) <- NULL
       print(options, row.names = FALSE)
@@ -231,7 +239,6 @@ TopologicalConstraintsCommand <- R6Class(
             "{type} [ {force_arg} ]",
             type = ifelse(constraint$is_positive, "+", "-")
           )
-
         } else if (test_class(constraint, "BackboneConstraint")) {
           force_arg <- ifelse(constraint$is_positive, "/", ":") %>%
             paste("&0")

@@ -79,18 +79,22 @@ MonophylyConstraint <- R6Class(
       if (missing(value)) {
         return(private$.fixed_otus)
       } else {
-        val_check <- check_character(value, min.chars = 1,
-                                     any.missing = FALSE,
-                                     min.len = 2, unique = TRUE)
+        val_check <- check_character(value,
+          min.chars = 1,
+          any.missing = FALSE,
+          min.len = 2, unique = TRUE
+        )
         if (!test_true(val_check)) {
           cli_abort(c("{.arg fixed_otus} must be a valid character vector.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         val_check <- check_disjunct(value, self$floating_otus)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg fixed_otus} must not contain taxa from {.arg floating_otus}.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.fixed_otus <- value
@@ -108,22 +112,26 @@ MonophylyConstraint <- R6Class(
         coll <- makeAssertCollection()
         assert(
           check_null(value),
-          check_character(value, min.chars = 1, any.missing = FALSE,
-                          min.len = 1, unique = TRUE),
+          check_character(value,
+            min.chars = 1, any.missing = FALSE,
+            min.len = 1, unique = TRUE
+          ),
           add = coll
         )
 
         if (!coll$isEmpty()) {
           val_check <- coll$getMessages()
           cli_abort(c("{.arg floating_otus} must be either a valid character vector or {.val NULL}.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         val_check <- check_disjunct(value, self$fixed_otus)
         if (!test_true(val_check)) {
           val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
           cli_abort(c("{.arg floating_otus} must not contain taxa from {.arg fixed_otus}.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.floating_otus <- value
@@ -140,13 +148,17 @@ MonophylyConstraint <- R6Class(
     format = function(...) {
       options <- data.frame(
         c("Constraint type:", "Fixed OTUs:"),
-        c(ifelse(self$is_positive, "positive", "negative"),
-          length(self$fixed_otus))
+        c(
+          ifelse(self$is_positive, "positive", "negative"),
+          length(self$fixed_otus)
+        )
       )
 
       if (length(self$floating_otus) > 0) {
-        options <- rbind(options, c("Floating OTUs:",
-                                    length(self$floating_otus)))
+        options <- rbind(options, c(
+          "Floating OTUs:",
+          length(self$floating_otus)
+        ))
       }
 
       names(options) <- c("", "Value")
@@ -173,7 +185,7 @@ MonophylyConstraint <- R6Class(
 
       super$initialize(is_positive = is_positive)
 
-      private$.fixed_otus    <- character(0)
+      private$.fixed_otus <- character(0)
       private$.floating_otus <- character(0)
 
       for (n in names(a)) {
@@ -185,8 +197,10 @@ MonophylyConstraint <- R6Class(
     #'
     #' @param ... Not used.
     print = function(...) {
-      cli_text(col_grey("# A ", style_italic(col_red("nitro")),
-                        " monophyly constraint"))
+      cli_text(col_grey(
+        "# A ", style_italic(col_red("nitro")),
+        " monophyly constraint"
+      ))
       options <- format(self)
       names(options) <- NULL
       print(options, row.names = FALSE)
@@ -218,7 +232,8 @@ c.MonophylyConstraint <- function(...) {
   val_check <- check_list(objs, types = "MonophylyConstraint")
   if (!test_true(val_check)) {
     cli_abort(c("All objects must inherit from class {.cls MonophylyConstraint}.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
   class(objs) <- c("MultiMonophylyConstraint", "list")
   objs

@@ -78,17 +78,19 @@
 #'   assembled.
 #'
 #' @keywords internal
-resolve_dependencies <- function (commands,  suppress_errors = TRUE) {
+resolve_dependencies <- function(commands, suppress_errors = TRUE) {
   val_check <- check_class(commands, "CommandList")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg commands} must be a {.cls CommandList} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   val_check <- check_flag(suppress_errors)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg suppress_errors} must be a logical value.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   queues <- NULL
@@ -101,10 +103,10 @@ resolve_dependencies <- function (commands,  suppress_errors = TRUE) {
     for (cmd in commands) {
       is_resolved <- cmd$is_resolved
       if (!is_resolved) {
-        old_resolved <- lapply(resolved, function (x) x$clone(deep = TRUE))
+        old_resolved <- lapply(resolved, function(x) x$clone(deep = TRUE))
         is_resolved <- resolve_command(cmd, resolved, "required")
 
-        cmd_diff <- sapply(seq(resolved), function (x) {
+        cmd_diff <- sapply(seq(resolved), function(x) {
           !identical(resolved[[x]]$format(), old_resolved[[x]]$format())
         })
         for (cmd_idx in which(cmd_diff)) {
@@ -132,7 +134,7 @@ resolve_dependencies <- function (commands,  suppress_errors = TRUE) {
         if (is_resolved) {
           queues <- c(queues, list(tmp_queue))
           resolved <- c(resolved, cmd)
-          commands <- Filter(f = function (x) !identical(x, cmd), commands)
+          commands <- Filter(f = function(x) !identical(x, cmd), commands)
         }
       }
 

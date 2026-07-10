@@ -51,7 +51,8 @@ TaxonNameCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg use_names} must be a logical value.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -68,7 +69,8 @@ TaxonNameCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg maximum_length} must be a valid integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

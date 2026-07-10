@@ -83,7 +83,8 @@ ExclusiveSectorialSearchCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg selections} must be a valid numeric vector.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         value <- sapply(value, floor)
@@ -101,7 +102,8 @@ ExclusiveSectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg rounds} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)

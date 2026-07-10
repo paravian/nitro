@@ -13,7 +13,8 @@ resolve_command <- function(command, resolved, type = "required",
   val_check <- check_class(command, "BasicCommand")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg command} must be inherit from {.cls BasicCommandList}.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   coll <- makeAssertCollection()
@@ -26,19 +27,22 @@ resolve_command <- function(command, resolved, type = "required",
   if (!coll$isEmpty()) {
     val_check <- coll$getMessages()
     cli_abort(c("{.arg resolved} must be either {.val NULL} or {.cls CommandList} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   val_check <- check_choice(type, c("required", "optional"))
   if (!test_true(val_check)) {
     cli_abort(c("{.arg type} must be a valid option.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   val_check <- check_flag(suppress_errors)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg suppress_errors} must be a logical value.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   provides <- sapply(resolved, getElement, "provides")
@@ -50,7 +54,7 @@ resolve_command <- function(command, resolved, type = "required",
 
   all_depen <- command$requires
   if (type == "optional") {
-    all_depen = command$optional
+    all_depen <- command$optional
   }
 
   res <- TRUE
@@ -61,7 +65,8 @@ resolve_command <- function(command, resolved, type = "required",
         if (!suppress_errors) {
           mask <- all_depen %in% provides
           cli_abort(c("Failed dependency check for {class(command)[1]}: {all_requires[!mask]}.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
       }
       mask <- depen == provides

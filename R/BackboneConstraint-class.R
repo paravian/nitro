@@ -72,8 +72,10 @@ BackboneConstraint <- R6Class(
     #'
     #' @param ... Not used.
     print = function(...) {
-      cli_text(col_grey("# A ", style_italic(col_red("nitro")),
-                        " backbone constraint"))
+      cli_text(col_grey(
+        "# A ", style_italic(col_red("nitro")),
+        " backbone constraint"
+      ))
       options <- format(self)
       names(options) <- NULL
       print(options, row.names = FALSE)

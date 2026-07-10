@@ -60,7 +60,8 @@ create_matrix <- function(data, ...) {
   val_check <- coll$getMessages()
   if (!coll$isEmpty()) {
     cli_abort(c("{.arg data} must be either a {.cls data.frame} or {.cls phyDat}.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   mtx_args <- list(...)

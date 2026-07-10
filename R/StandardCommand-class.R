@@ -70,7 +70,7 @@ StandardCommand <- R6Class(
     .arguments = NULL,
     deep_clone = function(name, value) {
       if (name == ".arguments") {
-        sapply(value, function (x) x$clone())
+        sapply(value, function(x) x$clone())
       } else {
         value
       }

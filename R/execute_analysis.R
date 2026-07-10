@@ -110,13 +110,15 @@ execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
   val_check <- check_class(interface, "TntInterface")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg interface} must be a {.arg TntInterface} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   val_check <- check_class(tree_analysis, "TreeAnalysis")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg tree_analysis} must be a {.arg TreeAnalysis} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   all_cmds <- Reduce(c, tree_analysis$commands) %>%
@@ -145,7 +147,8 @@ execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
       ReadTreesCommand$new(
         trees = starting_trees,
         inline = FALSE,
-        provides = "starting trees")
+        provides = "starting trees"
+      )
     )
   }
 

@@ -79,7 +79,8 @@ DiscreteMatrix <- R6Class(
           val_check <- check_class(value, "phyDat")
           if (!test_true(val_check)) {
             cli_abort(c("Matrix must be a {.cls phyDat} object."),
-                      "x" = val_check)
+              "x" = val_check
+            )
           }
 
           private$.data <- value
@@ -94,12 +95,15 @@ DiscreteMatrix <- R6Class(
           if (data_type == "user") {
             noncoding <- c("?", "-")
             symbols <- value$symbols %>%
-              {.[!. %in% noncoding]}
+              {
+                .[!. %in% noncoding]
+              }
             val_check <- check_subset(symbols, as.character(0:9))
             if (!test_true(val_check)) {
               val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
               cli_abort(c("Discrete character matrices with user-defined symbols must be numeric.",
-                          "x" = val_check))
+                "x" = val_check
+              ))
             }
             data_type <- "numeric"
           } else if (data_type == "aa") {
@@ -149,14 +153,17 @@ DiscreteMatrix <- R6Class(
         coll <- makeAssertCollection()
         assert(
           check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = n_chars,
-                        unique = TRUE, any.missing = FALSE),
+          check_numeric(value,
+            min.len = 1, lower = 1, upper = n_chars,
+            unique = TRUE, any.missing = FALSE
+          ),
           add = coll
         )
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg ordered} must contain valid unique character indices.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         if (self$data_type != "numeric" & !test_null(value)) {
@@ -180,7 +187,9 @@ DiscreteMatrix <- R6Class(
     #' @return A `data.frame` summarising the matrix properties.
     format = function(...) {
       log_lists <- list(ordered = self$ordered, inactive = self$inactive) %>%
-        {lapply(., function(x) ifelse(is.null(x), 0, length(x)))}
+        {
+          lapply(., function(x) ifelse(is.null(x), 0, length(x)))
+        }
 
       options <- data.frame(
         c(

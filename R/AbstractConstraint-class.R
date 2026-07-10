@@ -51,7 +51,8 @@ AbstractConstraint <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg is_positive} must be a logical value.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         private$.is_positive <- value
       }

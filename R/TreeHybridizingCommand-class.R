@@ -80,7 +80,8 @@ TreeHybridizingCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg rounds} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -96,7 +97,8 @@ TreeHybridizingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg hybridizations} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -112,7 +114,8 @@ TreeHybridizingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg best_trees} must be an integer",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -128,7 +131,8 @@ TreeHybridizingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg replace} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -145,7 +149,8 @@ TreeHybridizingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg sample_factor} must be an integer",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

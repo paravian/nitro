@@ -39,7 +39,8 @@ TreeBufferCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         value <- asInt(value)

@@ -74,7 +74,7 @@ CommandQueue <- R6Class(
     #'   commands currently in the queue are satisfied.
     is_resolved = function(value) {
       if (missing(value)) {
-        is_resolved <- sapply(private$.commands, function (x) x$command$is_resolved) %>%
+        is_resolved <- sapply(private$.commands, function(x) x$command$is_resolved) %>%
           all()
         return(is_resolved)
       }
@@ -106,13 +106,15 @@ CommandQueue <- R6Class(
       val_check <- check_class(command, "BasicCommand")
       if (!test_true(val_check)) {
         cli_abort("{.arg command} must be an object that inherits from {.cls BasicCommand}.",
-                  "x" = val_check)
+          "x" = val_check
+        )
       }
 
       val_check <- check_int(priority, lower = 0)
       if (!test_true(val_check)) {
         cli_abort("{.arg priority} must be a positive integer.",
-                  "x" = val_check)
+          "x" = val_check
+        )
       }
 
       new_cmd <- list(
@@ -141,10 +143,10 @@ CommandQueue <- R6Class(
     #'
     #' @return A `CommandList` if `show_priorities` is `FALSE`; otherwise
     #'   a list of named lists with elements `command` and `priority`.
-    commands = function (show_priorities = FALSE) {
+    commands = function(show_priorities = FALSE) {
       cmds <- private$.commands
       if (!show_priorities) {
-        cmds <- lapply(cmds, function (x) x$command)
+        cmds <- lapply(cmds, function(x) x$command)
         if (length(cmds) > 1) {
           cmds <- Reduce(c, cmds)
         } else {
@@ -194,10 +196,11 @@ CommandQueue <- R6Class(
       val_check <- check_class(command, "BasicCommand")
       if (!test_true(val_check)) {
         cli_abort("{.arg command} must be an object that inherits from {.cls BasicCommand}.",
-                  "x" = val_check)
+          "x" = val_check
+        )
       }
 
-      mask <- sapply(private$.commands, function (x) {
+      mask <- sapply(private$.commands, function(x) {
         identical(x$command, command)
       })
 
@@ -269,7 +272,8 @@ c.CommandQueue <- function(...) {
   val_check <- check_list(objs, types = "CommandQueue", any.missing = FALSE, min.len = 2)
   if (!test_true(val_check)) {
     cli_abort(c("All objects must inherit from class {.cls BasicCommand}.",
-              "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   obj <- Reduce(f = function(x1, x2) {

@@ -86,7 +86,8 @@ RatchetCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort("{.arg iterations} must be an integer.",
-                    "x" = val_check)
+            "x" = val_check
+          )
         }
         self$set_argument_value(label, value)
       }
@@ -102,7 +103,8 @@ RatchetCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort("{.arg replacements} must be an integer.",
-                    "x" = val_check)
+            "x" = val_check
+          )
         }
         self$set_argument_value(label, value)
       }
@@ -118,7 +120,8 @@ RatchetCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort("{.arg prob_up} must be an integer.",
-                    "x" = val_check)
+            "x" = val_check
+          )
         }
         self$set_argument_value(label, value)
       }
@@ -134,7 +137,8 @@ RatchetCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort("{.arg prob_down} must be an integer.",
-                    "x" = val_check)
+            "x" = val_check
+          )
         }
         self$set_argument_value(label, value)
       }

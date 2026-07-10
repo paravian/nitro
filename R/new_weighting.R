@@ -50,7 +50,8 @@ new_weighting <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg name} must be a string.",
-                x = val_check))
+      x = val_check
+    ))
   }
 
   args <- list()
@@ -62,7 +63,8 @@ new_weighting <- function(name, ...) {
       val_check <- check_list(args, names = "named")
       if (!test_true(val_check)) {
         cli_abort(c("Additional arguments must all be named.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
     }
   }
@@ -135,10 +137,11 @@ new_weighting <- function(name, ...) {
 #'
 #' # Extended implied weighting with multi-constant mode
 #' ta <- set_weighting(ta, "extended_implied_weighting",
-#'                     concavity_constant = 6,
-#'                     multi_constant     = TRUE,
-#'                     proportion         = 0.3,
-#'                     max_ratio          = 3)
+#'   concavity_constant = 6,
+#'   multi_constant     = TRUE,
+#'   proportion         = 0.3,
+#'   max_ratio          = 3
+#' )
 #' }
 #'
 #' @importFrom checkmate check_class test_true
@@ -148,7 +151,8 @@ set_weighting <- function(tree_analysis, name, ...) {
   val_check <- check_class(tree_analysis, "TreeAnalysis")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg tree_analysis} must be a {.obj TreeAnalysis} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   weighting_obj <- new_weighting(name, ...)

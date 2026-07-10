@@ -73,7 +73,8 @@ TntInterface <- R6Class(
       val_check <- check_character(value, min.len = 1, any.missing = FALSE)
       if (!isTRUE(val_check)) {
         cli_abort(c("A character vector must be supplied.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       cleaned <- str_split_1(value, private$newline) %>%
@@ -94,7 +95,8 @@ TntInterface <- R6Class(
       val_check <- check_string(path, min.chars = 1)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg path} must be a string."),
-                  "x" = val_check)
+          "x" = val_check
+        )
       }
 
       if (!file.exists(path)) {
@@ -112,7 +114,8 @@ TntInterface <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg argument} must be either {.val NULL} or a valid string.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       proc_args <- list(
@@ -151,7 +154,8 @@ TntInterface <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg {label}} must be a string.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           private$.path <- value
@@ -173,7 +177,8 @@ TntInterface <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg {label}} must be a valid option.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
           private$.platform <- value
         } else {
@@ -192,7 +197,8 @@ TntInterface <- R6Class(
         val_check <- check_class(value, "process")
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be an object of class {.cls process}.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.process <- value
@@ -212,7 +218,8 @@ TntInterface <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg {label}} must be a string.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           private$.version <- value
@@ -240,7 +247,8 @@ TntInterface <- R6Class(
       val_check <- check_string(path)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg path} must be a string.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       self$path <- normalizePath(path)
@@ -300,7 +308,8 @@ TntInterface <- R6Class(
             cli_alert_warning("You must agree to TNT's licence before using {.pkg nitro}.")
             if (self$platform == "windows") {
               cli_abort(c("nitro can't interactively agree to TNT's licence terms on Windows.",
-                          "i" = "Please open {.val {path}} manually and agree to the licence terms, then run {.arg tnt_attach} again."))
+                "i" = "Please open {.val {path}} manually and agree to the licence terms, then run {.arg tnt_attach} again."
+              ))
             }
             cli_alert_info("Please read and follow the instructions below.")
             pul_warned <- TRUE
@@ -380,7 +389,7 @@ TntInterface <- R6Class(
 
       all_cmds <- character(0)
 
-      write_proc <- function (out) {
+      write_proc <- function(out) {
         tnt_tempfile <- tempfile(pattern = "nitro-", fileext = ".tnt")
         writeLines(out, tnt_tempfile)
         glue("proc {tnt_tempfile};")
@@ -433,7 +442,8 @@ TntInterface <- R6Class(
             tnt_err <- str_match(proc_out[which(err_check)], private$prompts$err) %>%
               extract(2)
             cli_abort(c("A TNT error occurred, cannot continue.",
-                        "x" = tnt_err))
+              "x" = tnt_err
+            ))
           }
 
           raw_output <- c(raw_output, proc_out)
@@ -543,8 +553,10 @@ TntInterface <- R6Class(
     #' @return A character vector of output lines from TNT.
     send_command = function(command) {
       all_commands <- command$render()
-      all_commands <- sapply(all_commands, str_wrap, width = 255,
-                             whitespace_only = FALSE)
+      all_commands <- sapply(all_commands, str_wrap,
+        width = 255,
+        whitespace_only = FALSE
+      )
 
       all_output <- character(0)
 

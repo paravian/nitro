@@ -65,7 +65,9 @@ ReadDataCommand <- R6Class(
         )
 
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg data} must be an object that inherits {.cls AbstractCharacterMatrix}"))
+          cli_abort(c("{.arg data} must be an object that inherits {.cls AbstractCharacterMatrix}",
+            "x" = val_check
+          ))
         }
 
         if (test_class(value, "AbstractCharacterMatrix")) {

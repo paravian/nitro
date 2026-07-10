@@ -49,8 +49,10 @@
 #' bs <- new_tree_search("branch_swap")
 #'
 #' # Pass arguments to the constructor
-#' bs <- new_tree_search("branch_swapping", replications = 100,
-#'                        hold_rep = 25)
+#' bs <- new_tree_search("branch_swapping",
+#'   replications = 100,
+#'   hold_rep = 25
+#' )
 #'
 #' # Create an extra search methods search
 #' xm <- new_tree_search("extra_search_methods")
@@ -62,7 +64,8 @@ new_tree_search <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg name} must be a string.",
-                x = val_check))
+      x = val_check
+    ))
   }
 
   args <- list()
@@ -74,7 +77,8 @@ new_tree_search <- function(name, ...) {
       val_check <- check_list(args, names = "named")
       if (!test_true(val_check)) {
         cli_abort(c("Additional arguments must all be named.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
     }
   }

@@ -74,7 +74,8 @@ TreeTaggingCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be a valid choice.",
-                      "x" = str_replace_all(val_check, "([{}])", "\\1\\1")))
+            "x" = str_replace_all(val_check, "([{}])", "\\1\\1")
+          ))
         }
 
         names(value) <- NULL
@@ -156,7 +157,7 @@ TreeTaggingCommand <- R6Class(
       tags <- str_replace(output, "\\[([0-9\\.]+)\\]", "-\\1") %>%
         str_match_all("ttag \\+(?<node>[0-9]+) (?<tag>[0-9\\?\\.\\-]+[/0-9\\?\\.\\-]*)") %>%
         Reduce(f = rbind) %>%
-        extract(,-1) %>%
+        extract(, -1) %>%
         as_tibble() %>%
         mutate(
           node = seq(Nnode(phy) - 1) + Ntip(phy) + 1,

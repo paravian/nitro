@@ -37,7 +37,8 @@ create_new_object <- function(name, object_choice, ...) {
   if (!test_true(val_check)) {
     val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
     cli_abort(c("{.arg name} must be a valid method name.",
-                x = val_check))
+      x = val_check
+    ))
   }
 
   object_class <- get(object_choice[idx])

@@ -109,7 +109,7 @@ BranchSupportCommand <- R6Class(
         val_check <- check_choice(value, private$methods)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg method} must be a valid choice.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -133,7 +133,7 @@ BranchSupportCommand <- R6Class(
         val_check <- check_integer(value, lower = 1, any.missing = FALSE, min.len = 1, sorted = TRUE)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg suboptimal_steps} must be a vector of integers.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -282,7 +282,8 @@ BranchSupportCommand <- R6Class(
 
       if (method == "suboptimal_sampling" & test_null(suboptimal_steps)) {
         cli_abort(c("{.arg suboptimal_steps} must not be {.val NULL} if {.arg method} is {.val suboptimal_sampling}.",
-                    "i" = "Set a value for {.arg suboptimal steps}"))
+          "i" = "Set a value for {.arg suboptimal steps}"
+        ))
       }
 
       index_type_cmd_fmt <- function(value) {
@@ -326,7 +327,8 @@ BranchSupportCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg value} must be a {.cls BranchBreakingCommand} object.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         value$set_only <- TRUE

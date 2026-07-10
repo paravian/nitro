@@ -51,7 +51,8 @@ SectorialSearchCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg buffer} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -67,7 +68,8 @@ SectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg slack} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

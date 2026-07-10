@@ -105,7 +105,8 @@ RandomSectorialSearchCommand <- R6Class(
         if (!coll$isEmpty()) {
           err <- coll$getMessages()
           cli_abort(c("{.arg min_size} must be a valid integer",
-                      "x" = err))
+            "x" = err
+          ))
         }
 
         self$set_argument_value(label, value)
@@ -136,7 +137,8 @@ RandomSectorialSearchCommand <- R6Class(
         if (!coll$isEmpty()) {
           err <- coll$getMessages()
           cli_abort(c("{.arg max_size} must be a valid integer",
-                      "x" = err))
+            "x" = err
+          ))
         }
 
         self$set_argument_value(label, value)
@@ -153,7 +155,8 @@ RandomSectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg selection_factor} must be an integer",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -170,7 +173,8 @@ RandomSectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg increase} must be an integer",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -187,7 +191,8 @@ RandomSectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg small_starts} must be an integer",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

@@ -61,7 +61,9 @@ ReadTreesCommand <- R6Class(
         )
 
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg data} must be either a {.cls phylo} or {.cls multiPhylo} object."))
+          cli_abort(c("{.arg data} must be either a {.cls phylo} or {.cls multiPhylo} object.",
+            "x" = val_check
+          ))
         }
 
         if (test_class(value, "phylo")) {

@@ -87,7 +87,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_choice(value, c("spr", "tbr"))
         if (!test_true(val_check)) {
           cli_abort(c("{.arg swapper} must be a valid option.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -105,7 +106,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg cluster_size} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         value <- asInt(value)
         self$set_argument_value(label, value)
@@ -123,7 +125,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg safe_unclip} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -138,7 +141,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg fill_only} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -154,7 +158,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg save_multiple} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -169,7 +174,8 @@ BranchBreakingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg random_clip} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -204,7 +210,7 @@ BranchBreakingCommand <- R6Class(
     #'
     #' @return A new `BranchBreakingCommand` object.
     initialize = function(swapper, cluster_size, safe_unclip, fill_only,
-                          save_multiple, random_clip, set_only = FALSE){
+                          save_multiple, random_clip, set_only = FALSE) {
       super$initialize(
         name = "bbreak",
         description = "Branch swapping using existing trees",

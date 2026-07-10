@@ -62,7 +62,8 @@ TreePlottingCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be a logical value.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)
@@ -112,7 +113,8 @@ TreePlottingCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg value} must be a {.cls ReadDataCommand} object.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         value

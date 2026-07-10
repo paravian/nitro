@@ -46,11 +46,12 @@
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_to_lower
 #' @export
-new_support <- function (name, ...) {
+new_support <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg name} must be a string.",
-                x = val_check))
+      x = val_check
+    ))
   }
 
   args <- list()
@@ -62,7 +63,8 @@ new_support <- function (name, ...) {
       val_check <- check_list(args, names = "named")
       if (!test_true(val_check)) {
         cli_abort(c("Additional arguments must all be named.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
     }
   }
@@ -153,8 +155,9 @@ new_support <- function (name, ...) {
 #'
 #' # Symmetric resampling with multiple frequency summaries
 #' ta <- set_support(ta, "symmetric",
-#'                   replications      = 500,
-#'                   frequency_summary = c("absolute", "difference"))
+#'   replications      = 500,
+#'   frequency_summary = c("absolute", "difference")
+#' )
 #' }
 #'
 #' @importFrom checkmate check_class test_true
@@ -163,7 +166,9 @@ new_support <- function (name, ...) {
 set_support <- function(tree_analysis, name, ...) {
   val_check <- check_class(tree_analysis, "TreeAnalysis")
   if (!test_true(val_check)) {
-    cli_abort(c("{.arg tree_analysis} must be a {.obj TreeAnalysis} object."))
+    cli_abort(c("{.arg tree_analysis} must be a {.obj TreeAnalysis} object.",
+      "x" = val_check
+    ))
   }
 
   support_obj <- new_support(name, ...)

@@ -109,8 +109,8 @@ TreeAnalysisResults <- R6Class(
     statistics = function(...) {
       if (length(list(...)) == 0) {
         stat_df <- lapply(self$trees, function(x) {
-          slot(x, "info") %>% use_series("statistics")}
-          ) %>%
+          slot(x, "info") %>% use_series("statistics")
+        }) %>%
           Reduce(f = rbind) %>%
           as_tibble() %>%
           unnest(cols = everything())
@@ -151,13 +151,15 @@ TreeAnalysisResults <- R6Class(
       val_check <- check_character(text, min.chars = 1, min.len = 1, any.missing = FALSE)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg text} must be a character vector.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       val_check <- check_class(trees, "multiPhylo")
       if (!test_true(val_check)) {
         cli_abort(c("{.arg trees} must be a {.cls multiPhylo} object.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       coll <- makeAssertCollection()
@@ -171,7 +173,8 @@ TreeAnalysisResults <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg steps} must be either {.val NULL} or a valid numeric vector.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       assert(
@@ -183,7 +186,8 @@ TreeAnalysisResults <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg homoplasy_scores} must be either {.val NULL} or a valid numeric vector.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       assert(
@@ -200,7 +204,8 @@ TreeAnalysisResults <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg possible_steps} must be a valid numeric vector.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       assert(
@@ -212,7 +217,8 @@ TreeAnalysisResults <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg node_labels} must be a valid {.cls tibble}.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       assert(
@@ -224,7 +230,8 @@ TreeAnalysisResults <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg label_legend} must be a valid {.cls tibble}.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       possible_steps <- as.list(possible_steps)
@@ -256,9 +263,9 @@ TreeAnalysisResults <- R6Class(
         tibble(tree = .) %>%
         bind_cols(tree_data)
 
-      rf_fn <- function (data) {
+      rf_fn <- function(data) {
         tree <- extract2(data$tree, 1)
-        if(!test_null(node_labels)) {
+        if (!test_null(node_labels)) {
           tree <- full_join(tree, node_labels, by = "node")
         }
         tree <- as.treedata(tree)
@@ -273,7 +280,7 @@ TreeAnalysisResults <- R6Class(
         reframe(
           tree = rf_fn(across(everything()))
         ) %>%
-          use_series("tree")
+        use_series("tree")
 
       private$.trees <- trees
     },

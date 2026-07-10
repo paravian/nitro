@@ -88,7 +88,8 @@ ConstrainedSectorialSearchCommand <- R6Class(
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg min_fork} must be a valid integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -111,7 +112,8 @@ ConstrainedSectorialSearchCommand <- R6Class(
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg max_fork} must be a valid integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)
@@ -128,7 +130,8 @@ ConstrainedSectorialSearchCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg rounds} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)

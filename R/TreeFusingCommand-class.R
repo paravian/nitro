@@ -84,7 +84,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_int(value, lower = 0, upper = 100)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg rounds} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -100,7 +101,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg exchange_equal} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -115,7 +117,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg start_best} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -131,7 +134,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg keep_all} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -147,7 +151,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg refuse} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -162,7 +167,8 @@ TreeFusingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg swap} must be a logical.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

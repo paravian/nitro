@@ -43,7 +43,8 @@ TaxonActivityCommand <- R6Class(
 
         if (!val_check) {
           cli_abort(c("{.arg inactive_taxa} must be either {.val NULL} or a valid string.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.inactive_taxa <- value

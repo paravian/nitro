@@ -115,7 +115,7 @@ BasicCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg inline} must be a logical value.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -189,7 +189,7 @@ BasicCommand <- R6Class(
           val_check <- check_string(value, min.chars = 1)
           if (!test_true(val_check)) {
             cli_abort(c("{.arg outputs} must be a string.",
-                        "x" = val_check
+              "x" = val_check
             ))
           }
           private$.outputs <- value
@@ -221,7 +221,7 @@ BasicCommand <- R6Class(
           if (!coll$isEmpty()) {
             val_check <- coll$getMessages()
             cli_abort(c("{.arg provides} must be either a string or {.val NULL}.",
-                        "x" = val_check
+              "x" = val_check
             ))
           }
           private$.provides <- value
@@ -264,7 +264,7 @@ BasicCommand <- R6Class(
           if (!coll$isEmpty()) {
             err <- coll$getMessages()
             cli_abort(c("{.arg template} must be either a character vector of a function.",
-                        "x" = err
+              "x" = err
             ))
           }
           private$.template <- value
@@ -297,11 +297,12 @@ BasicCommand <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg .queue} must be a {.cls CommandQueue} object.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       if (test_null(.queue)) {
-        .queue = CommandQueue$new()
+        .queue <- CommandQueue$new()
       }
 
       .queue
@@ -399,19 +400,22 @@ BasicCommand <- R6Class(
       if (!coll$isEmpty()) {
         val_check <- coll$getMessages()
         cli_abort(c("{.arg name} must be a valid string.",
-                    "x" = str_replace_all(val_check, "([{}])", "\\1\\1")))
+          "x" = str_replace_all(val_check, "([{}])", "\\1\\1")
+        ))
       }
 
       val_check <- check_flag(required)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg required} must be a logical value.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       val_check <- check_function(callback)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg callback} must be a function.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       private$.dependencies[[name]] <- list(
@@ -485,7 +489,8 @@ BasicCommand <- R6Class(
       val_check <- check_character(output, min.chars = 1, any.missing = FALSE, min.len = 1)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg output} must be a valid character vector.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       output <- str_trim(output) %>%
@@ -520,8 +525,8 @@ c.BasicCommand <- function(...) {
   val_check <- check_list(objs, types = "BasicCommand")
   if (!test_true(val_check)) {
     cli_abort(c("All objects must inherit from class {.cls BasicCommand}.",
-              "x" = val_check)
-    )
+      "x" = val_check
+    ))
   }
   class(objs) <- c("CommandList", "list")
   objs

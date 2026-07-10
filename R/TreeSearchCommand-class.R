@@ -74,14 +74,15 @@ TreeSearchCommand <- R6Class(
     #'   Whether the command is in set-only mode. When `TRUE`, `$render()`
     #'   produces a configuration command (e.g., `mult:`) rather than an
     #'   execution command (`mult=`).
-    set_only = function (value) {
+    set_only = function(value) {
       if (missing(value)) {
         return(private$.set_only)
       } else {
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg set_only} must be a logical value.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         private$.set_only <- value
       }
@@ -151,7 +152,7 @@ TreeSearchCommand <- R6Class(
     #'   Configure-only mode (default: `FALSE`). See the `$set_only` field.
     #'
     #' @return A new `TreeSearchCommand` object.
-    initialize = function (name, description, set_only = FALSE) {
+    initialize = function(name, description, set_only = FALSE) {
       a <- as.list(environment(), all = TRUE)
 
       super$initialize(

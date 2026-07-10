@@ -57,7 +57,8 @@ KeepTreesCommand <- R6Class(
         val_check <- check_int(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be zero or a positive integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         value <- asInt(value)
         private$.number <- value
@@ -84,7 +85,8 @@ KeepTreesCommand <- R6Class(
       val_check <- check_int(priority, lower = 0, upper = 999)
       if (!test_true(val_check)) {
         cli_abort(c("{.arg priority} must be a non-negative integer no greater than 999.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
       .queue <- super$enqueue(.queue)
       .queue$add(self, priority)

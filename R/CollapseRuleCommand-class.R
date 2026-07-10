@@ -80,7 +80,8 @@ CollapseRuleCommand <- R6Class(
         if (!test_true(val_check)) {
           val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
           cli_abort(c("{.arg {label}} must be a valid choice.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         self$set_argument_value(label, value)

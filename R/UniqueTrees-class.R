@@ -44,7 +44,8 @@ UniqueTreesCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be a logical flag.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         private$.collapse <- value

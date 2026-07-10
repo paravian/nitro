@@ -59,11 +59,14 @@ ContinuousMatrix <- R6Class(
         return(private$.data)
       } else {
         if (test_null(private$.data)) {
-          val_check <- check_data_frame(value, min.rows = 1, min.cols = 1,
-                                        row.names = "named")
+          val_check <- check_data_frame(value,
+            min.rows = 1, min.cols = 1,
+            row.names = "named"
+          )
           if (!test_true(val_check)) {
             cli_abort(c("{.arg data} must be a {.cls data.frame}.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           taxon_col <- names(value) == "taxon"
@@ -74,7 +77,8 @@ ContinuousMatrix <- R6Class(
           val_check <- check_data_frame(value[-taxon_col], types = "numeric")
           if (!test_true(val_check)) {
             cli_abort(c("{.arg data} must contain columns of numeric type for all characters.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           value[, taxon_col] <- str_replace_all(value[, taxon_col], "\\s+", "_")
@@ -94,7 +98,7 @@ ContinuousMatrix <- R6Class(
                 return(x)
               }))
           } else {
-            value <- mutate(value, across(where(is.numeric), ~str_replace_na(.x, "?")))
+            value <- mutate(value, across(where(is.numeric), ~ str_replace_na(.x, "?")))
           }
 
           rownames(value) <- value[, taxon_col]
@@ -118,7 +122,9 @@ ContinuousMatrix <- R6Class(
     #' @return A `data.frame` summarising the matrix properties.
     format = function(...) {
       n_inactive <- self$inactive %>%
-        {ifelse(test_null(.), 0, length(.))}
+        {
+          ifelse(test_null(.), 0, length(.))
+        }
 
       options <- data.frame(
         c(

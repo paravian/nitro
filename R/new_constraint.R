@@ -31,7 +31,8 @@
 #' @examples
 #' # Monophyly constraint
 #' mc <- new_constraint("monophyly",
-#'                      fixed_otus = c("TaxonA", "TaxonB", "TaxonC"))
+#'   fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
+#' )
 #'
 #' # Backbone constraint
 #' bc <- new_constraint("backbone")
@@ -44,7 +45,8 @@ new_constraint <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
   if (!test_true(val_check)) {
     cli_abort(c("{.arg name} must be a string.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   args <- list()
@@ -56,7 +58,8 @@ new_constraint <- function(name, ...) {
       val_check <- check_list(args, names = "named")
       if (!test_true(val_check)) {
         cli_abort(c("Additional arguments must all be named.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
     }
   }
@@ -124,13 +127,15 @@ new_constraint <- function(name, ...) {
 #'
 #' # Monophyly constraint
 #' mc <- new_constraint("monophyly",
-#'                      fixed_otus = c("TaxonA", "TaxonB", "TaxonC"))
+#'   fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
+#' )
 #' ta <- set_constraint(ta, mc)
 #'
 #' # Multiple constraints
 #' mc2 <- new_constraint("monophyly",
-#'                       fixed_otus  = c("TaxonD", "TaxonE"),
-#'                       is_positive = FALSE)
+#'   fixed_otus  = c("TaxonD", "TaxonE"),
+#'   is_positive = FALSE
+#' )
 #' ta <- set_constraint(ta, mc, mc2)
 #'
 #' results <- execute_analysis(interface, ta, hold = 10000)
@@ -143,7 +148,8 @@ set_constraint <- function(tree_analysis, ...) {
   val_check <- check_class(tree_analysis, "TreeAnalysis")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg tree_analysis} must be a {.cls TreeAnalysis} object.",
-                "x" = val_check))
+      "x" = val_check
+    ))
   }
 
   constraint_obj <- TopologicalConstraintsCommand$new(

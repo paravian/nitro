@@ -46,7 +46,8 @@ ConstrainCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg enable} must be a logical flag.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         private$.enable <- value
       }

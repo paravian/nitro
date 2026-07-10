@@ -87,14 +87,17 @@ AbstractCharacterMatrix <- R6Class(
         coll <- makeAssertCollection()
         assert(
           check_null(value),
-          check_numeric(value, min.len = 1, lower = 1, upper = self$n_characters,
-                        unique = TRUE, any.missing = FALSE),
+          check_numeric(value,
+            min.len = 1, lower = 1, upper = self$n_characters,
+            unique = TRUE, any.missing = FALSE
+          ),
           add = coll
         )
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg inactive} must contain valid unique character indices.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         is_inactive <- rep(FALSE, self$n_characters)
         if (!test_null(value)) {
@@ -139,7 +142,8 @@ c.AbstractCharacterMatrix <- function(...) {
   val_check <- check_list(objs, types = "AbstractCharacterMatrix")
   if (!test_true(val_check)) {
     cli_abort(c("All objects must inherit from class {.cls AbstractCharacterMatrix}."),
-              "x" = val_check)
+      "x" = val_check
+    )
   }
   class(objs) <- c("MultiCharacterMatrix", "list")
   objs

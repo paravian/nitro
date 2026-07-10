@@ -53,7 +53,8 @@ AbstractImpliedWeightingCommand <- R6Class(
         val_check <- check_number(value, lower = 0, upper = 1000)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg concavity_constant} must be a valid number.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

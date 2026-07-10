@@ -53,8 +53,10 @@
 #' bs <- BranchSwappingCommand$new()
 #'
 #' # Create with custom settings
-#' bs <- BranchSwappingCommand$new(replications = 100, hold_rep = 25,
-#'                                  keep_all = TRUE)
+#' bs <- BranchSwappingCommand$new(
+#'   replications = 100, hold_rep = 25,
+#'   keep_all = TRUE
+#' )
 #'
 #' # Inspect current vs. default values
 #' bs$format()
@@ -95,7 +97,7 @@ BranchSwappingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg replications} must be a valid integer.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
         self$set_argument_value(label, value)
@@ -113,7 +115,7 @@ BranchSwappingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg hold_rep} must be a valid integer.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
         self$set_argument_value(label, value)
@@ -130,7 +132,7 @@ BranchSwappingCommand <- R6Class(
         val_check <- check_flag(value)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg keep_all} must be a logical value.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 

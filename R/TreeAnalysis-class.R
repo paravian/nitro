@@ -113,7 +113,7 @@ TreeAnalysis <- R6Class(
     .zlb_rule = NULL,
     deep_clone = function(name, value) {
       if (name == ".commands") {
-        sapply(value, function (x) x$clone())
+        sapply(value, function(x) x$clone())
       } else {
         value
       }
@@ -148,7 +148,7 @@ TreeAnalysis <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg data} must be a valid matrix object.",
-                        "x" = val_check
+              "x" = val_check
             ))
           }
 
@@ -179,8 +179,8 @@ TreeAnalysis <- R6Class(
         assert(
           check_null(value),
           check_character(value,
-                          min.len = 1, max.len = length(all_taxa),
-                          any.missing = FALSE, unique = TRUE
+            min.len = 1, max.len = length(all_taxa),
+            any.missing = FALSE, unique = TRUE
           ),
           add = coll
         )
@@ -188,7 +188,7 @@ TreeAnalysis <- R6Class(
         val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
           cli_abort(c("{.arg inactive_taxa} must be either a character vector or {.val NULL}.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -201,7 +201,7 @@ TreeAnalysis <- R6Class(
         if (!test_true(val_check)) {
           val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
           cli_abort(c("{.arg inactive_taxa} must contain taxa present in {.arg matrix}.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -258,7 +258,7 @@ TreeAnalysis <- R6Class(
         if (!coll$isEmpty()) {
           val_check <- str_replace_all(coll$getMessages(), "(\\{|\\})", "\\1\\1")
           cli_abort(c("{.arg outgroup} must be a taxon present in the data.",
-                      "x" = val_check
+            "x" = val_check
           ))
         }
 
@@ -289,8 +289,8 @@ TreeAnalysis <- R6Class(
         val_check <- check_choice(value, options)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg collapse} choice must be valid.",
-                      "x" = val_check,
-                      "i" = "Set {.arg zlb_rule} to {options}."
+            "x" = val_check,
+            "i" = "Set {.arg zlb_rule} to {options}."
           ))
         }
 
@@ -314,7 +314,8 @@ TreeAnalysis <- R6Class(
 
       if (!test_true(val_check)) {
         cli_abort(c("{.arg command} must be an object inheriting from {.cls BasicCommand}.",
-                    "x" = val_check))
+          "x" = val_check
+        ))
       }
 
       if (inherits(command, "BasicCommand")) {

@@ -53,7 +53,8 @@ SuboptimalCommand <- R6Class(
         val_check <- check_number(value, lower = 0)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg absolute_threshold} must be a valid number.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -70,7 +71,8 @@ SuboptimalCommand <- R6Class(
         val_check <- check_number(value, lower = 0, upper = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg relative_threshold} must be a valid number.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }

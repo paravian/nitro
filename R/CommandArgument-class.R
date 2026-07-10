@@ -74,7 +74,8 @@ CommandArgument <- R6Class(
           if (!coll$isEmpty()) {
             err <- coll$getMessages()
             cli_abort(c("{.arg command_format} must be either a string or a function.",
-                        "x" = err))
+              "x" = err
+            ))
           }
 
           private$.command_format <- value
@@ -108,7 +109,8 @@ CommandArgument <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg description} must be a string.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           private$.description <- value
@@ -129,7 +131,8 @@ CommandArgument <- R6Class(
 
           if (!test_true(val_check)) {
             cli_abort(c("{.arg label} must be a string.",
-                        "x" = val_check))
+              "x" = val_check
+            ))
           }
 
           private$.label <- value
@@ -158,7 +161,8 @@ CommandArgument <- R6Class(
           if (!coll$isEmpty()) {
             err <- coll$getMessages()
             cli_abort(c("{.arg pretty_format} must be either a string or a function.",
-                        "x" = err))
+              "x" = err
+            ))
           }
 
           if (test_null(value)) {
@@ -235,7 +239,8 @@ CommandArgument <- R6Class(
         err <- coll$getMessages()
         err <- str_replace_all(err, "[({})]", "\\1\\1")
         cli_abort(c("{.arg mode} must be a valid string.",
-                    "x" = err))
+          "x" = err
+        ))
       }
 
       assert(
@@ -247,7 +252,8 @@ CommandArgument <- R6Class(
         err <- coll$getMessages()
         err <- str_replace_all(err, "[({})]", "\\1\\1")
         cli_abort(c("{.arg which} must be a valid string.",
-                    "x" = err))
+          "x" = err
+        ))
       }
 
       format_obj <- ifelse(

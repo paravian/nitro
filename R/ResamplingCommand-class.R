@@ -114,7 +114,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_int(value, lower = 0, upper = 99)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg cutoff} must be a valid integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -131,7 +132,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_character(value, min.chars = 1, min.len = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg frequency_summary} must be a character vector.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         choices <- c("absolute", "difference", "slope")
@@ -142,7 +144,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_subset(value, choices, empty.ok = FALSE)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg frequency_summary} must be a character vector of valid frequency summary option.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -160,7 +163,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_string(value, min.chars = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg method} must be a string.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         choices <- c("bootstrap", "jackknife", "symmetric")
@@ -171,7 +175,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_subset(value, choices)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg method} must be valid method.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         if (value == choices[1]) {
@@ -199,7 +204,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_int(value, lower = 0, upper = 99)
         if (!isTRUE(val_check)) {
           cli_abort(c("{.arg probability} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         if (self$method == "bootstrap") {
@@ -220,7 +226,8 @@ ResamplingCommand <- R6Class(
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg replications} must be an integer.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
         self$set_argument_value(label, value)
       }
@@ -364,7 +371,8 @@ ResamplingCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg value} must be a {.cls TreeSearchCommand} object.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         value$set_only <- TRUE
@@ -380,7 +388,8 @@ ResamplingCommand <- R6Class(
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg value} must be a {.cls CollapseRuleCommand} object.",
-                      "x" = val_check))
+            "x" = val_check
+          ))
         }
 
         valid_zlb_rule <- c("maximum", "identical_states", "minimum")
@@ -389,8 +398,9 @@ ResamplingCommand <- R6Class(
         if (!test_true(val_check)) {
           val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
           cli_abort(c("{.arg zlb_rule} must be valid for a resampling {.arg method}.",
-                      "x" = val_check,
-                      "i" = "Set {.arg zlb_rule} to {valid_zlb_rule}."))
+            "x" = val_check,
+            "i" = "Set {.arg zlb_rule} to {valid_zlb_rule}."
+          ))
         }
 
         value
