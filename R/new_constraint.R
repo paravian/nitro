@@ -138,7 +138,7 @@ new_constraint <- function(name, ...) {
 #' )
 #' ta <- set_constraint(ta, mc, mc2)
 #'
-#' results <- execute_analysis(interface, ta, hold = 10000)
+#' results <- execute_analysis(interface, ta, tree_buffer_size = 10000)
 #' }
 #'
 #' @importFrom checkmate check_class test_true
