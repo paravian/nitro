@@ -109,7 +109,7 @@ TreeHybridizingCommand <- R6Class(
     best_trees = function(value) {
       label <- "best_trees"
       if (missing(value)) {
-        rreturn(self$get_argument_value(label))
+        return(self$get_argument_value(label))
       } else {
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
