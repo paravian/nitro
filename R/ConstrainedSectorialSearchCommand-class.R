@@ -81,8 +81,8 @@ ConstrainedSectorialSearchCommand <- R6Class(
       } else {
         coll <- makeAssertCollection()
         assert_int(value, lower = 0, add = coll)
-        if (!test_null(private$.min_fork)) {
-          assert_int(value, upper = private$.max_fork, add = coll)
+        if (!test_null(self$min_fork)) {
+          assert_int(value, upper = self$max_fork, add = coll)
         }
 
         val_check <- coll$getMessages()
@@ -104,9 +104,9 @@ ConstrainedSectorialSearchCommand <- R6Class(
         return(self$get_argument_value(label))
       } else {
         coll <- makeAssertCollection()
-        assert_int(value, lower = 0, add = coll)
-        if (!is.null(private$.min_fork)) {
-          assert_int(value, lower = private$.min_fork, add = coll)
+        val_check <- assert_int(value, lower = 0, add = coll)
+        if (!test_null(self$min_fork)) {
+          assert_int(value, lower = self$min_fork, add = coll)
         }
 
         val_check <- coll$getMessages()
