@@ -17,7 +17,7 @@ addition sequences and refining them with branch swapping.
 \subsection{Default values}{\tabular{ll}{
    Parameter \tab Default \cr
    \code{replications} \tab \code{10} \cr
-   \code{hold_rep} \tab \code{10} \cr
+   \code{rep_buffer_size} \tab \code{10} \cr
    \code{keep_all} \tab \code{FALSE} \cr
    \code{set_only} \tab \code{FALSE} \cr
 }
@@ -27,7 +27,7 @@ addition sequences and refining them with branch swapping.
 \subsection{Command output}{
 
 \verb{$render()} produces a string of the form
-\verb{mult= replic \{replications\} hold \{hold_rep\} [no]keepall;}
+\verb{mult= replic \{replications\} hold \{rep_buffer_size\} [no]keepall;}
 (or \verb{mult:} when \verb{$set_only} is \code{TRUE}).
 }
 
@@ -50,15 +50,17 @@ Calling \verb{$enqueue()} adds this command to a \link{CommandQueue} and, when
 bs <- BranchSwappingCommand$new()
 
 # Create with custom settings
-bs <- BranchSwappingCommand$new(replications = 100, hold_rep = 25,
-                                 keep_all = TRUE)
+bs <- BranchSwappingCommand$new(
+  replications = 100, rep_buffer_size = 25,
+  keep_all = TRUE
+)
 
 # Inspect current vs. default values
 bs$format()
 
 # Modify settings after creation
 bs$replications <- 50
-bs$hold_rep <- 15
+bs$rep_buffer_size <- 15
 bs$keep_all <- FALSE
 
 # Generate the TNT command string
@@ -100,7 +102,7 @@ new tree via random addition sequence and refines it with branch
 swapping. Must be a positive integer. Corresponds to the \code{replic}
 subcommand in TNT.}
 
-    \item{\code{hold_rep}}{[\code{integer(1)}]\cr
+    \item{\code{rep_buffer_size}}{[\code{integer(1)}]\cr
 The maximum number of trees to retain during each replication. Must
 be a positive integer. Corresponds to the \code{hold} subcommand in
 TNT.}
@@ -144,7 +146,7 @@ All parameters are optional. When omitted, default values are used
 via the active bindings (e.g., \code{bs$replications <- 50}).
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{BranchSwappingCommand$new(replications, hold_rep, keep_all)}
+    \preformatted{BranchSwappingCommand$new(replications, rep_buffer_size, keep_all, ...)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -153,12 +155,14 @@ via the active bindings (e.g., \code{bs$replications <- 50}).
       \item{\code{replications}}{[\code{integer(1)}]\cr
 Number of replications (default: \code{10}). See the \verb{$replications}
 field.}
-      \item{\code{hold_rep}}{[\code{integer(1)}]\cr
+      \item{\code{rep_buffer_size}}{[\code{integer(1)}]\cr
 Maximum trees to hold per replicate (default: \code{10}). See the
-\verb{$hold_rep} field.}
+\verb{$rep_buffer_size} field.}
       \item{\code{keep_all}}{[\code{logical(1)}]\cr
 Retain all trees regardless of length? (default: \code{FALSE}). See the
 \verb{$keep_all} field.}
+      \item{\code{...}}{Optional named arguments passed to the constructor of the
+command class.}
     }
     \if{html}{\out{</div>}}
   }

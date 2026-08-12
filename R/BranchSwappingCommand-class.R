@@ -15,13 +15,13 @@
 #' | Parameter      | Default |
 #' |----------------|---------|
 #' | `replications` | `10`    |
-#' | `hold_rep`     | `10`    |
+#' | `rep_buffer_size`     | `10`    |
 #' | `keep_all`     | `FALSE` |
 #' | `set_only`     | `FALSE` |
 #'
 #' ## Command output
 #' `$render()` produces a string of the form
-#' `mult= replic {replications} hold {hold_rep} [no]keepall;`
+#' `mult= replic {replications} hold {rep_buffer_size} [no]keepall;`
 #' (or `mult:` when `$set_only` is `TRUE`).
 #'
 #' ## Set-only mode
@@ -54,7 +54,7 @@
 #'
 #' # Create with custom settings
 #' bs <- BranchSwappingCommand$new(
-#'   replications = 100, hold_rep = 25,
+#'   replications = 100, rep_buffer_size = 25,
 #'   keep_all = TRUE
 #' )
 #'
@@ -63,7 +63,7 @@
 #'
 #' # Modify settings after creation
 #' bs$replications <- 50
-#' bs$hold_rep <- 15
+#' bs$rep_buffer_size <- 15
 #' bs$keep_all <- FALSE
 #'
 #' # Generate the TNT command string
@@ -103,18 +103,18 @@ BranchSwappingCommand <- R6Class(
         self$set_argument_value(label, value)
       }
     },
-    #' @field hold_rep \[`integer(1)`\]\cr
+    #' @field rep_buffer_size \[`integer(1)`\]\cr
     #'   The maximum number of trees to retain during each replication. Must
     #'   be a positive integer. Corresponds to the `hold` subcommand in
     #'   TNT.
-    hold_rep = function(value) {
-      label <- "hold_rep"
+    rep_buffer_size = function(value) {
+      label <- "rep_buffer_size"
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
         val_check <- check_int(value, lower = 1)
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg hold_rep} must be a valid integer.",
+          cli_abort(c("{.arg rep_buffer_size} must be a valid integer.",
             "x" = val_check
           ))
         }
@@ -151,18 +151,21 @@ BranchSwappingCommand <- R6Class(
     #' @param replications \[`integer(1)`\]\cr
     #'   Number of replications (default: `10`). See the `$replications`
     #'   field.
-    #' @param hold_rep \[`integer(1)`\]\cr
+    #' @param rep_buffer_size \[`integer(1)`\]\cr
     #'   Maximum trees to hold per replicate (default: `10`). See the
-    #'   `$hold_rep` field.
+    #'   `$rep_buffer_size` field.
     #' @param keep_all \[`logical(1)`\]\cr
     #'   Retain all trees regardless of length? (default: `FALSE`). See the
     #'   `$keep_all` field.
+    #' @param ... Optional named arguments passed to the constructor of the
+    #'   command class.
     #'
     #' @return A new `BranchSwappingCommand` object.
-    initialize = function(replications, hold_rep, keep_all) {
+    initialize = function(replications, rep_buffer_size, keep_all, ...) {
       super$initialize(
         name = "mult",
-        description = "Branch swapping tree search with replicates"
+        description = "Branch swapping tree search with replicates",
+        ...
       )
 
       self$new_argument(
@@ -172,7 +175,7 @@ BranchSwappingCommand <- R6Class(
         default_value = 10
       )
       self$new_argument(
-        label = "hold_rep",
+        label = "rep_buffer_size",
         description = "Trees to hold per replicate",
         command_format = "hold {value}",
         default_value = 10
