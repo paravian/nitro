@@ -1,10 +1,10 @@
-#' Monophyly Constraint
+#' Monophyletic Constraint
 #'
 #' @description
-#' An [R6][R6::R6Class] class that configures a monophyly constraint for
+#' An [R6][R6::R6Class] class that configures a monophyletic constraint for
 #' use in constrained tree searches in \pkg{nitro}.
 #'
-#' A monophyly constraint requires (positive) or forbids (negative) a
+#' A monophyletic constraint requires (positive) or forbids (negative) a
 #' specified set of taxa from forming a monophyletic group in the
 #' recovered trees. An optional set of floating OTUs may also be
 #' specified; these are taxa that are allowed to fall inside the
@@ -25,8 +25,8 @@
 #' | `is_positive`   | `TRUE`  |
 #'
 #' ## Combining constraints
-#' Multiple `MonophylyConstraint` objects can be combined into a
-#' `MultiMonophylyConstraint` list using `c()`. This is handled
+#' Multiple `MonophyleticConstraint` objects can be combined into a
+#' `MultiMonophyleticConstraint` list using `c()`. This is handled
 #' automatically by [TopologicalConstraintsCommand] when a list of
 #' constraints is supplied.
 #'
@@ -39,19 +39,19 @@
 #'   [TreeAnalysis].
 #'
 #' @examples
-#' # Positive monophyly constraint (taxa must form a clade)
-#' mc <- MonophylyConstraint$new(
+#' # Positive monophyletic constraint (taxa must form a clade)
+#' mc <- MonophyleticConstraint$new(
 #'   fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
 #' )
 #'
 #' # Negative constraint (taxa must not form a clade)
-#' mc_neg <- MonophylyConstraint$new(
+#' mc_neg <- MonophyleticConstraint$new(
 #'   fixed_otus  = c("TaxonA", "TaxonB"),
 #'   is_positive = FALSE
 #' )
 #'
 #' # With floating OTUs
-#' mc_float <- MonophylyConstraint$new(
+#' mc_float <- MonophyleticConstraint$new(
 #'   fixed_otus    = c("TaxonA", "TaxonB", "TaxonC"),
 #'   floating_otus = c("TaxonD", "TaxonE")
 #' )
@@ -62,8 +62,8 @@
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_replace_all
 #' @export
-MonophylyConstraint <- R6Class(
-  "MonophylyConstraint",
+MonophyleticConstraint <- R6Class(
+  "MonophyleticConstraint",
   inherit = AbstractConstraint,
   private = list(
     .fixed_otus    = NULL,
@@ -166,7 +166,7 @@ MonophylyConstraint <- R6Class(
       options
     },
     #' @description
-    #' Create a new `MonophylyConstraint` object.
+    #' Create a new `MonophyleticConstraint` object.
     #'
     #' @param fixed_otus \[`character`\]\cr
     #'   Taxon names forming the constrained group. See the `$fixed_otus`
@@ -178,7 +178,7 @@ MonophylyConstraint <- R6Class(
     #'   Whether the constraint is positive (default: `TRUE`). See the
     #'   `$is_positive` field.
     #'
-    #' @return A new `MonophylyConstraint` object.
+    #' @return A new `MonophyleticConstraint` object.
     initialize = function(fixed_otus, floating_otus = NULL,
                           is_positive = TRUE) {
       a <- as.list(environment(), all = TRUE)
@@ -199,7 +199,7 @@ MonophylyConstraint <- R6Class(
     print = function(...) {
       cli_text(col_grey(
         "# A ", style_italic(col_red("nitro")),
-        " monophyly constraint"
+        " monophyletic constraint"
       ))
       options <- format(self)
       names(options) <- NULL
@@ -208,47 +208,47 @@ MonophylyConstraint <- R6Class(
   )
 )
 
-#' Combine MonophylyConstraint Objects
+#' Combine MonophyleticConstraint Objects
 #'
 #' @description
-#' Combines two or more [MonophylyConstraint] objects into a
-#' `MultiMonophylyConstraint` list for use with
+#' Combines two or more [MonophyleticConstraint] objects into a
+#' `MultiMonophyleticConstraint` list for use with
 #' [TopologicalConstraintsCommand].
 #'
-#' @param ... Two or more [MonophylyConstraint] objects.
+#' @param ... Two or more [MonophyleticConstraint] objects.
 #'
-#' @return A `MultiMonophylyConstraint` object (a named list with class
-#'   `c("MultiMonophylyConstraint", "list")`).
+#' @return A `MultiMonophyleticConstraint` object (a named list with class
+#'   `c("MultiMonophyleticConstraint", "list")`).
 #'
 #' @seealso
-#' * [MonophylyConstraint] — the individual constraint class.
+#' * [MonophyleticConstraint] — the individual constraint class.
 #' * [TopologicalConstraintsCommand] — accepts a list of constraints.
 #'
 #' @importFrom checkmate check_list test_true
 #' @importFrom cli cli_abort
 #' @exportS3Method
-c.MonophylyConstraint <- function(...) {
+c.MonophyleticConstraint <- function(...) {
   objs <- list(...)
-  val_check <- check_list(objs, types = "MonophylyConstraint")
+  val_check <- check_list(objs, types = "MonophyleticConstraint")
   if (!test_true(val_check)) {
-    cli_abort(c("All objects must inherit from class {.cls MonophylyConstraint}.",
+    cli_abort(c("All objects must inherit from class {.cls MonophyleticConstraint}.",
       "x" = val_check
     ))
   }
-  class(objs) <- c("MultiMonophylyConstraint", "list")
+  class(objs) <- c("MultiMonophyleticConstraint", "list")
   objs
 }
 
-#' Print a MultiMonophylyConstraint Object
+#' Print a MultiMonophyleticConstraint Object
 #'
-#' @param x A `MonophylyConstraint` object.
+#' @param x A `MonophyleticConstraint` object.
 #' @param ... Ignored.
 #'
 #' @importFrom cli cli_text col_grey col_red style_italic
 #' @exportS3Method
 #' @keywords internal
-print.MultiMonophylyConstraint <- function(x, ...) {
-  cli_text(col_grey("# Multiple ", style_italic(col_red("nitro")), " monophyly constraints"))
+print.MultiMonophyleticConstraint <- function(x, ...) {
+  cli_text(col_grey("# Multiple ", style_italic(col_red("nitro")), " monophyletic constraints"))
 
   out <- data.frame(length(x))
   rownames(out) <- "Number of constraints:"

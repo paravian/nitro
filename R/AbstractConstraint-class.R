@@ -16,13 +16,13 @@
 #' logic required by the specific constraint type.
 #'
 #' The two concrete subclasses are:
-#' * [MonophylyConstraint] — constrains a named set of taxa to be
+#' * [MonophyleticConstraint] — constrains a named set of taxa to be
 #'   monophyletic (or non-monophyletic).
 #' * [BackboneConstraint] — constrains the search to recover a topology
 #'   compatible with a reference tree.
 #'
 #' @seealso
-#' * [MonophylyConstraint] — monophyly constraint.
+#' * [MonophyleticConstraint] — monophyletic constraint.
 #' * [BackboneConstraint] — backbone constraint.
 #' * [TopologicalConstraintsCommand] — the command object that holds one
 #'   or more constraints and renders the TNT `force` command.
@@ -63,8 +63,8 @@ AbstractConstraint <- R6Class(
     #' Create a new `AbstractConstraint` object.
     #'
     #' @param is_positive \[`logical(1)`\]\cr
-    #'   Whether the constraint is positive or negative (default: `TRUE`).
-    #'   See the `$is_positive` field.
+    #'   Whether the constraint is positive or negative. See the `$is_positive`
+    #'   field.
     #'
     #' @return A new `AbstractConstraint` object.
     initialize = function(is_positive = TRUE) {

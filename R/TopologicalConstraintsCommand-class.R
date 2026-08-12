@@ -5,7 +5,7 @@
 #' constraints and renders the TNT `force` command to apply them during
 #' tree searches in \pkg{nitro}.
 #'
-#' Each constraint is either a [MonophylyConstraint], which constrains a
+#' Each constraint is either a [MonophyleticConstraint], which constrains a
 #' named set of taxa to be monophyletic or non-monophyletic, or a
 #' [BackboneConstraint], which constrains the search to recover a topology
 #' compatible with a reference tree. Multiple constraints of either type
@@ -18,8 +18,8 @@
 #' @details
 #' ## Command output
 #' `$render()` produces one or more `force` statements of the form:
-#' * Positive monophyly: `force + [ TaxonA TaxonB TaxonC ];`
-#' * Negative monophyly: `force - [ TaxonA TaxonB ];`
+#' * Positive monophyletic: `force + [ TaxonA TaxonB TaxonC ];`
+#' * Negative monophyletic: `force - [ TaxonA TaxonB ];`
 #' * With floating OTUs: `force + [ TaxonA TaxonB (TaxonC TaxonD) ];`
 #' * Positive backbone: `force / &0;`
 #' * Negative backbone: `force : &0;`
@@ -36,7 +36,7 @@
 #'   when any constraint is a [BackboneConstraint].
 #'
 #' @seealso
-#' * [MonophylyConstraint] — monophyly constraint type.
+#' * [MonophyleticConstraint] — monophyletic constraint type.
 #' * [BackboneConstraint] — backbone constraint type.
 #' * [ConstrainCommand] — enables constraint enforcement during searches.
 #' * [set_constraint()] — recommended way to attach constraints to a
@@ -58,30 +58,31 @@ TopologicalConstraintsCommand <- R6Class(
   ),
   active = list(
     #' @field constraints \[`AbstractConstraint` or `list`\]\cr
-    #'   One or more [AbstractConstraint] objects (i.e., [MonophylyConstraint]
+    #'   One or more [AbstractConstraint] objects (i.e., [MonophyleticConstraint]
     #'   or [BackboneConstraint]) defining the topological constraints to
     #'   enforce. A single object is coerced to a list internally.
     constraints = function(value) {
       if (missing(value)) {
         return(private$.constraints)
       } else {
-        if (!test_list(value)) {
-          value <- c(value)
-        }
 
         coll <- makeAssertCollection()
         assert(
-          check_list(value, types = "MonophylyConstraint", any.missing = FALSE, min.len = 1, unique = TRUE),
-          check_list(value, types = "MultiMonophylyConstraint", any.missing = FALSE, min.len = 1, unique = TRUE),
-          check_list(value, types = "BackboneConstraint", any.missing = FALSE, min.len = 1, unique = TRUE),
+          check_class(value, "MonophyleticConstraint"),
+          check_class(value, "MultiMonophyleticConstraint"),
+          check_class(value, "BackboneConstraint"),
           add = coll
         )
 
         if (!coll$isEmpty()) {
           val_check <- coll$getMessages()
-          cli_abort(c("{.arg constraints} must be either {.cls BackboneConstraint} object a (list of) {.cls MonophylyConstraint} object(s).",
+          cli_abort(c("{.arg constraints} must be either {.cls BackboneConstraint} object a (list of) {.cls MonophyleticConstraint} object(s).",
             "x" = val_check
           ))
+        }
+
+        if (!test_list(value)) {
+          value <- c(value)
         }
 
         private$.constraints <- value
@@ -129,7 +130,7 @@ TopologicalConstraintsCommand <- R6Class(
     #' and attach this command to a [TreeAnalysis].
     #'
     #' @param constraints \[`AbstractConstraint` or `list`\]\cr
-    #'   One or more [MonophylyConstraint] or [BackboneConstraint] objects.
+    #'   One or more [MonophyleticConstraint] or [BackboneConstraint] objects.
     #'   See the `$constraints` field.
     #'
     #' @return A new `TopologicalConstraintsCommand` object.
@@ -152,11 +153,13 @@ TopologicalConstraintsCommand <- R6Class(
 
         all_taxa <- value$data %>%
           sapply(getElement, "taxa") %>%
-          as.vector() %>%
+          unlist() %>%
           unique()
 
         for (constraint in self$constraints) {
-          if (test_class(constraint, "MonophylyConstraint")) {
+          constraint_taxa <- character(0)
+
+          if (test_class(constraint, "MonophyleticConstraint")) {
             constraint_taxa <- c(
               constraint$fixed_otus,
               constraint$floating_otus
@@ -169,6 +172,7 @@ TopologicalConstraintsCommand <- R6Class(
 
           val_check <- check_subset(constraint_taxa, all_taxa)
           if (!test_true(val_check)) {
+            val_check <- str_replace_all(val_check, "([{}])", "\\1\\1")
             cli_abort(c("{.arg constraints} contains taxa not present in the matrix.",
               "x" = val_check
             ))
@@ -214,7 +218,7 @@ TopologicalConstraintsCommand <- R6Class(
     #' @description
     #' Render the TNT `force` command string.
     #'
-    #' Produces one `force` statement per constraint. Monophyly constraints
+    #' Produces one `force` statement per constraint. Monophyletic constraints
     #' render as `force +/-  [ taxa (floating) ];` and backbone constraints
     #' render as `force /: &0;`.
     #'
@@ -225,7 +229,7 @@ TopologicalConstraintsCommand <- R6Class(
       force_args <- character(0)
 
       for (constraint in self$constraints) {
-        if (test_class(constraint, "MonophylyConstraint")) {
+        if (test_class(constraint, "MonophyleticConstraint")) {
           force_arg <- paste(constraint$fixed_otus, collapse = " ")
 
           if (!is.null(constraint$floating_otus)) {

@@ -8,7 +8,7 @@ An \link[R6:R6Class]{R6} class that holds one or more topological
 constraints and renders the TNT \code{force} command to apply them during
 tree searches in \pkg{nitro}.
 
-Each constraint is either a \link{MonophylyConstraint}, which constrains a
+Each constraint is either a \link{MonophyleticConstraint}, which constrains a
 named set of taxa to be monophyletic or non-monophyletic, or a
 \link{BackboneConstraint}, which constrains the search to recover a topology
 compatible with a reference tree. Multiple constraints of either type
@@ -23,8 +23,8 @@ Constraints are activated during a search by a companion
 
 \verb{$render()} produces one or more \code{force} statements of the form:
 \itemize{
-\item Positive monophyly: \verb{force + [ TaxonA TaxonB TaxonC ];}
-\item Negative monophyly: \verb{force - [ TaxonA TaxonB ];}
+\item Positive monophyletic: \verb{force + [ TaxonA TaxonB TaxonC ];}
+\item Negative monophyletic: \verb{force - [ TaxonA TaxonB ];}
 \item With floating OTUs: \verb{force + [ TaxonA TaxonB (TaxonC TaxonD) ];}
 \item Positive backbone: \verb{force / &0;}
 \item Negative backbone: \verb{force : &0;}
@@ -49,7 +49,7 @@ when any constraint is a \link{BackboneConstraint}.
 }
 \seealso{
 \itemize{
-\item \link{MonophylyConstraint} — monophyly constraint type.
+\item \link{MonophyleticConstraint} — monophyletic constraint type.
 \item \link{BackboneConstraint} — backbone constraint type.
 \item \link{ConstrainCommand} — enables constraint enforcement during searches.
 \item \code{\link[=set_constraint]{set_constraint()}} — recommended way to attach constraints to a
@@ -65,7 +65,7 @@ when any constraint is a \link{BackboneConstraint}.
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
     \item{\code{constraints}}{[\code{AbstractConstraint} or \code{list}]\cr
-One or more \link{AbstractConstraint} objects (i.e., \link{MonophylyConstraint}
+One or more \link{AbstractConstraint} objects (i.e., \link{MonophyleticConstraint}
 or \link{BackboneConstraint}) defining the topological constraints to
 enforce. A single object is coerced to a list internally.}
   }
@@ -154,7 +154,7 @@ and attach this command to a \link{TreeAnalysis}.
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{constraints}}{[\code{AbstractConstraint} or \code{list}]\cr
-One or more \link{MonophylyConstraint} or \link{BackboneConstraint} objects.
+One or more \link{MonophyleticConstraint} or \link{BackboneConstraint} objects.
 See the \verb{$constraints} field.}
     }
     \if{html}{\out{</div>}}
@@ -189,7 +189,7 @@ See the \verb{$constraints} field.}
 \subsection{\code{TopologicalConstraintsCommand$render()}}{
   Render the TNT \code{force} command string.
 
-Produces one \code{force} statement per constraint. Monophyly constraints
+Produces one \code{force} statement per constraint. Monophyletic constraints
 render as \verb{force +/-  [ taxa (floating) ];} and backbone constraints
 render as \verb{force /: &0;}.
   \subsection{Usage}{

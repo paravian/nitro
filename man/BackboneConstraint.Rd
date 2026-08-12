@@ -31,7 +31,7 @@ bc_neg <- BackboneConstraint$new(is_positive = FALSE)
 }
 \seealso{
 \itemize{
-\item \link{MonophylyConstraint} — constrains a named set of taxa to be
+\item \link{MonophyleticConstraint} — constrains a named set of taxa to be
 monophyletic.
 \item \link{AbstractConstraint} — parent class defining \verb{$is_positive}.
 \item \link{TopologicalConstraintsCommand} — holds and renders one or more

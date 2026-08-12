@@ -17,7 +17,7 @@
 #' | `is_positive` | `TRUE`  |
 #'
 #' @seealso
-#' * [MonophylyConstraint] — constrains a named set of taxa to be
+#' * [MonophyleticConstraint] — constrains a named set of taxa to be
 #'   monophyletic.
 #' * [AbstractConstraint] — parent class defining `$is_positive`.
 #' * [TopologicalConstraintsCommand] — holds and renders one or more

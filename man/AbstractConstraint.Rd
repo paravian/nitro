@@ -21,7 +21,7 @@ logic required by the specific constraint type.
 
 The two concrete subclasses are:
 \itemize{
-\item \link{MonophylyConstraint} — constrains a named set of taxa to be
+\item \link{MonophyleticConstraint} — constrains a named set of taxa to be
 monophyletic (or non-monophyletic).
 \item \link{BackboneConstraint} — constrains the search to recover a topology
 compatible with a reference tree.
@@ -30,7 +30,7 @@ compatible with a reference tree.
 }
 \seealso{
 \itemize{
-\item \link{MonophylyConstraint} — monophyly constraint.
+\item \link{MonophyleticConstraint} — monophyletic constraint.
 \item \link{BackboneConstraint} — backbone constraint.
 \item \link{TopologicalConstraintsCommand} — the command object that holds one
 or more constraints and renders the TNT \code{force} command.
@@ -71,8 +71,8 @@ does not.}
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{is_positive}}{[\code{logical(1)}]\cr
-Whether the constraint is positive or negative (default: \code{TRUE}).
-See the \verb{$is_positive} field.}
+Whether the constraint is positive or negative. See the \verb{$is_positive}
+field.}
     }
     \if{html}{\out{</div>}}
   }
