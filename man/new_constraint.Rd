@@ -12,16 +12,16 @@ The name of the constraint type. Partial unambiguous matches are
 accepted (case-insensitive, underscores optional). The available
 types are:\tabular{ll}{
    Name \tab Creates \cr
-   \code{"monophyly"} \tab \link{MonophylyConstraint} \cr
+   \code{"monophyletic"} \tab \link{MonophyleticConstraint} \cr
    \code{"backbone"} \tab \link{BackboneConstraint} \cr
 }}
 
 \item{...}{Optional named arguments passed to the constructor of the
-selected constraint class. See \link{MonophylyConstraint} and
+selected constraint class. See \link{MonophyleticConstraint} and
 \link{BackboneConstraint} for available parameters.}
 }
 \value{
-A \link{MonophylyConstraint} or \link{BackboneConstraint} object,
+A \link{MonophyleticConstraint} or \link{BackboneConstraint} object,
 depending on \code{name}.
 }
 \description{
@@ -30,9 +30,10 @@ recommended way to instantiate constraint objects in \pkg{nitro},
 rather than calling R6 constructors directly.
 }
 \examples{
-# Monophyly constraint
-mc <- new_constraint("monophyly",
-                     fixed_otus = c("TaxonA", "TaxonB", "TaxonC"))
+# Monophyletic constraint
+mc <- new_constraint("monophyletic",
+  fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
+)
 
 # Backbone constraint
 bc <- new_constraint("backbone")
@@ -42,7 +43,7 @@ bc <- new_constraint("backbone")
 \itemize{
 \item \code{\link[=set_constraint]{set_constraint()}} — create constraints and attach them to a
 \link{TreeAnalysis} in one step.
-\item \link{MonophylyConstraint}, \link{BackboneConstraint} — individual constraint
+\item \link{MonophyleticConstraint}, \link{BackboneConstraint} — individual constraint
 classes with full parameter documentation.
 }
 }

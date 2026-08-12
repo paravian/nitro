@@ -42,9 +42,9 @@ read_data_config(ta, dm)
 
 # --- Combined discrete + continuous ---
 nex_path2 <- system.file("extdata", "raven_2017.nex", package = "nitro")
-csv_path  <- system.file("extdata", "raven_2017.csv", package = "nitro")
+csv_path <- system.file("extdata", "raven_2017.csv", package = "nitro")
 dm2 <- ReadAsPhyDat(nex_path2) |> create_matrix()
-cm  <- read.table(csv_path, sep = ",", header = TRUE) |> create_matrix()
+cm <- read.table(csv_path, sep = ",", header = TRUE) |> create_matrix()
 
 ta2 <- TreeAnalysis$new()
 read_data_config(ta2, c(dm2, cm))

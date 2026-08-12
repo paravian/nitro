@@ -54,10 +54,11 @@ ta <- set_weighting(ta, "implied_weighting", concavity_constant = 6)
 
 # Extended implied weighting with multi-constant mode
 ta <- set_weighting(ta, "extended_implied_weighting",
-                    concavity_constant = 6,
-                    multi_constant     = TRUE,
-                    proportion         = 0.3,
-                    max_ratio          = 3)
+  concavity_constant = 6,
+  multi_constant     = TRUE,
+  proportion         = 0.3,
+  max_ratio          = 3
+)
 }
 
 }

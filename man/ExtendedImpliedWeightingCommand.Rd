@@ -62,10 +62,11 @@ and attached to the \link{TreeAnalysis} transparently.
 # Preferred: use set_weighting() which handles both commands
 \dontrun{
 ta <- set_weighting(ta, "extended",
-                    concavity_constant = 6,
-                    multi_constant     = TRUE,
-                    proportion         = 0.5,
-                    max_ratio          = 5)
+  concavity_constant = 6,
+  multi_constant     = TRUE,
+  proportion         = 0.5,
+  max_ratio          = 5
+)
 }
 
 # Direct construction

@@ -45,8 +45,10 @@ bs <- new_tree_search("branch_swapping")
 bs <- new_tree_search("branch_swap")
 
 # Pass arguments to the constructor
-bs <- new_tree_search("branch_swapping", replications = 100,
-                       hold_rep = 25)
+bs <- new_tree_search("branch_swapping",
+  replications = 100,
+  rep_buffer_size = 25
+)
 
 # Create an extra search methods search
 xm <- new_tree_search("extra_search_methods")

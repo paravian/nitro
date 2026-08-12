@@ -10,7 +10,7 @@ set_constraint(tree_analysis, ...)
 \item{tree_analysis}{[\code{TreeAnalysis}]\cr
 A \link{TreeAnalysis} object to add the constraints to.}
 
-\item{...}{One or more \link{MonophylyConstraint} or \link{BackboneConstraint}
+\item{...}{One or more \link{MonophyleticConstraint} or \link{BackboneConstraint}
 objects.}
 }
 \value{
@@ -48,18 +48,20 @@ dm <- ReadAsPhyDat(nex_path) |> create_matrix()
 ta <- make_tree_analysis(dm, outgroup = "Abelisauridae")
 ta <- set_tree_search(ta, name = "branch_swapping", replications = 1000)
 
-# Monophyly constraint
-mc <- new_constraint("monophyly",
-                     fixed_otus = c("TaxonA", "TaxonB", "TaxonC"))
+# Monophyletic constraint
+mc <- new_constraint("monophyletic",
+  fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
+)
 ta <- set_constraint(ta, mc)
 
 # Multiple constraints
-mc2 <- new_constraint("monophyly",
-                      fixed_otus  = c("TaxonD", "TaxonE"),
-                      is_positive = FALSE)
+mc2 <- new_constraint("monophyletic",
+  fixed_otus  = c("TaxonD", "TaxonE"),
+  is_positive = FALSE
+)
 ta <- set_constraint(ta, mc, mc2)
 
-results <- execute_analysis(interface, ta, hold = 10000)
+results <- execute_analysis(interface, ta, tree_buffer_size = 10000)
 }
 
 }
@@ -67,7 +69,7 @@ results <- execute_analysis(interface, ta, hold = 10000)
 \itemize{
 \item \code{\link[=new_constraint]{new_constraint()}} — create a constraint object without attaching it
 to an analysis.
-\item \link{MonophylyConstraint} — monophyly constraint type.
+\item \link{MonophyleticConstraint} — monophyletic constraint type.
 \item \link{BackboneConstraint} — backbone constraint type.
 \item \link{TopologicalConstraintsCommand} — the command object created
 internally by this function.

@@ -63,8 +63,9 @@ ta <- set_support(ta, "jackknife", replications = 500, probability = 25)
 
 # Symmetric resampling with multiple frequency summaries
 ta <- set_support(ta, "symmetric",
-                  replications      = 500,
-                  frequency_summary = c("absolute", "difference"))
+  replications      = 500,
+  frequency_summary = c("absolute", "difference")
+)
 }
 
 }
