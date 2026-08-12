@@ -130,7 +130,7 @@ BranchSupportCommand <- R6Class(
       if (missing(value)) {
         return(private$.suboptimal_steps)
       } else {
-        val_check <- check_integer(value, lower = 1, any.missing = FALSE, min.len = 1, sorted = TRUE)
+        val_check <- check_integer(value, lower = 1, any.missing = FALSE, min.len = 1, unique = TRUE, sorted = TRUE)
         if (!test_true(val_check)) {
           cli_abort(c("{.arg suboptimal_steps} must be a vector of integers.",
             "x" = val_check
