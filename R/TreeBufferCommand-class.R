@@ -1,8 +1,8 @@
 #' Tree Buffer Command
 #'
 #' @description
-#' An [R6][R6::R6Class] class that configures the size of the TNT tree
-#' buffer — the maximum number of trees held in memory simultaneously.
+#' An [R6][R6::R6Class] class that allocates memory to the TNT tree buffer in
+#' terms of the maximum number of trees to hold simultaneously.
 #'
 #' This command is created automatically as part of the standard
 #' [CommandQueue] setup. Users do not typically need to instantiate it
@@ -28,7 +28,7 @@ TreeBufferCommand <- R6Class(
   ),
   active = list(
     #' @field size \[`integer(1)`\]\cr
-    #'   The maximum number of trees to hold in the TNT tree buffer. Must
+    #'   The maximum number of trees to allocate in the TNT tree buffer. Must
     #'   be a positive integer.
     size = function(value) {
       label <- "size"
@@ -77,7 +77,7 @@ TreeBufferCommand <- R6Class(
 
       super$initialize(
         name = "hold",
-        description = "Tree buffer control",
+        description = "Tree buffer allocation",
         provides = "tree buffer"
       )
 

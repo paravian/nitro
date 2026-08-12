@@ -4,8 +4,8 @@
 \alias{TreeBufferCommand}
 \title{Tree Buffer Command}
 \description{
-An \link[R6:R6Class]{R6} class that configures the size of the TNT tree
-buffer — the maximum number of trees held in memory simultaneously.
+An \link[R6:R6Class]{R6} class that allocates memory to the TNT tree buffer in
+terms of the maximum number of trees to hold simultaneously.
 
 This command is created automatically as part of the standard
 \link{CommandQueue} setup. Users do not typically need to instantiate it
@@ -31,7 +31,7 @@ Calling \verb{$enqueue()} adds this command to a \link{CommandQueue} at priority
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
     \item{\code{size}}{[\code{integer(1)}]\cr
-The maximum number of trees to hold in the TNT tree buffer. Must
+The maximum number of trees to allocate in the TNT tree buffer. Must
 be a positive integer.}
   }
   \if{html}{\out{</div>}}
