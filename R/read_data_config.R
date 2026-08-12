@@ -69,8 +69,8 @@ read_data_config <- function(tree_analysis, data) {
 
   n <- 0
   any_continuous <- FALSE
-  inactive_indices <- NULL
-  ordered_indices <- NULL
+  inactive_indices <- integer(0)
+  ordered_indices <- integer(0)
   for (mtx in data) {
     is_continuous <- test_class(mtx, "ContinuousMatrix")
     any_continuous <- any_continuous | is_continuous
