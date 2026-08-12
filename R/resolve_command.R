@@ -1,5 +1,9 @@
 #' Resolve a single command
 #'
+#' @importFrom checkmate assert check_choice check_class check_null check_flag
+#'   makeAssertCollection test_null test_true
+#' @importFrom cli cli_abort
+#' @importFrom magrittr %>% extract extract2
 #' @param command A command to be resolved
 #' @param resolved A `CommandList` of resolved commands
 #' @param type The type of dependency to resolve
@@ -49,7 +53,7 @@ resolve_command <- function(command, resolved, type = "required",
   provide_cmds <- sapply(provides, test_null) %>%
     not() %>%
     which() %>%
-    resolved[.]
+    extract(resolved, .)
   provides <- unlist(provides)
 
   all_depen <- command$requires
