@@ -84,11 +84,11 @@ ContinuousMatrix <- R6Class(
           value[, taxon_col] <- str_replace_all(value[, taxon_col], "\\s+", "_")
 
           if (any(duplicated(value[, taxon_col]))) {
-            value <- group_by(value, "taxon") %>%
+            value <- group_by(value, taxon) %>%
               summarise(across(everything(), function(x) {
                 x <- na.omit(x)
                 if (length(x) > 0) {
-                  x <- round(3) %>%
+                  x <- round(x, 3) %>%
                     range(x) %>%
                     unique() %>%
                     paste(collapse = "-")
@@ -98,9 +98,13 @@ ContinuousMatrix <- R6Class(
                 return(x)
               }))
           } else {
-            value <- mutate(value, across(where(is.numeric), ~ str_replace_na(.x, "?")))
+            value <- mutate(
+              value,
+              across(where(is.numeric), ~ str_replace_na(.x, "?"))
+            )
           }
 
+          value <- as.data.frame(value)
           rownames(value) <- value[, taxon_col]
           value[, taxon_col] <- NULL
 
