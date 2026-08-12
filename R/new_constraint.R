@@ -12,25 +12,25 @@
 #'
 #'   | Name | Creates |
 #'   |------|---------|
-#'   | `"monophyly"` | [MonophylyConstraint] |
+#'   | `"monophyletic"` | [MonophyleticConstraint] |
 #'   | `"backbone"` | [BackboneConstraint] |
 #'
 #' @param ... Optional named arguments passed to the constructor of the
-#'   selected constraint class. See [MonophylyConstraint] and
+#'   selected constraint class. See [MonophyleticConstraint] and
 #'   [BackboneConstraint] for available parameters.
 #'
-#' @return A [MonophylyConstraint] or [BackboneConstraint] object,
+#' @return A [MonophyleticConstraint] or [BackboneConstraint] object,
 #'   depending on `name`.
 #'
 #' @seealso
 #' * [set_constraint()] — create constraints and attach them to a
 #'   [TreeAnalysis] in one step.
-#' * [MonophylyConstraint], [BackboneConstraint] — individual constraint
+#' * [MonophyleticConstraint], [BackboneConstraint] — individual constraint
 #'   classes with full parameter documentation.
 #'
 #' @examples
-#' # Monophyly constraint
-#' mc <- new_constraint("monophyly",
+#' # Monophyletic constraint
+#' mc <- new_constraint("monophyletic",
 #'   fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
 #' )
 #'
@@ -65,7 +65,7 @@ new_constraint <- function(name, ...) {
   }
 
   object_choice <- c(
-    "MonophylyConstraint",
+    "MonophyleticConstraint",
     "BackboneConstraint"
   )
 
@@ -102,7 +102,7 @@ new_constraint <- function(name, ...) {
 #'
 #' @param tree_analysis \[`TreeAnalysis`\]\cr
 #'   A [TreeAnalysis] object to add the constraints to.
-#' @param ... One or more [MonophylyConstraint] or [BackboneConstraint]
+#' @param ... One or more [MonophyleticConstraint] or [BackboneConstraint]
 #'   objects.
 #'
 #' @return A **copy** of `tree_analysis` with the constraint commands
@@ -111,7 +111,7 @@ new_constraint <- function(name, ...) {
 #' @seealso
 #' * [new_constraint()] — create a constraint object without attaching it
 #'   to an analysis.
-#' * [MonophylyConstraint] — monophyly constraint type.
+#' * [MonophyleticConstraint] — monophyletic constraint type.
 #' * [BackboneConstraint] — backbone constraint type.
 #' * [TopologicalConstraintsCommand] — the command object created
 #'   internally by this function.
@@ -125,14 +125,14 @@ new_constraint <- function(name, ...) {
 #' ta <- make_tree_analysis(dm, outgroup = "Abelisauridae")
 #' ta <- set_tree_search(ta, name = "branch_swapping", replications = 1000)
 #'
-#' # Monophyly constraint
-#' mc <- new_constraint("monophyly",
+#' # Monophyletic constraint
+#' mc <- new_constraint("monophyletic",
 #'   fixed_otus = c("TaxonA", "TaxonB", "TaxonC")
 #' )
 #' ta <- set_constraint(ta, mc)
 #'
 #' # Multiple constraints
-#' mc2 <- new_constraint("monophyly",
+#' mc2 <- new_constraint("monophyletic",
 #'   fixed_otus  = c("TaxonD", "TaxonE"),
 #'   is_positive = FALSE
 #' )
