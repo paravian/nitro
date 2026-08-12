@@ -40,14 +40,12 @@ Calling \verb{$enqueue()} adds this command to a \link{CommandQueue} at priority
 \section{Active bindings}{
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
-    \item{\code{inactive_indices}}{[\code{numeric} or \code{NULL}]\cr
-Integer indices of characters to mark as inactive, or \code{NULL} when
-all characters are active. Values are floored to integers.}
+    \item{\code{inactive_indices}}{[\code{integer}]\cr
+Integer indices of characters to mark as inactive.}
 
-    \item{\code{ordered_indices}}{[\code{numeric} or \code{NULL}]\cr
-Integer indices of characters to mark as ordered, or \code{NULL} when
-no characters are ordered. Values are floored to integers. Only
-applicable to matrices with \code{data_type = "numeric"}.}
+    \item{\code{ordered_indices}}{[\code{integer}]\cr
+Integer indices of characters to mark as ordered. Only applicable to
+matrices with \code{data_type = "numeric"}.}
   }
   \if{html}{\out{</div>}}
 }
@@ -129,8 +127,8 @@ instantiation is rarely necessary.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{CharacterCodingCommand$new(
-  inactive_indices = NULL,
-  ordered_indices = NULL,
+  inactive_indices = integer(0),
+  ordered_indices = integer(0),
   ...
 )}
     \if{html}{\out{</div>}}
@@ -139,11 +137,11 @@ instantiation is rarely necessary.
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{inactive_indices}}{[\code{numeric} or \code{NULL}]\cr
-Indices of characters to mark as inactive (default: \code{NULL}). See
-the \verb{$inactive_indices} field.}
+Indices of characters to mark as inactive. See the \verb{$inactive_indices}
+field.}
       \item{\code{ordered_indices}}{[\code{numeric} or \code{NULL}]\cr
-Indices of characters to mark as ordered (default: \code{NULL}). See
-the \verb{$ordered_indices} field.}
+Indices of characters to mark as ordered. See the \verb{$ordered_indices}
+field.}
       \item{\code{...}}{Optional named arguments passed to the constructor of the
 command class.}
     }
@@ -159,9 +157,6 @@ command class.}
 \if{latex}{\out{\hypertarget{method-CharacterCodingCommand-render}{}}}
 \subsection{\code{CharacterCodingCommand$render()}}{
   Render the TNT \code{ccode} command string.
-
-Returns \code{NULL} when both \verb{$inactive_indices} and \verb{$ordered_indices}
-are \code{NULL}, since no command needs to be issued in that case.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{CharacterCodingCommand$render(...)}

@@ -25,9 +25,8 @@
 #'   `$inactive` and `$ordered` fields.
 #'
 #' @keywords internal
-#' @importFrom checkmate assert check_null check_integerish makeAssertCollection test_null test_numeric
+#' @importFrom checkmate assert check_integer check_numeric check_true makeAssertCollection test_null test_numeric
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 CharacterCodingCommand <- R6Class(
   "CharacterCodingCommand",
@@ -37,57 +36,69 @@ CharacterCodingCommand <- R6Class(
     .ordered_indices = NULL
   ),
   active = list(
-    #' @field inactive_indices \[`numeric` or `NULL`\]\cr
-    #'   Integer indices of characters to mark as inactive, or `NULL` when
-    #'   all characters are active. Values are floored to integers.
+    #' @field inactive_indices \[`integer`\]\cr
+    #'   Integer indices of characters to mark as inactive.
     inactive_indices = function(value) {
       if (missing(value)) {
         return(private$.inactive_indices)
       } else {
         coll <- makeAssertCollection()
+
         assert(
-          check_null(value),
-          check_integerish(value, lower = 1, any.missing = FALSE, min.len = 1),
+          assert(
+            check_numeric(value, lower = 1, any.missing = FALSE, unique = TRUE),
+            check_integer(value, lower = 1, any.missing = FALSE, unique = TRUE)
+          ),
+          check_true(
+            all(value == as.integer(value))
+          ),
+          combine = "and",
           add = coll
         )
 
         if (!coll$isEmpty()) {
-          err <- coll$getMessages()
-          cli_abort(c("{.arg inactive_indices} must be either {.val NULL} or a valid numeric vector.",
-            "x" = err
+          val_check <- coll$getMessages()
+          cli_abort(c("{.arg inactive_indices} must be a valid integer vector.",
+            "x" = val_check
           ))
         }
 
         if (test_numeric(value)) {
-          value <- floor(value)
+          value <- as.integer(value)
         }
         private$.inactive_indices <- value
       }
     },
-    #' @field ordered_indices \[`numeric` or `NULL`\]\cr
-    #'   Integer indices of characters to mark as ordered, or `NULL` when
-    #'   no characters are ordered. Values are floored to integers. Only
-    #'   applicable to matrices with `data_type = "numeric"`.
+    #' @field ordered_indices \[`integer`\]\cr
+    #'   Integer indices of characters to mark as ordered. Only applicable to
+    #'   matrices with `data_type = "numeric"`.
     ordered_indices = function(value) {
       if (missing(value)) {
         return(private$.ordered_indices)
       } else {
         coll <- makeAssertCollection()
+
         assert(
-          check_null(value),
-          check_integerish(value, lower = 1, any.missing = FALSE, min.len = 1),
+          assert(
+            check_numeric(value, lower = 1, any.missing = FALSE, unique = TRUE),
+            check_integer(value, lower = 1, any.missing = FALSE, unique = TRUE)
+          ),
+          check_true(
+            all(value == as.integer(value))
+          ),
+          combine = "and",
           add = coll
         )
 
         if (!coll$isEmpty()) {
-          err <- coll$getMessages()
-          cli_abort(c("{.arg ordered_indices} must be either {.val NULL} or a valid numeric vector.",
-            "x" = err
+          val_check <- coll$getMessages()
+          cli_abort(c("{.arg ordered_indices} must be a valid numeric vector.",
+            "x" = val_check
           ))
         }
 
         if (test_numeric(value)) {
-          value <- floor(value)
+          value <- as.integer(value)
         }
         private$.ordered_indices <- value
       }
@@ -120,7 +131,7 @@ CharacterCodingCommand <- R6Class(
       counts <- list(
         private$.inactive_indices,
         private$.ordered_indices
-      ) %>%
+      ) |>
         sapply(function(x) {
           ifelse(test_null(x), 0, length(x))
         })
@@ -140,18 +151,23 @@ CharacterCodingCommand <- R6Class(
     #' instantiation is rarely necessary.
     #'
     #' @param inactive_indices \[`numeric` or `NULL`\]\cr
-    #'   Indices of characters to mark as inactive (default: `NULL`). See
-    #'   the `$inactive_indices` field.
+    #'   Indices of characters to mark as inactive. See the `$inactive_indices`
+    #'   field.
     #' @param ordered_indices \[`numeric` or `NULL`\]\cr
-    #'   Indices of characters to mark as ordered (default: `NULL`). See
-    #'   the `$ordered_indices` field.
+    #'   Indices of characters to mark as ordered. See the `$ordered_indices`
+    #'   field.
     #' @param ... Optional named arguments passed to the constructor of the
     #'   command class.
     #'
     #' @return A new `CharacterCodingCommand` object.
-    initialize = function(inactive_indices = NULL, ordered_indices = NULL,
+    initialize = function(inactive_indices = integer(0),
+                          ordered_indices = integer(0),
                           ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      if (length(inactive_indices) == 0 & length(ordered_indices) == 0) {
+        cli_abort(c("{.arg inactive_indices} and {.arg ordered_indices} cannot both be unspecified."))
+      }
+
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(
@@ -168,9 +184,6 @@ CharacterCodingCommand <- R6Class(
     #' @description
     #' Render the TNT `ccode` command string.
     #'
-    #' Returns `NULL` when both `$inactive_indices` and `$ordered_indices`
-    #' are `NULL`, since no command needs to be issued in that case.
-    #'
     #' @param ... Not used.
     #'
     #' @return A single-element character vector containing the TNT
@@ -178,23 +191,22 @@ CharacterCodingCommand <- R6Class(
     render = function(...) {
       args <- NULL
 
-      if (!test_null(private$.inactive_indices)) {
+      if (!length(private$.inactive_indices) == 0) {
         args <- c(
           args,
           paste(c("]", private$.inactive_indices), collapse = " ")
         )
       }
 
-      if (!test_null(private$.ordered_indices)) {
+      if (!length(private$.ordered_indices) == 0) {
         args <- c(
           args,
           paste(c("+", private$.ordered_indices), collapse = " ")
         )
       }
 
-      cmd <- NULL
       if (!test_null(args)) {
-        cmd <- paste(self$name, " ", args, ";", sep = "")
+        cmd <- paste(self$name, " ", paste(args, collapse = " "), ";", sep = "")
       }
       cmd
     }
