@@ -19,7 +19,7 @@
 #' * [ScreenSizeCommand] — sets the output buffer dimensions.
 #' * [MemoryAllocationCommand] — allocates RAM (controlled by `max_ram`).
 #' * [TreeBufferCommand] — sets the tree buffer size (controlled by
-#'   `hold`).
+#'   `tree_buffer_size`).
 #' * [TreeStepsCommand] and [PossibleStepsCommand] — collect tree length
 #'   statistics after the search.
 #'
@@ -46,8 +46,8 @@
 #' @param tree_analysis \[`TreeAnalysis`\]\cr
 #'   A [TreeAnalysis] object configured with data, search settings, and
 #'   optional weighting or support commands.
-#' @param hold \[`integer(1)`\]\cr
-#'   The number of trees to hold in TNT's tree buffer (default: `100`).
+#' @param tree_buffer_size \[`integer(1)`\]\cr
+#'   The number of trees to allocate in TNT's tree buffer (default: `100`).
 #'   Passed to [TreeBufferCommand].
 #' @param max_ram \[`numeric(1)`\]\cr
 #'   The number of binary megabytes to allocate for TNT (default: `16`).
@@ -89,7 +89,7 @@
 #' ta <- make_tree_analysis(dm, outgroup = "Herrerasaurus")
 #' ta <- set_tree_search(ta, "branch_swapping", replications = 100)
 #'
-#' results <- execute_analysis(interface, ta, hold = 200, max_ram = 32)
+#' results <- execute_analysis(interface, ta, tree_buffer_size = 200, max_ram = 32)
 #'
 #' # Extract trees
 #' trees <- as.phylo(results)
@@ -104,9 +104,9 @@
 #' @importFrom stringr str_replace str_replace_all str_split str_trim
 #' @importFrom utils head tail
 #' @export
-execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
-                             reference_tree = NULL, starting_trees = NULL,
-                             timeout = NULL) {
+execute_analysis <- function(interface, tree_analysis, tree_buffer_size = 100,
+                             max_ram = 16, reference_tree = NULL,
+                             starting_trees = NULL) {
   val_check <- check_class(interface, "TntInterface")
   if (!test_true(val_check)) {
     cli_abort(c("{.arg interface} must be a {.arg TntInterface} object.",
@@ -126,7 +126,7 @@ execute_analysis <- function(interface, tree_analysis, hold = 100, max_ram = 16,
       EchoCommand$new(enable = TRUE),
       ScreenSizeCommand$new(columns = 50000, rows = 25),
       MemoryAllocationCommand$new(size = max_ram),
-      TreeBufferCommand$new(size = hold),
+      TreeBufferCommand$new(size = tree_buffer_size),
       TreeStepsCommand$new(),
       PossibleStepsCommand$new(active_taxa = TRUE)
     )

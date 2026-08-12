@@ -7,11 +7,10 @@
 execute_analysis(
   interface,
   tree_analysis,
-  hold = 100,
+  tree_buffer_size = 100,
   max_ram = 16,
   reference_tree = NULL,
-  starting_trees = NULL,
-  timeout = NULL
+  starting_trees = NULL
 )
 }
 \arguments{
@@ -22,8 +21,8 @@ A \link{TntInterface} object created by \code{\link[=create_interface]{create_in
 A \link{TreeAnalysis} object configured with data, search settings, and
 optional weighting or support commands.}
 
-\item{hold}{[\code{integer(1)}]\cr
-The number of trees to hold in TNT's tree buffer (default: \code{100}).
+\item{tree_buffer_size}{[\code{integer(1)}]\cr
+The number of trees to allocate in TNT's tree buffer (default: \code{100}).
 Passed to \link{TreeBufferCommand}.}
 
 \item{max_ram}{[\code{numeric(1)}]\cr
@@ -72,7 +71,7 @@ to those configured in \code{tree_analysis}:
 \item \link{ScreenSizeCommand} — sets the output buffer dimensions.
 \item \link{MemoryAllocationCommand} — allocates RAM (controlled by \code{max_ram}).
 \item \link{TreeBufferCommand} — sets the tree buffer size (controlled by
-\code{hold}).
+\code{tree_buffer_size}).
 \item \link{TreeStepsCommand} and \link{PossibleStepsCommand} — collect tree length
 statistics after the search.
 }
@@ -108,7 +107,7 @@ dm <- ReadAsPhyDat(nex_path) |> create_matrix()
 ta <- make_tree_analysis(dm, outgroup = "Herrerasaurus")
 ta <- set_tree_search(ta, "branch_swapping", replications = 100)
 
-results <- execute_analysis(interface, ta, hold = 200, max_ram = 32)
+results <- execute_analysis(interface, ta, tree_buffer_size = 200, max_ram = 32)
 
 # Extract trees
 trees <- as.phylo(results)
