@@ -51,7 +51,7 @@
 #' # Pass arguments to the constructor
 #' bs <- new_tree_search("branch_swapping",
 #'   replications = 100,
-#'   hold_rep = 25
+#'   rep_buffer_size = 25
 #' )
 #'
 #' # Create an extra search methods search
@@ -157,27 +157,6 @@ set_tree_search <- function(tree_analysis, name, ...) {
   }
 
   tree_search_obj <- new_tree_search(name, ...)
-
-  if (test_class(tree_search_obj, "ExtraSearchMethodsCommand")) {
-    set_sel_size <- function(extra_methods_class) {
-      sect_classes <- sapply(extra_methods_class$sectorial_search, function(x) {
-        class(x)[1]
-      })
-      if ("RandomSectorialSearchCommand" %in% sect_classes) {
-        def_size <- min(ceiling(tree_analysis$n_taxa / 2), 45L)
-        idx <- which(sect_classes == "RandomSectorialSearchCommand")
-        if (extra_methods_class$sectorial_search[[idx]]$max_size == "auto") {
-          extra_methods_class$sectorial_search[[idx]]$max_size <- def_size
-        }
-        if (extra_methods_class$sectorial_search[[idx]]$min_size == "auto") {
-          extra_methods_class$sectorial_search[[idx]]$min_size <- def_size
-        }
-      }
-      return(extra_methods_class)
-    }
-
-    tree_search_obj <- set_sel_size(tree_search_obj)
-  }
 
   ta <- tree_analysis$clone(deep = TRUE)
   ta$add_command(tree_search_obj)
