@@ -185,8 +185,8 @@ TreeAnalysis <- R6Class(
           add = coll
         )
 
-        val_check <- coll$getMessages()
         if (!coll$isEmpty()) {
+          val_check <- coll$getMessages()
           cli_abort(c("{.arg inactive_taxa} must be either a character vector or {.val NULL}.",
             "x" = val_check
           ))
