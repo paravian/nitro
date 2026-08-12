@@ -50,11 +50,9 @@ a \link{CommandQueue} and, when \verb{$set_only} is \code{FALSE}, also enqueues 
 # Create with default settings
 xss <- ExclusiveSectorialSearchCommand$new()
 
-# Set a fixed number of sectors
-xss$selections <- 10
-
-# Set a range of sectors
-xss$selections <- c(6, 14)
+# Set a range of sector counts
+xss$min_sectors <- 6
+xss$max_sectors <- 14
 
 # Generate the TNT command
 xss$render()
@@ -81,10 +79,15 @@ including sectorial searches.
 \section{Active bindings}{
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
-    \item{\code{selections}}{[\code{integer(1)} or \code{integer(2)}]\cr
-The number of non-overlapping sectors to subdivide the tree into.
-Supply a single integer for a fixed count, or a sorted two-element
-vector for a range (e.g., \code{c(8, 12)}). Values must be at least 2.}
+    \item{\code{min_sectors}}{[\code{integer(1)}]\cr
+The minimum number of non-overlapping sectors to subdivide the tree
+into. Must be a non-negative integer of at least 2 and no greater than
+\verb{$max_sectors}.}
+
+    \item{\code{max_sectors}}{[\code{integer(1)}]\cr
+The maximum number of non-overlapping sectors to subdivide the tree
+into. Must be a non-negative integer of at least 2 and no less than
+\verb{$min_sectors}.}
 
     \item{\code{rounds}}{[\code{integer(1)}]\cr
 The number of times to repeat the exclusive sector selection and
@@ -122,7 +125,8 @@ analysis cycle. Must be a non-negative integer.}
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
     \preformatted{ExclusiveSectorialSearchCommand$new(
-  selections,
+  min_sectors,
+  max_sectors,
   rounds,
   slack,
   buffer,
@@ -133,10 +137,12 @@ analysis cycle. Must be a non-negative integer.}
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{selections}}{[\code{integer(1)} or \code{integer(2)}]\cr
-Fixed sector count or a sorted two-element range (default:
-\code{c(8, 12)}). Values must be at least 2. See the \verb{$selections}
-field.}
+      \item{\code{min_sectors}}{[\code{integer(1)}]\cr
+Minimum number of sectors to subdivide the tree into. See the
+\verb{$min_sectors} field.}
+      \item{\code{max_sectors}}{[\code{integer(1)}]\cr
+Maximum number of sectors to subdivide the tree into. See the
+\verb{$max_sectors} field.}
       \item{\code{rounds}}{[\code{integer(1)}]\cr
 Number of sector selection and analysis cycles (default: \code{2}). See
 the \verb{$rounds} field.}

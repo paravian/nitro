@@ -52,11 +52,9 @@
 #' # Create with default settings
 #' xss <- ExclusiveSectorialSearchCommand$new()
 #'
-#' # Set a fixed number of sectors
-#' xss$selections <- 10
-#'
-#' # Set a range of sectors
-#' xss$selections <- c(6, 14)
+#' # Set a range of sector counts
+#' xss$min_sectors <- 6
+#' xss$max_sectors <- 14
 #'
 #' # Generate the TNT command
 #' xss$render()
@@ -70,24 +68,52 @@ ExclusiveSectorialSearchCommand <- R6Class(
   "ExclusiveSectorialSearchCommand",
   inherit = SectorialSearchCommand,
   active = list(
-    #' @field selections \[`integer(1)` or `integer(2)`\]\cr
-    #'   The number of non-overlapping sectors to subdivide the tree into.
-    #'   Supply a single integer for a fixed count, or a sorted two-element
-    #'   vector for a range (e.g., `c(8, 12)`). Values must be at least 2.
-    selections = function(value) {
-      label <- "selections"
+    #' @field min_sectors \[`integer(1)`\]\cr
+    #'   The minimum number of non-overlapping sectors to subdivide the tree
+    #'   into. Must be a non-negative integer of at least 2 and no greater than
+    #'   `$max_sectors`.
+    min_sectors = function(value) {
+      label <- "min_sectors"
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
-        val_check <- check_integerish(value, lower = 2, any.missing = FALSE, min.len = 1, max.len = 2, unique = TRUE, sorted = TRUE)
+        coll <- makeAssertCollection()
+        assert_int(value, lower = 2, add = coll)
+        if (!test_null(self$min_sectors)) {
+          assert_int(value, upper = self$max_sectors, add = coll)
+        }
 
-        if (!test_true(val_check)) {
-          cli_abort(c("{.arg selections} must be a valid numeric vector.",
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg min_sectors} must be a valid integer.",
+            "x" = val_check
+          ))
+        }
+        self$set_argument_value(label, value)
+      }
+    },
+    #' @field max_sectors \[`integer(1)`\]\cr
+    #'   The maximum number of non-overlapping sectors to subdivide the tree
+    #'   into. Must be a non-negative integer of at least 2 and no less than
+    #'   `$min_sectors`.
+    max_sectors = function(value) {
+      label <- "max_sectors"
+      if (missing(value)) {
+        return(self$get_argument_value(label))
+      } else {
+        coll <- makeAssertCollection()
+        val_check <- assert_int(value, lower = 2, add = coll)
+        if (!test_null(self$min_sectors)) {
+          assert_int(value, lower = self$min_sectors, add = coll)
+        }
+
+        val_check <- coll$getMessages()
+        if (!coll$isEmpty()) {
+          cli_abort(c("{.arg max_sectors} must be a valid integer.",
             "x" = val_check
           ))
         }
 
-        value <- sapply(value, floor)
         self$set_argument_value(label, value)
       }
     },
@@ -114,10 +140,12 @@ ExclusiveSectorialSearchCommand <- R6Class(
     #' @description
     #' Create a new `ExclusiveSectorialSearchCommand` object.
     #'
-    #' @param selections \[`integer(1)` or `integer(2)`\]\cr
-    #'   Fixed sector count or a sorted two-element range (default:
-    #'   `c(8, 12)`). Values must be at least 2. See the `$selections`
-    #'   field.
+    #' @param min_sectors \[`integer(1)`\]\cr
+    #'   Minimum number of sectors to subdivide the tree into. See the
+    #'   `$min_sectors` field.
+    #' @param max_sectors \[`integer(1)`\]\cr
+    #'   Maximum number of sectors to subdivide the tree into. See the
+    #'   `$max_sectors` field.
     #' @param rounds \[`integer(1)`\]\cr
     #'   Number of sector selection and analysis cycles (default: `2`). See
     #'   the `$rounds` field.
@@ -131,20 +159,19 @@ ExclusiveSectorialSearchCommand <- R6Class(
     #'   Configure-only mode (default: `FALSE`). See the `$set_only` field.
     #'
     #' @return A new `ExclusiveSectorialSearchCommand` object.
-    initialize = function(selections, rounds, slack, buffer, set_only = FALSE) {
+    initialize = function(min_sectors, max_sectors, rounds, slack, buffer,
+                          set_only = FALSE) {
       super$initialize(
         name = "sectsch",
         description = "Exclusive sectorial searches using existing trees",
         set_only = set_only
       )
 
-      selections_fmt <- function(value) {
-        ifelse(length(value) == 2, paste(value, collapse = "-"), value)
-      }
-      self$new_argument("selections", "Selections", selections_fmt, c(8, 12), selections_fmt)
+      self$new_argument("min_sectors", "Minimum selections", "{value}", 8)
+      self$new_argument("max_sectors", "Maximum selections", "{value}", 12)
       self$new_argument("rounds", "Selection rounds", "{value}", 2)
 
-      self$new_argument("slack", "Percentage memory increase", "minfork {value}", 0)
+      self$new_argument("slack", "Percentage memory increase", "slack {value}", 0)
 
       buffer_cmd_fmt <- function(value) {
         glue("{value}xbuf", value = ifelse(value, "", "no"))
@@ -156,7 +183,7 @@ ExclusiveSectorialSearchCommand <- R6Class(
 
       self$template <- c(
         "xss",
-        "{selections}+{rounds}",
+        "{min_sectors}-{max_sectors}+{rounds}",
         "{buffer}",
         "{slack}"
       )
