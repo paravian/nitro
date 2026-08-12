@@ -9,25 +9,14 @@ An \link[R6:R6Class]{R6} class that configures a random sectorial search in
 
 Random sectorial searches select sectors of the tree randomly and perform
 branch swapping within each sector. The size of sectors is drawn from a
-range defined by \verb{$min_size} and \verb{$max_size}, which are automatically
-scaled to the number of taxa when used within a \link{TreeAnalysis} via
-\code{\link[=set_tree_search]{set_tree_search()}}. This wraps the \code{sectsch} TNT command with the \code{rss}
-subcommand.
+range defined by \verb{$min_size} and \verb{$max_size}. This wraps the \code{sectsch} TNT
+command with the \code{rss} subcommand.
 }
 \details{
-\subsection{Automatic sector sizing}{
-
-When \verb{$min_size} and \verb{$max_size} are left at their default value of
-\code{"auto"}, \code{\link[=set_tree_search]{set_tree_search()}} will automatically set both to
-\code{min(ceiling(n_taxa / 2), 45)} based on the number of taxa in the
-associated \link{TreeAnalysis}. If using this class outside of a
-\link{TreeAnalysis}, set these values manually.
-}
-
 \subsection{Default values}{\tabular{ll}{
    Parameter \tab Default \cr
-   \code{min_size} \tab \code{"auto"} \cr
-   \code{max_size} \tab \code{"auto"} \cr
+   \code{min_size} \tab \code{35} \cr
+   \code{max_size} \tab \code{55} \cr
    \code{selection_factor} \tab \code{50} \cr
    \code{increase} \tab \code{100} \cr
    \code{small_starts} \tab \code{3} \cr
@@ -58,8 +47,8 @@ a \link{CommandQueue} and, when \verb{$set_only} is \code{FALSE}, also enqueues 
 rss <- RandomSectorialSearchCommand$new()
 
 # Set sector sizes manually (required outside of a TreeAnalysis)
-rss$min_size <- 10
-rss$max_size <- 30
+rss$min_size <- 20
+rss$max_size <- 25
 
 # Adjust search intensity
 rss$selection_factor <- 100
@@ -70,8 +59,8 @@ rss$render()
 
 }
 \references{
-Goloboff, P. A., Farris, J. S., & Nixon, K. C. (2008). TNT, a free
-program for phylogenetic analysis. \emph{Cladistics}, 24(5), 774--786.
+Goloboff, P. A., Farris, J. S., & Nixon, K. C. (2008). TNT, a free program
+for phylogenetic analysis. \emph{Cladistics}, 24(5), 774--786.
 }
 \seealso{
 \itemize{
@@ -91,19 +80,13 @@ including sectorial searches.
 \section{Active bindings}{
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
-    \item{\code{min_size}}{[\code{integer(1)} or \code{"auto"}]\cr
-The minimum size (number of taxa) of randomly selected sectors.
-Must be an integer of at least 5, and no greater than \verb{$max_size}.
-When set to \code{"auto"} (default), the value is determined
-automatically from the number of taxa when used within a
-\link{TreeAnalysis}. See \strong{Details}.}
+    \item{\code{min_size}}{[\code{integer(1)} or \code{NULL}]\cr
+The minimum size (number of taxa) of randomly selected sectors. Must be
+an integer greater than or equal to 5 and no greater than \verb{$max_size}.}
 
-    \item{\code{max_size}}{[\code{integer(1)} or \code{"auto"}]\cr
-The maximum size (number of taxa) of randomly selected sectors.
-Must be an integer of at least 5, and no less than \verb{$min_size}.
-When set to \code{"auto"} (default), the value is determined
-automatically from the number of taxa when used within a
-\link{TreeAnalysis}. See \strong{Details}.}
+    \item{\code{max_size}}{[\code{integer(1)} or \code{NULL}]\cr
+The maximum size (number of taxa) of randomly selected sectors. Must be
+an integer greater than or equal to 5 and no less than \verb{$min_size}.}
 
     \item{\code{selection_factor}}{[\code{integer(1)}]\cr
 The maximum number of random sector selections to perform for the
@@ -169,12 +152,10 @@ set them manually.
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{min_size}}{[\code{integer(1)} or \code{"auto"}]\cr
-Minimum sector size in taxa (default: \code{"auto"}). See the
-\verb{$min_size} field.}
-      \item{\code{max_size}}{[\code{integer(1)} or \code{"auto"}]\cr
-Maximum sector size in taxa (default: \code{"auto"}). See the
-\verb{$max_size} field.}
+      \item{\code{min_size}}{[\code{integer(1)}]\cr
+Minimum sector size in taxa. See the \verb{$min_size} field.}
+      \item{\code{max_size}}{[\code{integer(1)}]\cr
+Maximum sector size in taxa. See the \verb{$max_size} field.}
       \item{\code{selection_factor}}{[\code{integer(1)}]\cr
 Maximum number of random sector selections (default: \code{50}). See
 the \verb{$selection_factor} field.}

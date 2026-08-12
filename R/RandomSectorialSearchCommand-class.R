@@ -6,24 +6,15 @@
 #'
 #' Random sectorial searches select sectors of the tree randomly and perform
 #' branch swapping within each sector. The size of sectors is drawn from a
-#' range defined by `$min_size` and `$max_size`, which are automatically
-#' scaled to the number of taxa when used within a [TreeAnalysis] via
-#' [set_tree_search()]. This wraps the `sectsch` TNT command with the `rss`
-#' subcommand.
+#' range defined by `$min_size` and `$max_size`. This wraps the `sectsch` TNT
+#' command with the `rss` subcommand.
 #'
 #' @details
-#' ## Automatic sector sizing
-#' When `$min_size` and `$max_size` are left at their default value of
-#' `"auto"`, [set_tree_search()] will automatically set both to
-#' `min(ceiling(n_taxa / 2), 45)` based on the number of taxa in the
-#' associated [TreeAnalysis]. If using this class outside of a
-#' [TreeAnalysis], set these values manually.
-#'
 #' ## Default values
 #' | Parameter          | Default  |
 #' |--------------------|----------|
-#' | `min_size`         | `"auto"` |
-#' | `max_size`         | `"auto"` |
+#' | `min_size`         | `35`   |
+#' | `max_size`         | `55`   |
 #' | `selection_factor` | `50`     |
 #' | `increase`         | `100`    |
 #' | `small_starts`     | `3`      |
@@ -53,16 +44,16 @@
 #'   [TreeAnalysis]; handles automatic sector sizing.
 #'
 #' @references
-#' Goloboff, P. A., Farris, J. S., & Nixon, K. C. (2008). TNT, a free
-#' program for phylogenetic analysis. *Cladistics*, 24(5), 774--786.
+#' Goloboff, P. A., Farris, J. S., & Nixon, K. C. (2008). TNT, a free program
+#' for phylogenetic analysis. *Cladistics*, 24(5), 774--786.
 #'
 #' @examples
 #' # Create with default (automatic) sector sizing
 #' rss <- RandomSectorialSearchCommand$new()
 #'
 #' # Set sector sizes manually (required outside of a TreeAnalysis)
-#' rss$min_size <- 10
-#' rss$max_size <- 30
+#' rss$min_size <- 20
+#' rss$max_size <- 25
 #'
 #' # Adjust search intensity
 #' rss$selection_factor <- 100
@@ -71,7 +62,7 @@
 #' # Generate the TNT command
 #' rss$render()
 #'
-#' @importFrom checkmate assert asInt assert_int check_int check_flag check_null check_string makeAssertCollection test_int test_true
+#' @importFrom checkmate asInt check_int check_flag check_null check_string makeAssertCollection test_int test_true
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom R6 R6Class
@@ -80,64 +71,48 @@ RandomSectorialSearchCommand <- R6Class(
   "RandomSectorialSearchCommand",
   inherit = SectorialSearchCommand,
   active = list(
-    #' @field min_size \[`integer(1)` or `"auto"`\]\cr
-    #'   The minimum size (number of taxa) of randomly selected sectors.
-    #'   Must be an integer of at least 5, and no greater than `$max_size`.
-    #'   When set to `"auto"` (default), the value is determined
-    #'   automatically from the number of taxa when used within a
-    #'   [TreeAnalysis]. See **Details**.
+    #' @field min_size \[`integer(1)` or `NULL`\]\cr
+    #'   The minimum size (number of taxa) of randomly selected sectors. Must be
+    #'   an integer greater than or equal to 5 and no greater than `$max_size`.
     min_size = function(value) {
       label <- "min_size"
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
         coll <- makeAssertCollection()
-        assert(
-          check_string(value, pattern = "auto"),
-          check_int(value, lower = 5),
-          add = coll
-        )
-
-        if (test_int(private$.max_size)) {
-          assert_int(value, upper = private$.max_size, add = coll)
+        assert_int(value, lower = 5, add = coll)
+        if (!test_null(self$max_size)) {
+          assert_int(value, upper = self$max_size, add = coll)
         }
 
         if (!coll$isEmpty()) {
-          err <- coll$getMessages()
+          val_check <- coll$getMessages()
           cli_abort(c("{.arg min_size} must be a valid integer",
-            "x" = err
+            "x" = val_check
           ))
         }
 
         self$set_argument_value(label, value)
       }
     },
-    #' @field max_size \[`integer(1)` or `"auto"`\]\cr
-    #'   The maximum size (number of taxa) of randomly selected sectors.
-    #'   Must be an integer of at least 5, and no less than `$min_size`.
-    #'   When set to `"auto"` (default), the value is determined
-    #'   automatically from the number of taxa when used within a
-    #'   [TreeAnalysis]. See **Details**.
+    #' @field max_size \[`integer(1)` or `NULL`\]\cr
+    #'   The maximum size (number of taxa) of randomly selected sectors. Must be
+    #'   an integer greater than or equal to 5 and no less than `$min_size`.
     max_size = function(value) {
       label <- "max_size"
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
         coll <- makeAssertCollection()
-        assert(
-          check_string(value, pattern = "auto"),
-          check_int(value, lower = 5),
-          add = coll
-        )
-
-        if (test_int(private$.min_size)) {
-          assert_int(value, upper = private$.min_size, add = coll)
+        assert_int(value, lower = 5, add = coll)
+        if (!test_null(self$min_size)) {
+          assert_int(value, lower = self$min_size, add = coll)
         }
 
         if (!coll$isEmpty()) {
-          err <- coll$getMessages()
+          val_check <- coll$getMessages()
           cli_abort(c("{.arg max_size} must be a valid integer",
-            "x" = err
+            "x" = val_check
           ))
         }
 
@@ -206,12 +181,10 @@ RandomSectorialSearchCommand <- R6Class(
     #' automatically from the number of taxa. If using this class directly,
     #' set them manually.
     #'
-    #' @param min_size \[`integer(1)` or `"auto"`\]\cr
-    #'   Minimum sector size in taxa (default: `"auto"`). See the
-    #'   `$min_size` field.
-    #' @param max_size \[`integer(1)` or `"auto"`\]\cr
-    #'   Maximum sector size in taxa (default: `"auto"`). See the
-    #'   `$max_size` field.
+    #' @param min_size \[`integer(1)`\]\cr
+    #'   Minimum sector size in taxa. See the `$min_size` field.
+    #' @param max_size \[`integer(1)`\]\cr
+    #'   Maximum sector size in taxa. See the `$max_size` field.
     #' @param selection_factor \[`integer(1)`\]\cr
     #'   Maximum number of random sector selections (default: `50`). See
     #'   the `$selection_factor` field.
@@ -239,15 +212,8 @@ RandomSectorialSearchCommand <- R6Class(
         set_only = set_only
       )
 
-      min_size_cmd_fmt <- function(value, argument) {
-        ifelse(test_int(value), glue("minsize {value}"), "minsize 0")
-      }
-      self$new_argument("min_size", "Minimum selection size", min_size_cmd_fmt, "auto")
-
-      max_size_cmd_fmt <- function(value, argument) {
-        ifelse(test_int(value), glue("maxsize {value}"), "maxsize 0")
-      }
-      self$new_argument("max_size", "Maximum selection size", max_size_cmd_fmt, "auto")
+      self$new_argument("min_size", "Minimum sector size", "{value}", 35)
+      self$new_argument("max_size", "Maximum sector size", "{value}", 55)
       self$new_argument("selection_factor", "Maximum random selections", "selfact {value}", 50)
       self$new_argument("increase", "Selection increase factor", "increase {value}", 100)
       self$new_argument("small_starts", "Small sector search rounds", "starts {value}", 3)
