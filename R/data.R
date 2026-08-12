@@ -217,3 +217,61 @@ NULL
 #' @aliases gatesy_1997_12s.nex gatesy_1997_16s.nex
 NULL
 
+#' Gentry (1992) Bovid Skeletal Character Matrix
+#'
+#' @description
+#' A discrete morphological character matrix of 112 skeletal characters scored
+#' for 27 extant bovid species, from the tribal and subfamilial classification
+#' of Gentry (1992). Provided as a Nexus file.
+#'
+#' @details
+#' ## File
+#' `gentry_1992.nex` — a Nexus-format file readable by
+#' [TreeTools::ReadAsPhyDat()].
+#'
+#' ## Contents
+#' * **Taxa:** 27 extant bovid species, with one species included from most
+#'   tribes as a typical or unspecialised representative.
+#' * **Characters:** 112 discrete skeletal characters covering both cranial and
+#'   postcranial characters. Seventeen characters have an intermediate state in
+#'   addition to the primitive and derived conditions.
+#'
+#' ## Ordered characters
+#' The following characters are ordered as prescribed by Gentry (1992) and
+#' should be passed to the `ordered` argument of `create_matrix()` when loading
+#' this dataset for combined analysis:
+#'
+#' Characters 1, 5, 10, 11, 18, 21, 23, 25, 26, 29, 32, 43, 45, 49,
+#' 55, 68, 73.
+#'
+#' ## Loading
+#' ```r
+#' library(TreeTools)
+#'
+#' nex_path <- system.file("extdata", "gentry_1992.nex",
+#'                         package = "nitro")
+#' morph <- ReadAsPhyDat(nex_path) |>
+#'   create_matrix(
+#'     ordered = c(1, 5, 10, 11, 18, 21, 23, 25, 26, 29, 32, 43, 45,
+#'                 49, 55, 68, 73)
+#'   )
+#' ```
+#'
+#' @format A Nexus file containing a discrete morphological character matrix
+#'   with 27 taxa as rows and 112 skeletal characters as columns. Character
+#'   states are coded as integers; multistate characters are ordered as
+#'   prescribed by Gentry (1992).
+#'
+#' @source Gentry, A. W. (1992). The subfamilies and tribes of the
+#'   family Bovidae. *Mammal Review*, 22(1), 1--32.
+#'   \doi{10.1111/j.1365-2907.1992.tb00116.x}
+#'
+#' @seealso
+#' * [create_matrix()] — converts the parsed data into a [DiscreteMatrix].
+#' * [`gatesy_1997`] — the molecular partitions combined with this matrix.
+#' * [Molecular and Morphological Analysis](molecular-morphology.html) — a
+#'   worked example of the complete combined analysis workflow.
+#'
+#' @name gentry_1992
+#' @aliases gentry_1992.nex
+NULL
