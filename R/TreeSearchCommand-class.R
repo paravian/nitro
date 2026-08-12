@@ -66,6 +66,9 @@ TreeSearchCommand <- R6Class(
         if (self$set_only & "starting trees" %in% requires) {
           requires <- requires[!requires == "starting trees"]
         }
+        if (length(requires) == 0) {
+          requires <- NULL
+        }
         return(requires)
       }
       cli_abort(c("{.var requires} is a read-only attribute."))
