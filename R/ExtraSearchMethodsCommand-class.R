@@ -443,7 +443,7 @@ ExtraSearchMethodsCommand <- R6Class(
       self$new_argument("consense_times", "Number of consensus rounds", consense_cmd_fmt, 0)
 
       keep_all_cmd_fmt <- function(value) {
-        glue("{value}keepall", value = ifelse(keep_all, "", "no"))
+        glue("{value}keepall", value = ifelse(value, "", "no"))
       }
       yes_no_pty_fmt <- function(value) {
         ifelse(value, "yes", "no")
@@ -451,7 +451,7 @@ ExtraSearchMethodsCommand <- R6Class(
       self$new_argument("keep_all", "Keep all trees", keep_all_cmd_fmt, FALSE, yes_no_pty_fmt)
 
       multiply_cmd_fmt <- function(value) {
-        glue("{value}multiply", value = ifelse(keep_all, "", "no"))
+        glue("{value}multiply", value = ifelse(value, "", "no"))
       }
       self$new_argument("multiply", "Multiply trees by fusing", multiply_cmd_fmt, TRUE, yes_no_pty_fmt)
 
