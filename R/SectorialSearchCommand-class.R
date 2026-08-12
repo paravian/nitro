@@ -74,5 +74,37 @@ SectorialSearchCommand <- R6Class(
         self$set_argument_value(label, value)
       }
     }
+  ),
+  public = list(
+    #' @description
+    #' Create a new `SectorialSearchCommand` object.
+    #'
+    #' @param name \[`character(1)`\]\cr
+    #'   The TNT command name. See the `$name` field.
+    #' @param description \[`character(1)`\]\cr
+    #'   A human-readable description. See the `$description` field.
+    #' @param set_only \[`logical(1)`\]\cr
+    #'   Configure-only mode (default: `FALSE`). See the `$set_only` field.
+    #'
+    #' @return A new `SectorialSearchCommand` object.
+    initialize = function(name, description, set_only = FALSE) {
+      super$initialize(
+        name = name,
+        description = description,
+        set_only = set_only
+      )
+
+      validate_topology <- function(value) {
+        val_check <- check_class(value, "ReadTreesCommand")
+
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
+        }
+
+        value
+      }
+
+      self$new_dependency("starting trees", TRUE, validate_topology)
+    }
   )
 )

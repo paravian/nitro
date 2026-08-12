@@ -61,6 +61,7 @@ searches. Must be a non-negative integer.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-SectorialSearchCommand-initialize}{\code{SectorialSearchCommand$new()}}
     \item \href{#method-SectorialSearchCommand-clone}{\code{SectorialSearchCommand$clone()}}
   }
 }
@@ -76,10 +77,36 @@ searches. Must be a non-negative integer.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="enqueue"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-enqueue'><code>TreeSearchCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="format"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-format'><code>TreeSearchCommand$format()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="initialize"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-initialize'><code>TreeSearchCommand$initialize()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="render"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-render'><code>TreeSearchCommand$render()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-SectorialSearchCommand-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-SectorialSearchCommand-initialize}{}}}
+\subsection{\code{SectorialSearchCommand$new()}}{
+  Create a new \code{SectorialSearchCommand} object.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{SectorialSearchCommand$new(name, description, set_only = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{[\code{character(1)}]\cr
+The TNT command name. See the \verb{$name} field.}
+      \item{\code{description}}{[\code{character(1)}]\cr
+A human-readable description. See the \verb{$description} field.}
+      \item{\code{set_only}}{[\code{logical(1)}]\cr
+Configure-only mode (default: \code{FALSE}). See the \verb{$set_only} field.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A new \code{SectorialSearchCommand} object.
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-SectorialSearchCommand-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-SectorialSearchCommand-clone}{}}}
