@@ -91,7 +91,7 @@
 #' }
 #'
 #' @importFrom checkmate asInt assertInt check_character check_flag check_int check_multi_class check_null check_string check_subset test_class test_null test_true
-#' @importFrom cli cli_abort cli_alert_warning cli_text col_grey
+#' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
@@ -201,17 +201,17 @@ ResamplingCommand <- R6Class(
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
+        if (self$method == "bootstrap") {
+          cli_abort("{.arg probability} is not compatible with bootstrap resampling analyses.")
+        }
+
         val_check <- check_int(value, lower = 0, upper = 99)
-        if (!isTRUE(val_check)) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg probability} must be an integer.",
             "x" = val_check
           ))
         }
 
-        if (self$method == "bootstrap") {
-          cli_alert_warning("{.arg probability} is not applicable to bootstrap resampling analyses, ignoring request.")
-          value <- NULL
-        }
         self$set_argument_value(label, value)
       }
     },
@@ -351,15 +351,16 @@ ResamplingCommand <- R6Class(
         freq_summ_pty_fmt
       )
 
-      for (argument in private$.arguments) {
-        self[[argument$label]] <- argument$default_value
-      }
-
       all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")
 
       for (argument in private$.arguments) {
         arg_val <- try(get(argument$label), silent = TRUE)
+        if (!test_null(self$method)) {
+          if (self$method == "bootstrap" & argument$label == "probability"){
+            next
+          }
+        }
         if (test_class(arg_val, "try-error")) {
           arg_val <- argument$default_value
         }
