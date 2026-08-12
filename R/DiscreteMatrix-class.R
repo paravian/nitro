@@ -94,7 +94,7 @@ DiscreteMatrix <- R6Class(
             str_to_lower()
           if (data_type == "user") {
             noncoding <- c("?", "-")
-            symbols <- value$symbols %>%
+            symbols <- self$symbols %>%
               {
                 .[!. %in% noncoding]
               }
