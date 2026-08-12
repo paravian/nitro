@@ -213,12 +213,10 @@ TreeHybridizingCommand <- R6Class(
       )
 
       validate_topology <- function(value) {
-        if (!test_null(value)) {
-          val_check <- check_class(value, "ReadTreesCommand")
+        val_check <- check_class(value, "ReadTreesCommand")
 
-          if (!test_true(val_check)) {
-            cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
-          }
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
         }
 
         value

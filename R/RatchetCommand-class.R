@@ -198,18 +198,16 @@ RatchetCommand <- R6Class(
       )
 
       validate_topology <- function(value) {
-        if (!test_null(value)) {
-          val_check <- check_class(value, "ReadTreesCommand")
+        val_check <- check_class(value, "ReadTreesCommand")
 
-          if (!test_true(val_check)) {
-            cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
-          }
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
         }
 
         value
       }
 
-      self$new_dependency("starting trees", FALSE, validate_topology)
+      self$new_dependency("starting trees", TRUE, validate_topology)
 
       all_labels <- sapply(private$.arguments, getElement, "label")
       self$template <- paste("{", all_labels, "}", sep = "")

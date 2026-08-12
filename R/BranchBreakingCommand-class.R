@@ -67,7 +67,6 @@
 #' @importFrom checkmate asInt check_choice check_flag check_int test_true
 #' @importFrom cli cli_abort cli_text col_grey col_red style_italic
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_to_upper
 #' @export
@@ -293,12 +292,10 @@ BranchBreakingCommand <- R6Class(
       self$template <- paste("{", all_labels, "}", sep = "")
 
       validate_topology <- function(value) {
-        if (!test_null(value)) {
-          val_check <- check_class(value, "ReadTreesCommand")
+        val_check <- check_class(value, "ReadTreesCommand")
 
-          if (!test_true(val_check)) {
-            cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
-          }
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg value} must be a {.cls ReadTreesCommand} object"))
         }
 
         value
