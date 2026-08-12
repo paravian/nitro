@@ -172,7 +172,7 @@ TreeAnalysis <- R6Class(
         return(private$.inactive_taxa)
       } else {
         all_taxa <- sapply(private$.data, getElement, "taxa") %>%
-          as.vector() %>%
+          unlist() %>%
           unique()
 
         coll <- makeAssertCollection()
@@ -241,7 +241,7 @@ TreeAnalysis <- R6Class(
         return(private$.outgroup)
       } else {
         all_taxa <- sapply(self$data, getElement, "taxa") %>%
-          as.vector() %>%
+          unlist() %>%
           unique()
 
         coll <- makeAssertCollection()

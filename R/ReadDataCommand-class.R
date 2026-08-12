@@ -202,7 +202,7 @@ ReadDataCommand <- R6Class(
     #' @return A character vector of TNT command lines.
     render = function(...) {
       all_taxa <- sapply(self$data, getElement, "taxa") %>%
-        as.vector() %>%
+        unlist() %>%
         unique()
 
       n_char <- sapply(self$data, getElement, "n_characters") %>%

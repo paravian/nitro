@@ -164,7 +164,7 @@ TreePlottingCommand <- R6Class(
       matrix <- self$get_dependency("matrix")
 
       all_taxa <- sapply(matrix$data, getElement, "taxa") %>%
-        as.vector() %>%
+        unlist() %>%
         unique()
 
       tax_idx <- attr(phy, "TipLabel") %>%
