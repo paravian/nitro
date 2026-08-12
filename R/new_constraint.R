@@ -153,7 +153,7 @@ set_constraint <- function(tree_analysis, ...) {
   }
 
   constraint_obj <- TopologicalConstraintsCommand$new(
-    constraints = list(...)
+    constraints = ...
   )
 
   ta <- tree_analysis$clone(deep = TRUE)
