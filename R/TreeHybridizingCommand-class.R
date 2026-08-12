@@ -166,7 +166,7 @@ TreeHybridizingCommand <- R6Class(
     #' @param rounds \[`integer(1)`\]\cr
     #'   The number of hybridizing rounds (default: `1`). See the `$rounds`
     #'   field.
-    #' @param hybridization \[`integer(1)`\]\cr
+    #' @param hybridizations \[`integer(1)`\]\cr
     #'   The number of hybridizations per round (default: `1000`). See the
     #'   `$hybridizations` field.
     #' @param best_trees \[`integer(1)`\]\cr
@@ -180,7 +180,7 @@ TreeHybridizingCommand <- R6Class(
     #'  `15`). See tbe `sample_factor` field.
     #'
     #' @return A new `TreeHybridizingCommand` object.
-    initialize = function(rounds, hybridization, best_trees, replace,
+    initialize = function(rounds, hybridizations, best_trees, replace,
                           sample_factor, set_only = FALSE) {
       super$initialize(
         name = "tfuse",

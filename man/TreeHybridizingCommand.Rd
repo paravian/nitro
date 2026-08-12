@@ -137,7 +137,7 @@ the active bindings.
     \if{html}{\out{<div class="r">}}
     \preformatted{TreeHybridizingCommand$new(
   rounds,
-  hybridization,
+  hybridizations,
   best_trees,
   replace,
   sample_factor,
@@ -151,7 +151,7 @@ the active bindings.
       \item{\code{rounds}}{[\code{integer(1)}]\cr
 The number of hybridizing rounds (default: \code{1}). See the \verb{$rounds}
 field.}
-      \item{\code{hybridization}}{[\code{integer(1)}]\cr
+      \item{\code{hybridizations}}{[\code{integer(1)}]\cr
 The number of hybridizations per round (default: \code{1000}). See the
 \verb{$hybridizations} field.}
       \item{\code{best_trees}}{[\code{integer(1)}]\cr
