@@ -226,7 +226,7 @@ BranchSupportCommand <- R6Class(
 
         subopt_cmd <- SuboptimalCommand$new()
 
-        for (idx in seq(buf_steps)) {
+        for (idx in seq_along(buf_steps)) {
           subopt_cmd$absolute_threshold <- subopt_steps[idx]
           buffer_cmd$size <- buf_steps[idx]
 
