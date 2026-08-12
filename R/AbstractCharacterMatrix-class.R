@@ -32,9 +32,11 @@
 #'
 #' @keywords internal
 #' @importFrom checkmate assert check_numeric check_null makeAssertCollection test_null test_true
-#' @importFrom cli cli_abort
-#' @importFrom dplyr across everything group_by mutate where
+#' @importFrom cli cli_abort pluralize qty
+#' @importFrom dplyr across everything group_by mutate reframe rowwise where
 #' @importFrom R6 R6Class
+#' @importFrom stringr str_to_lower str_replace
+#' @importFrom tibble tibble
 AbstractCharacterMatrix <- R6Class(
   "AbstractCharacterMatrix",
   private = list(
@@ -162,12 +164,16 @@ c.AbstractCharacterMatrix <- function(...) {
 print.MultiCharacterMatrix <- function(x, ...) {
   cli_text(col_grey("# Multiple ", style_italic(col_red("nitro")), " character matrices"))
 
-  which_mtx <- sapply(x, function(x) class(x)[1]) %>%
+  which_mtx <- sapply(x, function(x) class(x)[1]) |>
     table()
-  names(which_mtx) <- names(which_mtx) %>%
-    str_to_lower() %>%
-    str_replace("(matrix)", " \\1")
-  which_mtx <- glue("* {which_mtx} {names(which_mtx)}") %>%
+
+  names(which_mtx) <- names(which_mtx) |>
+    str_to_lower() |>
+    str_remove("matrix")
+
+  which_mtx <- tibble(count = as.vector(which_mtx), type = names(which_mtx)) |>
+    rowwise() |>
+    reframe(label = pluralize("* {count} {type} {qty(count)}matri{?x/ces}")) |>
     paste(collapse = "\n")
 
   cat("\n", which_mtx, sep = "")
