@@ -13,8 +13,6 @@
 #' `$render()` produces a string of the form
 #' `ccode ] {inactive_indices} + {ordered_indices};`
 #' where `]` marks inactive characters and `+` marks ordered characters.
-#' Either group is omitted when `NULL`. Returns `NULL` when both are
-#' `NULL`.
 #'
 #' ## Queue integration
 #' Calling `$enqueue()` adds this command to a [CommandQueue] at priority
@@ -150,10 +148,10 @@ CharacterCodingCommand <- R6Class(
     #' This command is created automatically from [DiscreteMatrix]. Direct
     #' instantiation is rarely necessary.
     #'
-    #' @param inactive_indices \[`numeric` or `NULL`\]\cr
+    #' @param inactive_indices \[`integer`\]\cr
     #'   Indices of characters to mark as inactive. See the `$inactive_indices`
     #'   field.
-    #' @param ordered_indices \[`numeric` or `NULL`\]\cr
+    #' @param ordered_indices \[`integer`\]\cr
     #'   Indices of characters to mark as ordered. See the `$ordered_indices`
     #'   field.
     #' @param ... Optional named arguments passed to the constructor of the

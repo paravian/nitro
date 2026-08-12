@@ -17,8 +17,6 @@ directly.
 \verb{$render()} produces a string of the form
 \verb{ccode ] \{inactive_indices\} + \{ordered_indices\};}
 where \verb{]} marks inactive characters and \code{+} marks ordered characters.
-Either group is omitted when \code{NULL}. Returns \code{NULL} when both are
-\code{NULL}.
 }
 
 \subsection{Queue integration}{
@@ -136,10 +134,10 @@ instantiation is rarely necessary.
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{inactive_indices}}{[\code{numeric} or \code{NULL}]\cr
+      \item{\code{inactive_indices}}{[\code{integer}]\cr
 Indices of characters to mark as inactive. See the \verb{$inactive_indices}
 field.}
-      \item{\code{ordered_indices}}{[\code{numeric} or \code{NULL}]\cr
+      \item{\code{ordered_indices}}{[\code{integer}]\cr
 Indices of characters to mark as ordered. See the \verb{$ordered_indices}
 field.}
       \item{\code{...}}{Optional named arguments passed to the constructor of the
