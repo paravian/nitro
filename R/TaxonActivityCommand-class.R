@@ -22,7 +22,7 @@
 #' * [TreeAnalysis] — sets inactive taxa via its `$inactive_taxa` field.
 #'
 #' @keywords internal
-#' @importFrom checkmate assert check_null check_string makeAssertCollection test_null
+#' @importFrom checkmate assert check_null check_character makeAssertCollection test_null
 #' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
 TaxonActivityCommand <- R6Class(
@@ -39,9 +39,9 @@ TaxonActivityCommand <- R6Class(
       if (missing(value)) {
         return(private$.inactive_taxa)
       } else {
-        val_check <- check_string(value, min.chars = 1)
+        val_check <- check_character(value, min.chars = 1)
 
-        if (!val_check) {
+        if (!test_true(val_check)) {
           cli_abort(c("{.arg inactive_taxa} must be either {.val NULL} or a valid string.",
             "x" = val_check
           ))
