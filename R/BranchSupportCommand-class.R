@@ -204,7 +204,7 @@ BranchSupportCommand <- R6Class(
     #'
     #' @return A [CommandQueue] object.
     enqueue = function(.queue, priority = 503) {
-      .queue <- super$enqueue(.queue, priority)
+      super$enqueue(.queue, priority)
 
       if (self$method == "suboptimal_sampling") {
         search_cmd <- self$get_dependency("tree search")
@@ -217,7 +217,7 @@ BranchSupportCommand <- R6Class(
           multiply_by(buf_size) |>
           sapply(floor)
 
-        if (search_cmd$set_only == TRUE) {
+        if (search_cmd$set_only) {
           search_cmd$set_only <- FALSE
         }
 
@@ -231,7 +231,7 @@ BranchSupportCommand <- R6Class(
           if (idx > 1) {
             buffer_cmd$enqueue(.queue, 502)
           }
-          search_cmd$enqueue(.queue, 502)
+          .queue$add(search_cmd, 502)
 
           subopt_cmd <- subopt_cmd$clone(deep = TRUE)
           buffer_cmd <- buffer_cmd$clone()
@@ -243,8 +243,6 @@ BranchSupportCommand <- R6Class(
         tree_cmd <- self$get_dependency("starting trees")
         tree_cmd$enqueue(.queue, 505)
       }
-
-      .queue
     },
     #' @description
     #' Create a new `BranchSupportCommand` object.
