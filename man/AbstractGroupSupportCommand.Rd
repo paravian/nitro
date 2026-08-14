@@ -81,20 +81,24 @@ symmetric resampling analyses.
 \if{html}{\out{<a id="method-AbstractGroupSupportCommand-enqueue"></a>}}
 \if{latex}{\out{\hypertarget{method-AbstractGroupSupportCommand-enqueue}{}}}
 \subsection{\code{AbstractGroupSupportCommand$enqueue()}}{
-  Add tree tagging and plotting commands to a \link{CommandQueue}.
+  Add group support, tree tagging and plotting commands to a
+\link{CommandQueue}.
 
 Adds \code{TreeTaggingCommand} objects at priorities \code{500}, \code{520}, and
 \code{601}. Subclasses should call \code{super$enqueue(.queue)} to add their own
 command.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{AbstractGroupSupportCommand$enqueue(.queue)}
+    \preformatted{AbstractGroupSupportCommand$enqueue(.queue, priority)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }
