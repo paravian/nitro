@@ -24,7 +24,6 @@ Imports:
     dplyr,
     glue,
     magrittr,
-    lubridate,
     processx,
     R6,
     stringr,

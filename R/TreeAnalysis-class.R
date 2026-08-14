@@ -96,7 +96,6 @@
 #' @importFrom cli cli_abort cli_alert_info cli_text col_grey col_red style_italic symbol
 #' @importFrom dplyr bind_rows if_else
 #' @importFrom glue glue
-#' @importFrom lubridate day hour minute second seconds_to_period
 #' @importFrom magrittr %>% %$% add and extract extract2
 #' @importFrom R6 R6Class
 #' @importFrom tibble tibble
