@@ -69,28 +69,12 @@ KeepTreesCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Unlike most command classes, an explicit `priority` argument is
-    #' required. Priority must be a non-negative integer in the range
-    #' `[0, 999]`.
-    #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
+    #' @param .queue A [CommandQueue] object.
     #' @param priority \[`integer(1)`\]\cr
-    #'   The priority at which to insert this command. Must be a
-    #'   non-negative integer no greater than `999`. Lower values execute
+    #'   The priority at which to insert this command. Lower values execute
     #'   first.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL, priority = NULL) {
-      val_check <- check_int(priority, lower = 0, upper = 999)
-      if (!test_true(val_check)) {
-        cli_abort(c("{.arg priority} must be a non-negative integer no greater than 999.",
-          "x" = val_check
-        ))
-      }
-      .queue <- super$enqueue(.queue)
-      .queue$add(self, priority)
-      .queue
+    enqueue = function(.queue, priority = 504) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `KeepTreesCommand` object.
