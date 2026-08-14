@@ -34,3 +34,6 @@ Imports:
 Config/roxygen2/version: 8.0.0
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
+Suggests: 
+    phangorn,
+    testthat (>= 3.0.0)
