@@ -203,10 +203,8 @@ BranchSupportCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 503)
+    enqueue = function(.queue, priority = 503) {
+      .queue <- super$enqueue(.queue, priority)
 
       if (self$method == "suboptimal_sampling") {
         search_cmd <- self$get_dependency("tree search")
@@ -215,9 +213,8 @@ BranchSupportCommand <- R6Class(
         buf_size <- buffer_cmd$size
 
         subopt_steps <- self$suboptimal_steps
-        buf_steps <- subopt_steps %>%
-          divide_by(max(.)) %>%
-          multiply_by(buf_size) %>%
+        buf_steps <- (subopt_steps / max(subopt_steps)) |>
+          multiply_by(buf_size) |>
           sapply(floor)
 
         if (search_cmd$set_only == TRUE) {
@@ -230,21 +227,21 @@ BranchSupportCommand <- R6Class(
           subopt_cmd$absolute_threshold <- subopt_steps[idx]
           buffer_cmd$size <- buf_steps[idx]
 
-          .queue$add(subopt_cmd, 502)
+          subopt_cmd$enqueue(.queue)
           if (idx > 1) {
-            .queue$add(buffer_cmd, 502)
+            buffer_cmd$enqueue(.queue, 502)
           }
-          .queue$add(search_cmd, 502)
+          search_cmd$enqueue(.queue, 502)
 
           subopt_cmd <- subopt_cmd$clone(deep = TRUE)
           buffer_cmd <- buffer_cmd$clone()
         }
 
         keep_cmd <- KeepTreesCommand$new(number = 0)
-        .queue$add(keep_cmd, 504)
+        keep_cmd$enqueue(.queue)
 
         tree_cmd <- self$get_dependency("starting trees")
-        .queue$add(tree_cmd, 505)
+        tree_cmd$enqueue(.queue, 505)
       }
 
       .queue
@@ -375,11 +372,11 @@ BranchSupportCommand <- R6Class(
     transform = function(output) {
       legend_re <- "Copied legends: \"Bremer supports \\(from (?<trees>[0-9]+) trees, cut (?<cutoff>[0-9]+)\\)"
 
-      output <- str_match_all(output, legend_re) %>%
-        Reduce(f = rbind) %>%
-        extract(, -1) %>%
-        t() %>%
-        as_tibble() %>%
+      output <- str_match_all(output, legend_re) |>
+        Reduce(f = rbind) |>
+        extract(, -1) |>
+        t() |>
+        as_tibble() |>
         mutate(
           method = "branch support",
           label = method,

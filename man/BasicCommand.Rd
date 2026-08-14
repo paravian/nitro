@@ -141,21 +141,21 @@ function used to assemble the command arguments.}
 \if{html}{\out{<a id="method-BasicCommand-enqueue"></a>}}
 \if{latex}{\out{\hypertarget{method-BasicCommand-enqueue}{}}}
 \subsection{\code{BasicCommand$enqueue()}}{
-  Add this command to a \link{CommandQueue}.
-
-The base implementation creates a new \link{CommandQueue} if none is
-supplied, or passes the existing queue through unchanged. Subclasses
-should override this method to add themselves (and any follow-up
-commands) to the queue.
+  Add this command to a \link{CommandQueue} at a specific priority. Subclasses
+should override this method to specify default command priorities add
+any additional commands to the queue.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{BasicCommand$enqueue(.queue = NULL)}
+    \preformatted{BasicCommand$enqueue(.queue, priority)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new one.}
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

@@ -241,17 +241,12 @@ ResamplingCommand <- R6Class(
     #' commands), then adds a `UniqueTreesCommand` at priority `600` and
     #' this command at priority `510`.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 510) {
+      super$enqueue(.queue, priority)
 
-      .queue$add(UniqueTreesCommand$new(), 600)
-      .queue$add(self, 510)
-
-      .queue
+      unique <- UniqueTreesCommand$new()
+      unique$enqueue(.queue)
     },
     #' @description
     #' Create a new `ResamplingCommand` object.

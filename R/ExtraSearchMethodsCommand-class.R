@@ -293,14 +293,12 @@ ExtraSearchMethodsCommand <- R6Class(
     #' executes at priority `501`.
     #'
     #' @param .queue A [CommandQueue] object.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    enqueue = function(.queue, priority = 501) {
+      .queue <- super$enqueue(.queue, priority)
 
       for (cmd in self$sectorial_search) {
         cmd$set_only <- TRUE
-        .queue$add(cmd, 500)
+        cmd$enqueue(.queue, 501)
       }
 
       if (self$tree_fusing$rounds > 0) {
@@ -319,8 +317,6 @@ ExtraSearchMethodsCommand <- R6Class(
         self$ratchet$set_only <- TRUE
         .queue$add(self$ratchet, 500)
       }
-
-      .queue
     },
     #' @description
     #' Format the command and all enabled sub-strategies as a summary table.

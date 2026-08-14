@@ -58,6 +58,7 @@ nodes as compatible with any resolution) when computing scores.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-HomoplasyTreeScoresCommand-enqueue}{\code{HomoplasyTreeScoresCommand$enqueue()}}
     \item \href{#method-HomoplasyTreeScoresCommand-initialize}{\code{HomoplasyTreeScoresCommand$new()}}
     \item \href{#method-HomoplasyTreeScoresCommand-transform}{\code{HomoplasyTreeScoresCommand$transform()}}
     \item \href{#method-HomoplasyTreeScoresCommand-clone}{\code{HomoplasyTreeScoresCommand$clone()}}
@@ -65,7 +66,6 @@ nodes as compatible with any resolution) when computing scores.}
 }
 \if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="enqueue"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-enqueue'><code>BasicCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="get_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-get_dependency'><code>BasicCommand$get_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="new_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-new_dependency'><code>BasicCommand$new_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="print"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-print'><code>BasicCommand$print()</code></a></span></li>
@@ -77,6 +77,30 @@ nodes as compatible with any resolution) when computing scores.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-HomoplasyTreeScoresCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-HomoplasyTreeScoresCommand-enqueue}{}}}
+\subsection{\code{HomoplasyTreeScoresCommand$enqueue()}}{
+  Add this command to a \link{CommandQueue}.
+
+Adds this command at priority \code{710} by default.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{HomoplasyTreeScoresCommand$enqueue(.queue, priority = 710)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-HomoplasyTreeScoresCommand-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-HomoplasyTreeScoresCommand-initialize}{}}}

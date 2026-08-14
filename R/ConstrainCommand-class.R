@@ -64,11 +64,8 @@ ConstrainCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 402)
-      .queue
+    enqueue = function(.queue, priority = 402) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `ConstrainCommand` object.

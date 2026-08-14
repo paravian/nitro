@@ -110,13 +110,16 @@ also enqueues a \link{CollapseTreesCommand} (priority \code{600}) and a
 \link{TreePlottingCommand} (priority \code{601}).
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{TreeSearchCommand$enqueue(.queue = NULL)}
+    \preformatted{TreeSearchCommand$enqueue(.queue, priority = 501)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new one.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

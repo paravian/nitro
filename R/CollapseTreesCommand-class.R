@@ -27,6 +27,18 @@ CollapseTreesCommand <- R6Class(
   inherit = BasicCommand,
   public = list(
     #' @description
+    #' Add this command to a [CommandQueue].
+    #'
+    #' Adds this command at priority `600` by default.
+    #'
+    #' @param .queue A [CommandQueue] object.
+    #' @param priority \[`integer(1)`\]\cr
+    #'   A non-negative integer controlling execution order. Lower values
+    #'   execute first.
+    enqueue = function (.queue, priority = 600) {
+      super$enqueue(.queue, priority)
+    },
+    #' @description
     #' Create a new `CollapseTreesCommand` object.
     #'
     #' @param ... Not used.

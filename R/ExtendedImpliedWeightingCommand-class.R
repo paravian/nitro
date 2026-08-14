@@ -159,16 +159,13 @@ ExtendedImpliedWeightingCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    enqueue = function(.queue, priority = 230) {
+      super$enqueue(.queue, priority)
 
       iw <- ImpliedWeightingCommand$new(
         concavity_constant = self$concavity_constant
       )
-      .queue <- iw$enqueue(.queue)
-
-      .queue$add(self, 230)
-      .queue
+      iw$enqueue(.queue)
     },
     #' @description
     #' Create a new `ExtendedImpliedWeightingCommand` object.

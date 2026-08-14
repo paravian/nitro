@@ -68,11 +68,8 @@ PossibleStepsCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 710)
-      .queue
+    enqueue = function(.queue, priority = 710) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `PossibleStepsCommand` object.

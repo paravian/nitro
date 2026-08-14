@@ -62,15 +62,15 @@ accepted. See \strong{Details} for the available options.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-TreeTaggingCommand-enqueue}{\code{TreeTaggingCommand$enqueue()}}
     \item \href{#method-TreeTaggingCommand-initialize}{\code{TreeTaggingCommand$new()}}
     \item \href{#method-TreeTaggingCommand-render}{\code{TreeTaggingCommand$render()}}
     \item \href{#method-TreeTaggingCommand-transform}{\code{TreeTaggingCommand$transform()}}
     \item \href{#method-TreeTaggingCommand-clone}{\code{TreeTaggingCommand$clone()}}
   }
 }
-\if{html}{\out{<details><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="enqueue"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-enqueue'><code>BasicCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="format"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-format'><code>BasicCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="get_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-get_dependency'><code>BasicCommand$get_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="new_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-new_dependency'><code>BasicCommand$new_dependency()</code></a></span></li>
@@ -78,6 +78,28 @@ accepted. See \strong{Details} for the available options.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="set_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-set_dependency'><code>BasicCommand$set_dependency()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeTaggingCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeTaggingCommand-enqueue}{}}}
+\subsection{\code{TreeTaggingCommand$enqueue()}}{
+  Add this command to a \link{CommandQueue}.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeTaggingCommand$enqueue(.queue, priority)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeTaggingCommand-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeTaggingCommand-initialize}{}}}

@@ -156,7 +156,7 @@ it at priority \code{160} along with a \code{HomoplasyTreeScoresCommand} at
 priority \code{710}. Then adds this command at priority \code{230}.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ExtendedImpliedWeightingCommand$enqueue(.queue = NULL)}
+    \preformatted{ExtendedImpliedWeightingCommand$enqueue(.queue, priority = 230)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -164,6 +164,9 @@ priority \code{710}. Then adds this command at priority \code{230}.
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
 one.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

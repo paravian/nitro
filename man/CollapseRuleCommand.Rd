@@ -99,7 +99,7 @@ accepted. See \strong{Details} for the available options. Defaults to
 Adds this command at priority \code{420}.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{CollapseRuleCommand$enqueue(.queue = NULL)}
+    \preformatted{CollapseRuleCommand$enqueue(.queue, priority = 420)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -107,6 +107,9 @@ Adds this command at priority \code{420}.
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
 one.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

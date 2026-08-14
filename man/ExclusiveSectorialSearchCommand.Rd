@@ -112,9 +112,9 @@ analysis cycle. Must be a non-negative integer.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="get_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-get_argument_value'><code>StandardCommand$get_argument_value()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="new_argument"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-new_argument'><code>StandardCommand$new_argument()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="enqueue"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-enqueue'><code>TreeSearchCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="format"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-format'><code>TreeSearchCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="render"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-render'><code>TreeSearchCommand$render()</code></a></span></li>
+  <li><span class="pkg-link" data-pkg="nitro" data-topic="SectorialSearchCommand" data-id="enqueue"><a href='../../nitro/html/SectorialSearchCommand.html#method-SectorialSearchCommand-enqueue'><code>SectorialSearchCommand$enqueue()</code></a></span></li>
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}

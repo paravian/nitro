@@ -92,22 +92,21 @@ ignored.}
 \subsection{\code{StateNumberCommand$enqueue()}}{
   Add this command to a \link{CommandQueue}.
 
-Adds this command at priority \code{200}.
+Adds this command at priority \code{200} by default.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{StateNumberCommand$enqueue(.queue = NULL)}
+    \preformatted{StateNumberCommand$enqueue(.queue, priority = 200)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
-one.}
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
-  }
-  \subsection{Returns}{
-    A \link{CommandQueue} object.
   }
 }
 

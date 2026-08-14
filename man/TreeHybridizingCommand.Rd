@@ -106,6 +106,7 @@ value. Must be a positive integer.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-TreeHybridizingCommand-enqueue}{\code{TreeHybridizingCommand$enqueue()}}
     \item \href{#method-TreeHybridizingCommand-initialize}{\code{TreeHybridizingCommand$new()}}
     \item \href{#method-TreeHybridizingCommand-clone}{\code{TreeHybridizingCommand$clone()}}
   }
@@ -120,11 +121,34 @@ value. Must be a positive integer.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="get_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-get_argument_value'><code>StandardCommand$get_argument_value()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="new_argument"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-new_argument'><code>StandardCommand$new_argument()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="enqueue"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-enqueue'><code>TreeSearchCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="format"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-format'><code>TreeSearchCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="TreeSearchCommand" data-id="render"><a href='../../nitro/html/TreeSearchCommand.html#method-TreeSearchCommand-render'><code>TreeSearchCommand$render()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeHybridizingCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeHybridizingCommand-enqueue}{}}}
+\subsection{\code{TreeHybridizingCommand$enqueue()}}{
+  Add this command to a \link{CommandQueue}.
+
+Adds this command at priority \code{500} by default.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeHybridizingCommand$enqueue(.queue, priority = 500)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreeHybridizingCommand-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-TreeHybridizingCommand-initialize}{}}}

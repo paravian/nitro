@@ -92,7 +92,7 @@ Enqueues a \code{TaxonNameCommand} and a \code{StateNumberCommand} before
 adding this command at priority \code{220}.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ReadDataCommand$enqueue(.queue = NULL)}
+    \preformatted{ReadDataCommand$enqueue(.queue, priority = 220)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -100,6 +100,9 @@ adding this command at priority \code{220}.
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
 one.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

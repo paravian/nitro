@@ -84,23 +84,19 @@ symmetric resampling analyses.
   Add tree tagging and plotting commands to a \link{CommandQueue}.
 
 Adds \code{TreeTaggingCommand} objects at priorities \code{500}, \code{520}, and
-\code{601}. Subclasses should call \code{super$enqueue(.queue)} before adding their
-own command.
+\code{601}. Subclasses should call \code{super$enqueue(.queue)} to add their own
+command.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{AbstractGroupSupportCommand$enqueue(.queue = NULL)}
+    \preformatted{AbstractGroupSupportCommand$enqueue(.queue)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
-one.}
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
     }
     \if{html}{\out{</div>}}
-  }
-  \subsection{Returns}{
-    A \link{CommandQueue} object.
   }
 }
 

@@ -61,17 +61,19 @@ be a positive integer.}
 \subsection{\code{TreeBufferCommand$enqueue()}}{
   Add this command to a \link{CommandQueue}.
 
-Adds this command at priority \code{400}.
+Adds this command at priority \code{400} by default.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{TreeBufferCommand$enqueue(.queue = NULL)}
+    \preformatted{TreeBufferCommand$enqueue(.queue, priority = 400)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
-one.}
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

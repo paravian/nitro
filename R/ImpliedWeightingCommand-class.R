@@ -85,14 +85,11 @@ ImpliedWeightingCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    enqueue = function(.queue, priority = 160) {
+      super$enqueue(.queue, priority)
 
       scores <- HomoplasyTreeScoresCommand$new()
-      .queue$add(scores, 710)
-
-      .queue$add(self, 160)
-      .queue
+      scores$enqueue(.queue)
     },
     #' @description
     #' Create a new `ImpliedWeightingCommand` object.

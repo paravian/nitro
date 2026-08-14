@@ -53,17 +53,11 @@ MemoryAllocationCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `140`.
+    #' Adds this command at priority `140` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 140)
-      .queue
+    #' @param .queue A [CommandQueue] object
+    enqueue = function(.queue, priority = 140) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `MemoryAllocateCommand` object.

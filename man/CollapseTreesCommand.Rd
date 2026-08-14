@@ -36,6 +36,7 @@ This command has no \verb{$enqueue()} override; it is added to a
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-CollapseTreesCommand-enqueue}{\code{CollapseTreesCommand$enqueue()}}
     \item \href{#method-CollapseTreesCommand-initialize}{\code{CollapseTreesCommand$new()}}
     \item \href{#method-CollapseTreesCommand-render}{\code{CollapseTreesCommand$render()}}
     \item \href{#method-CollapseTreesCommand-clone}{\code{CollapseTreesCommand$clone()}}
@@ -43,7 +44,6 @@ This command has no \verb{$enqueue()} override; it is added to a
 }
 \if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="enqueue"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-enqueue'><code>BasicCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="format"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-format'><code>BasicCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="get_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-get_dependency'><code>BasicCommand$get_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="new_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-new_dependency'><code>BasicCommand$new_dependency()</code></a></span></li>
@@ -52,6 +52,30 @@ This command has no \verb{$enqueue()} override; it is added to a
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="transform"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-transform'><code>BasicCommand$transform()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-CollapseTreesCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-CollapseTreesCommand-enqueue}{}}}
+\subsection{\code{CollapseTreesCommand$enqueue()}}{
+  Add this command to a \link{CommandQueue}.
+
+Adds this command at priority \code{600} by default.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{CollapseTreesCommand$enqueue(.queue, priority = 600)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-CollapseTreesCommand-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-CollapseTreesCommand-initialize}{}}}

@@ -71,7 +71,7 @@ CollapseRuleCommand <- R6Class(
       if (missing(value)) {
         return(self$get_argument_value(label))
       } else {
-        value <- pmatch(value, private$rules) %>%
+        value <- pmatch(value, private$rules) |>
           na.omit() %>%
           private$rules[.]
 
@@ -98,11 +98,8 @@ CollapseRuleCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 420)
-      .queue
+    enqueue = function(.queue, priority = 420) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `CollapseRuleCommand` object.

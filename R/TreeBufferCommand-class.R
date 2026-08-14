@@ -52,17 +52,13 @@ TreeBufferCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `400`.
+    #' Adds this command at priority `400` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
+    #' @param .queue A [CommandQueue] object.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 400)
-      .queue
+    enqueue = function(.queue, priority = 400) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `TreeBufferCommand` object.

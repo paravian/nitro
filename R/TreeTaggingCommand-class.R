@@ -85,6 +85,16 @@ TreeTaggingCommand <- R6Class(
   ),
   public = list(
     #' @description
+    #' Add this command to a [CommandQueue].
+    #'
+    #' @param .queue A [CommandQueue] object.
+    #' @param priority \[`integer(1)`\]\cr
+    #'   A non-negative integer controlling execution order. Lower values
+    #'   execute first.
+    enqueue = function(.queue, priority) {
+      super$enqueue(.queue, priority)
+    },
+    #' @description
     #' Create a new `TreeTaggingCommand` object.
     #'
     #' This command is created automatically by [AbstractGroupSupportCommand].

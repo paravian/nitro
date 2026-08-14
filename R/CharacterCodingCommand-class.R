@@ -106,17 +106,11 @@ CharacterCodingCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `410`.
+    #' Adds this command at priority `410` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 410)
-      .queue
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 401) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Format the command as a summary table.

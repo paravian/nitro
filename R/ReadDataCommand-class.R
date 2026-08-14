@@ -113,8 +113,8 @@ ReadDataCommand <- R6Class(
     #'   one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    enqueue = function(.queue, priority = 220) {
+      super$enqueue(.queue, priority)
 
       tax_name <- TaxonNameCommand$new(
         use_names = FALSE
@@ -132,9 +132,6 @@ ReadDataCommand <- R6Class(
 
       state_num <- StateNumberCommand$new(max_states, any_continuous)
       state_num$enqueue(.queue)
-
-      .queue$add(self, 220)
-      .queue
     },
     #' @description
     #' Format the command as a summary table.

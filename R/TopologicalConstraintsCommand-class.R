@@ -93,20 +93,14 @@ TopologicalConstraintsCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `401`.
+    #' Adds this command at priority `401` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 401) {
+      super$enqueue(.queue, priority)
 
       con_cmd <- ConstrainCommand$new(enable = TRUE)
-      .queue <- con_cmd$enqueue(.queue)
-
-      .queue$add(self, 401)
-      .queue
+      con_cmd$enqueue(.queue)
     },
     #' @description
     #' Format the command as a summary table.

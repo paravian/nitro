@@ -102,20 +102,16 @@ TreeSearchCommand <- R6Class(
     #' @param .queue A [CommandQueue] object, or `NULL` to create a new one.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 501)
+    enqueue = function(.queue, priority = 501) {
+      super$enqueue(.queue, priority)
 
       if (!self$set_only) {
         collapse_trees <- CollapseTreesCommand$new()
-        .queue$add(collapse_trees, 600)
+        collapse_trees$enqueue(.queue)
 
         plot_trees <- TreePlottingCommand$new(TRUE)
-        .queue$add(plot_trees, 601)
+        plot_trees$enqueue(.queue)
       }
-
-      .queue
     },
     #' @description
     #' Format the command as a summary table.

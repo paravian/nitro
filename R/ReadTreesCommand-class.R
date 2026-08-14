@@ -86,17 +86,13 @@ ReadTreesCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `230`.
+    #' Adds this command at priority `230` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
+    #' @param .queue A [CommandQueue] object.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 230)
-      .queue
+    enqueue = function(.queue, priority = 230) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `ReadTreesCommand` object.

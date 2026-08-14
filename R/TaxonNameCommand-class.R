@@ -82,15 +82,9 @@ TaxonNameCommand <- R6Class(
     #'
     #' Adds this command at priority `210`.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 210)
-      .queue
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 210) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `TaxonNameCommand` object.

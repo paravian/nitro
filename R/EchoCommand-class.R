@@ -50,17 +50,11 @@ EchoCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `100`.
+    #' Adds this command at priority `100` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 100) {
       .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 100)
-      .queue
     },
     #' @description
     #' Create a new `EchoCommand` object.

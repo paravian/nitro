@@ -53,22 +53,22 @@ AbstractGroupSupportCommand <- R6Class(
     #' Add tree tagging and plotting commands to a [CommandQueue].
     #'
     #' Adds `TreeTaggingCommand` objects at priorities `500`, `520`, and
-    #' `601`. Subclasses should call `super$enqueue(.queue)` before adding their
-    #' own command.
+    #' `601`. Subclasses should call `super$enqueue(.queue)` to add their own
+    #' command.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue) {
+      tag_start <- TreeTaggingCommand$new("start")
+      tag_start$enqueue(.queue, 500)
 
-      .queue$add(TreeTaggingCommand$new("start"), 500)
-      .queue$add(TreeTaggingCommand$new("stop"), 520)
-      .queue$add(TreeTaggingCommand$new("display"), 601)
-      .queue$add(TreePlottingCommand$new(TRUE), 601)
+      tag_stop <- TreeTaggingCommand$new("stop")
+      tag_stop$enqueue(.queue, 520)
 
-      .queue
+      tag_display <- TreeTaggingCommand$new("display")
+      tag_display$enqueue(.queue, 601)
+
+      tree_plot <- TreePlottingCommand$new(TRUE)
+      tree_plot$enqueue(.queue)
     },
     #' @description
     #' Create a new `AbstractGroupSupportCommand` object.

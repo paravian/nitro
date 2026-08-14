@@ -276,36 +276,26 @@ BasicCommand <- R6Class(
   ),
   public = list(
     #' @description
-    #' Add this command to a [CommandQueue].
+    #' Add this command to a [CommandQueue] at a specific priority. Subclasses
+    #' should override this method to specify default command priorities add
+    #' any additional commands to the queue.
     #'
-    #' The base implementation creates a new [CommandQueue] if none is
-    #' supplied, or passes the existing queue through unchanged. Subclasses
-    #' should override this method to add themselves (and any follow-up
-    #' commands) to the queue.
-    #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new one.
+    #' @param .queue A [CommandQueue] object.
+    #' @param priority \[`integer(1)`\]\cr
+    #'   A non-negative integer controlling execution order. Lower values
+    #'   execute first.
     #'
     #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      coll <- makeAssertCollection()
+    enqueue = function(.queue, priority) {
+      val_check <- check_class(.queue, "CommandQueue")
 
-      val_check <- assert(
-        check_class(.queue, "CommandQueue"),
-        check_null(.queue)
-      )
-
-      if (!coll$isEmpty()) {
-        val_check <- coll$getMessages()
-        cli_abort(c("{.arg .queue} must be a {.cls CommandQueue} object.",
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg .queue} must be either {.arg NULL} or a {.cls CommandQueue} object.",
           "x" = val_check
         ))
       }
 
-      if (test_null(.queue)) {
-        .queue <- CommandQueue$new()
-      }
-
-      .queue
+      .queue$add(self, priority)
     },
     #' @description
     #' Format the command as a summary table.

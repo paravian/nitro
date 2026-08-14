@@ -72,6 +72,18 @@ TreePlottingCommand <- R6Class(
   ),
   public = list(
     #' @description
+    #' Add this command to a [CommandQueue].
+    #'
+    #' Adds this command at priority `601` by default.
+    #'
+    #' @param .queue A [CommandQueue] object.
+    #' @param priority \[`integer(1)`\]\cr
+    #'   A non-negative integer controlling execution order. Lower values
+    #'   execute first.
+    enqueue = function(.queue, priority = 601) {
+      super$enqueue(.queue, priority)
+    },
+    #' @description
     #' Create a new `TreePlottingCommand` object.
     #'
     #' This command is created automatically by [TreeSearchCommand] and

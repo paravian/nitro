@@ -61,17 +61,11 @@ TreeStepsCommand <- R6Class(
     #' @description
     #' Add this command to a [CommandQueue].
     #'
-    #' Adds this command at priority `700`.
+    #' Adds this command at priority `700` by default.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
-    enqueue = function(.queue = NULL) {
-      .queue <- super$enqueue(.queue)
-
-      .queue$add(self, 700)
-      .queue
+    #' @param .queue A [CommandQueue] object.
+    enqueue = function(.queue, priority = 700) {
+      super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `TreeStepsCommand` object.

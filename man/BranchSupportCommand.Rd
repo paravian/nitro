@@ -182,7 +182,7 @@ trees before \code{bsupport} runs.
 }
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{BranchSupportCommand$enqueue(.queue = NULL)}
+    \preformatted{BranchSupportCommand$enqueue(.queue, priority = 503)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -190,6 +190,9 @@ trees before \code{bsupport} runs.
     \describe{
       \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
 one.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
     }
     \if{html}{\out{</div>}}
   }

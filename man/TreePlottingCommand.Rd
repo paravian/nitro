@@ -69,6 +69,7 @@ Whether to retrieve trees in parenthetic (Newick) notation.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
+    \item \href{#method-TreePlottingCommand-enqueue}{\code{TreePlottingCommand$enqueue()}}
     \item \href{#method-TreePlottingCommand-initialize}{\code{TreePlottingCommand$new()}}
     \item \href{#method-TreePlottingCommand-transform}{\code{TreePlottingCommand$transform()}}
     \item \href{#method-TreePlottingCommand-clone}{\code{TreePlottingCommand$clone()}}
@@ -76,7 +77,6 @@ Whether to retrieve trees in parenthetic (Newick) notation.}
 }
 \if{html}{\out{<details><summary>Inherited methods</summary>
 <ul>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="enqueue"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-enqueue'><code>BasicCommand$enqueue()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="get_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-get_dependency'><code>BasicCommand$get_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="new_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-new_dependency'><code>BasicCommand$new_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="print"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-print'><code>BasicCommand$print()</code></a></span></li>
@@ -88,6 +88,30 @@ Whether to retrieve trees in parenthetic (Newick) notation.}
   <li><span class="pkg-link" data-pkg="nitro" data-topic="StandardCommand" data-id="set_argument_value"><a href='../../nitro/html/StandardCommand.html#method-StandardCommand-set_argument_value'><code>StandardCommand$set_argument_value()</code></a></span></li>
 </ul>
 </details>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreePlottingCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-TreePlottingCommand-enqueue}{}}}
+\subsection{\code{TreePlottingCommand$enqueue()}}{
+  Add this command to a \link{CommandQueue}.
+
+Adds this command at priority \code{601} by default.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreePlottingCommand$enqueue(.queue, priority = 601)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
+      \item{\code{priority}}{[\code{integer(1)}]\cr
+A non-negative integer controlling execution order. Lower values
+execute first.}
+    }
+    \if{html}{\out{</div>}}
+  }
+}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-TreePlottingCommand-initialize"></a>}}
 \if{latex}{\out{\hypertarget{method-TreePlottingCommand-initialize}{}}}
