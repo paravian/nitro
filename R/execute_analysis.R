@@ -64,9 +64,6 @@
 #'   is added to the queue. Required when a [BranchSupportCommand] is
 #'   present, as the optimal trees must be reloaded into the buffer after
 #'   suboptimal sampling completes (default: `NULL`).
-#' @param timeout \[`integer(1)` or `NULL`\]\cr
-#'   The number of seconds to allow the analysis to run before
-#'   terminating. Currently reserved for future use (default: `NULL`).
 #'
 #' @return A [TreeAnalysisResults] object containing the trees and
 #'   associated statistics.

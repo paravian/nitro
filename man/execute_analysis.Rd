@@ -42,10 +42,6 @@ When supplied, a \link{ReadTreesCommand} with \code{provides = "starting trees"}
 is added to the queue. Required when a \link{BranchSupportCommand} is
 present, as the optimal trees must be reloaded into the buffer after
 suboptimal sampling completes (default: \code{NULL}).}
-
-\item{timeout}{[\code{integer(1)} or \code{NULL}]\cr
-The number of seconds to allow the analysis to run before
-terminating. Currently reserved for future use (default: \code{NULL}).}
 }
 \value{
 A \link{TreeAnalysisResults} object containing the trees and
