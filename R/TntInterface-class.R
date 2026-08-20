@@ -251,6 +251,12 @@ TntInterface <- R6Class(
         ))
       }
 
+      val_check <- check_file_exists(path)
+      if (!test_true(val_check)) {
+        cli_abort(c("{.arg path} must be a valid path.",
+                    "x" = val_check
+        ))
+      }
       self$path <- normalizePath(path)
       self$platform <- .Platform$OS.type
       if (self$platform == "unix") {
@@ -273,9 +279,10 @@ TntInterface <- R6Class(
       pul_warned <- FALSE
       proc_read <- TRUE
       buffer <- character()
+      n_no_prompt <- 1
       while (!ready) {
         if (proc_read) {
-          proc_poll <- self$process$poll_io(5000)
+          proc_poll <- self$process$poll_io(100)
 
           conn_id <- names(proc_poll)[proc_poll == "ready"]
 
@@ -295,6 +302,12 @@ TntInterface <- R6Class(
           prompt_match <- sapply(private$prompts[1:3], str_detect, string = buffer)
 
           if (!any(prompt_match)) {
+            n_no_prompt <- n_no_prompt + 1
+            if (n_no_prompt > 5) {
+              cli_abort(c("No TNT output received; aborting attempts to create interface.",
+                "i" = "Check that {.arg path} matches the location for a TNT executable file."
+              ))
+            }
             next
           }
 
