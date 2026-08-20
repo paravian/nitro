@@ -44,8 +44,8 @@ CharacterCodingCommand <- R6Class(
 
         assert(
           assert(
-            check_numeric(value, lower = 1, any.missing = FALSE, unique = TRUE),
-            check_integer(value, lower = 1, any.missing = FALSE, unique = TRUE)
+            check_numeric(value, lower = 0, any.missing = FALSE, unique = TRUE),
+            check_integer(value, lower = 0, any.missing = FALSE, unique = TRUE)
           ),
           check_true(
             all(value == as.integer(value))
@@ -78,8 +78,8 @@ CharacterCodingCommand <- R6Class(
 
         assert(
           assert(
-            check_numeric(value, lower = 1, any.missing = FALSE, unique = TRUE),
-            check_integer(value, lower = 1, any.missing = FALSE, unique = TRUE)
+            check_numeric(value, lower = 0, any.missing = FALSE, unique = TRUE),
+            check_integer(value, lower = 0, any.missing = FALSE, unique = TRUE)
           ),
           check_true(
             all(value == as.integer(value))
