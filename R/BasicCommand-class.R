@@ -55,6 +55,7 @@
 #' @importFrom checkmate assert check_character check_choice check_class check_disjunct check_flag check_function check_int check_null check_number check_string check_subset makeAssertCollection test_function test_null test_true test_string
 #' @importFrom cli cli_abort cli_text col_grey col_red style_italic
 #' @importFrom glue glue glue_data
+#' @importFrom purrr keep
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_replace_all str_trim str_split_1
 BasicCommand <- R6Class(
@@ -290,7 +291,7 @@ BasicCommand <- R6Class(
       val_check <- check_class(.queue, "CommandQueue")
 
       if (!test_true(val_check)) {
-        cli_abort(c("{.arg .queue} must be either {.arg NULL} or a {.cls CommandQueue} object.",
+        cli_abort(c("{.arg .queue} must be a {.cls CommandQueue} object.",
           "x" = val_check
         ))
       }
@@ -308,7 +309,7 @@ BasicCommand <- R6Class(
     #' @return A `data.frame` with columns for description, current value,
     #'   and default value.
     format = function(...) {
-      invisible()
+      invisible(NULL)
     },
     #' @description
     #' Retrieve the value of a named dependency.
@@ -375,7 +376,7 @@ BasicCommand <- R6Class(
     new_dependency = function(name, required, callback) {
       coll <- makeAssertCollection()
 
-      all_names <- sapply(self$dependencies, getElement, "name") %>%
+      all_names <- sapply(self$dependencies, getElement, "name") |>
         names()
       if (length(all_names) == 0) {
         all_names <- character(0)
@@ -483,10 +484,10 @@ BasicCommand <- R6Class(
         ))
       }
 
-      output <- str_trim(output) %>%
-        str_split_1("[\n\r]+") %>%
-        str_trim() %>%
-        .[nchar(.) > 0]
+      output <- str_trim(output) |>
+        str_split_1("[\n\r]+") |>
+        str_trim() |>
+        keep(\(x) nchar(x) > 0)
       output
     }
   )
