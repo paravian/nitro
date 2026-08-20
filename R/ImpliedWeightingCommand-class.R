@@ -81,10 +81,7 @@ ImpliedWeightingCommand <- R6Class(
     #' correctly configured `ImpliedWeightingCommand` through this method
     #' before adding itself at priority `230`.
     #'
-    #' @param .queue A [CommandQueue] object, or `NULL` to create a new
-    #'   one.
-    #'
-    #' @return A [CommandQueue] object.
+    #' @param .queue A [CommandQueue] object.
     enqueue = function(.queue, priority = 160) {
       super$enqueue(.queue, priority)
 

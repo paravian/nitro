@@ -122,16 +122,12 @@ before adding itself at priority \code{230}.
   \subsection{Arguments}{
     \if{html}{\out{<div class="arguments">}}
     \describe{
-      \item{\code{.queue}}{A \link{CommandQueue} object, or \code{NULL} to create a new
-one.}
+      \item{\code{.queue}}{A \link{CommandQueue} object.}
       \item{\code{priority}}{[\code{integer(1)}]\cr
 A non-negative integer controlling execution order. Lower values
 execute first.}
     }
     \if{html}{\out{</div>}}
-  }
-  \subsection{Returns}{
-    A \link{CommandQueue} object.
   }
 }
 
