@@ -17,7 +17,7 @@
 #' `400`.
 #'
 #' @keywords internal
-#' @importFrom checkmate asInt check_integerish test_true
+#' @importFrom checkmate check_int test_true
 #' @importFrom cli cli_abort
 #' @importFrom R6 R6Class
 TreeBufferCommand <- R6Class(
@@ -35,7 +35,7 @@ TreeBufferCommand <- R6Class(
       if (missing(value)) {
         return(private$.size)
       } else {
-        val_check <- check_integerish(value)
+        val_check <- check_int(value, lower = 1)
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be an integer.",
@@ -43,7 +43,7 @@ TreeBufferCommand <- R6Class(
           ))
         }
 
-        value <- asInt(value)
+        value <- as.integer(value)
         private$.size <- value
       }
     }

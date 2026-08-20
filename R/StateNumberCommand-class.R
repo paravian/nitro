@@ -57,7 +57,7 @@ StateNumberCommand <- R6Class(
           ))
         }
 
-        value <- floor(value)
+        value <- as.integer(value)
         self$set_argument_value(label, value)
       }
     },

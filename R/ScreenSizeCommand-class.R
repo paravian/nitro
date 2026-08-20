@@ -17,7 +17,7 @@
 #' `110`.
 #'
 #' @keywords internal
-#' @importFrom checkmate asInt check_integerish test_true
+#' @importFrom checkmate check_int test_true
 #' @importFrom cli cli_abort
 #' @importFrom glue glue_data
 #' @importFrom R6 R6Class
@@ -37,7 +37,7 @@ ScreenSizeCommand <- R6Class(
       if (missing(value)) {
         return(private$.columns)
       } else {
-        val_check <- check_integerish(value)
+        val_check <- check_int(value, lower = 1)
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be an integer.",
@@ -45,7 +45,7 @@ ScreenSizeCommand <- R6Class(
           ))
         }
 
-        value <- asInt(value)
+        value <- as.integer(value)
         private$.columns <- value
       }
     },
@@ -57,7 +57,7 @@ ScreenSizeCommand <- R6Class(
       if (missing(value)) {
         return(private$.rows)
       } else {
-        val_check <- check_integerish(value)
+        val_check <- check_int(value, lower = 1)
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be an integer.",
@@ -65,7 +65,7 @@ ScreenSizeCommand <- R6Class(
           ))
         }
 
-        value <- asInt(value)
+        value <- as.integer(value)
         private$.rows <- value
       }
     }

@@ -32,8 +32,8 @@ Calling \verb{$enqueue()} adds this command to a \link{CommandQueue} at priority
   \if{html}{\out{<div class="r6-active-bindings">}}
   \describe{
     \item{\code{size}}{[\code{integer(1)}]\cr
-The amount of memory to allocate, in megabytes. Must be a
-positive integer.}
+The amount of memory to allocate, in megabytes. Must be a positive
+number.}
   }
   \if{html}{\out{</div>}}
 }

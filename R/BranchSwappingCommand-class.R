@@ -100,6 +100,7 @@ BranchSwappingCommand <- R6Class(
             "x" = val_check
           ))
         }
+        value <- as.integer(value)
         self$set_argument_value(label, value)
       }
     },
@@ -118,6 +119,7 @@ BranchSwappingCommand <- R6Class(
             "x" = val_check
           ))
         }
+        value <- as.integer(value)
         self$set_argument_value(label, value)
       }
     },
