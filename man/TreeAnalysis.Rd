@@ -132,7 +132,7 @@ a taxon present in \verb{$data}. If \code{NULL} is supplied, defaults to the
 first taxon in the matrix.}
 
     \item{\code{zlb_rule}}{[\code{character(1)}]\cr
-\emph{(Write-once.)} The rule for handling zero-length branches when
+\emph{(Write-many.)} The rule for handling zero-length branches when
 collapsing trees. See \strong{Details} for the available options.
 Defaults to \code{"minimum"}.}
   }

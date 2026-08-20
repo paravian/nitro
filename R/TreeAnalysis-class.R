@@ -268,7 +268,7 @@ TreeAnalysis <- R6Class(
       }
     },
     #' @field zlb_rule \[`character(1)`\]\cr
-    #'   *(Write-once.)* The rule for handling zero-length branches when
+    #'   *(Write-many.)* The rule for handling zero-length branches when
     #'   collapsing trees. See **Details** for the available options.
     #'   Defaults to `"minimum"`.
     zlb_rule = function(value) {
@@ -284,10 +284,16 @@ TreeAnalysis <- R6Class(
       if (missing(value)) {
         options[private$.zlb_rule]
       } else {
+        val_check <- check_string(value, min.chars = 1)
+        if (!test_true(val_check)) {
+          cli_abort(c("{.arg collapse} must be a valid string.",
+                      "x" = val_check))
+        }
+
         value <- match.arg(value, options)
         val_check <- check_choice(value, options)
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg collapse} choice must be valid.",
+          cli_abort(c("{.arg collapse} must be a valid choice.",
             "x" = val_check,
             "i" = "Set {.arg zlb_rule} to {options}."
           ))
