@@ -54,7 +54,7 @@ EchoCommand <- R6Class(
     #'
     #' @param .queue A [CommandQueue] object.
     enqueue = function(.queue, priority = 100) {
-      .queue <- super$enqueue(.queue)
+      .queue <- super$enqueue(.queue, priority)
     },
     #' @description
     #' Create a new `EchoCommand` object.
