@@ -251,7 +251,7 @@ TreeAnalysisResults <- R6Class(
       if (!test_null(node_labels) & !test_null(label_legend)) {
         new_header <- names(node_labels)[-1]
         names(new_header) <- label_legend$label
-        node_labels <- rename(node_labels, new_header)
+        node_labels <- rename(node_labels, all_of(new_header))
         label_legend$label <- NULL
       }
 
