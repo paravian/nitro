@@ -30,9 +30,8 @@
 #' * [ImpliedWeightingCommand] — enqueues this command after a search.
 #'
 #' @keywords internal
-#' @importFrom checkmate assert check_flag check_integerish check_null makeAssertCollection test_null test_numeric test_true test_class
+#' @importFrom checkmate assert check_flag check_null test_true test_class
 #' @importFrom cli cli_abort
-#' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_extract_all str_remove str_split
