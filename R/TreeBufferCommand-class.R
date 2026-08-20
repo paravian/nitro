@@ -61,6 +61,27 @@ TreeBufferCommand <- R6Class(
       super$enqueue(.queue, priority)
     },
     #' @description
+    #' Format the command as a summary table.
+    #'
+    #' Returns a data frame with one row per argument showing its
+    #' description, current value, and default value.
+    #'
+    #' @param ... Not used.
+    #'
+    #' @return A `data.frame` with columns for description, current value,
+    #'   and default value.
+    format = function(...) {
+      tbl <- c(
+          "Size:", self$size, ""
+        ) |>
+        t() |>
+        as.data.frame()
+
+      tbl[, 1] <- format(tbl[, 1], justify = "left")
+      names(tbl) <- c("", "Current value", "Default value")
+      tbl
+    },
+    #' @description
     #' Create a new `TreeBufferCommand` object.
     #'
     #' @param size \[`integer(1)`\]\cr

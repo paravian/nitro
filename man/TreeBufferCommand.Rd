@@ -40,14 +40,14 @@ be a positive integer.}
 \subsection{Public methods}{
   \itemize{
     \item \href{#method-TreeBufferCommand-enqueue}{\code{TreeBufferCommand$enqueue()}}
+    \item \href{#method-TreeBufferCommand-format}{\code{TreeBufferCommand$format()}}
     \item \href{#method-TreeBufferCommand-initialize}{\code{TreeBufferCommand$new()}}
     \item \href{#method-TreeBufferCommand-render}{\code{TreeBufferCommand$render()}}
     \item \href{#method-TreeBufferCommand-clone}{\code{TreeBufferCommand$clone()}}
   }
 }
-\if{html}{\out{<details><summary>Inherited methods</summary>
+\if{html}{\out{<details open><summary>Inherited methods</summary>
 <ul>
-  <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="format"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-format'><code>BasicCommand$format()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="get_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-get_dependency'><code>BasicCommand$get_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="new_dependency"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-new_dependency'><code>BasicCommand$new_dependency()</code></a></span></li>
   <li><span class="pkg-link" data-pkg="nitro" data-topic="BasicCommand" data-id="print"><a href='../../nitro/html/BasicCommand.html#method-BasicCommand-print'><code>BasicCommand$print()</code></a></span></li>
@@ -79,6 +79,32 @@ execute first.}
   }
   \subsection{Returns}{
     A \link{CommandQueue} object.
+  }
+}
+
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-TreeBufferCommand-format"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeBufferCommand-format}{}}}
+\subsection{\code{TreeBufferCommand$format()}}{
+  Format the command as a summary table.
+
+Returns a data frame with one row per argument showing its
+description, current value, and default value.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{TreeBufferCommand$format(...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{...}}{Not used.}
+    }
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Returns}{
+    A \code{data.frame} with columns for description, current value,
+and default value.
   }
 }
 
