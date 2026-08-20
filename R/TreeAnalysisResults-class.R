@@ -191,13 +191,9 @@ TreeAnalysisResults <- R6Class(
       }
 
       assert(
-        check_null(possible_steps),
-        assert(
-          check_numeric(possible_steps, lower = 0, len = 2, any.missing = FALSE),
-          check_subset(names(possible_steps), c("minimum", "maximum")),
-          combine = "and",
-          add = coll
-        ),
+        check_numeric(possible_steps, lower = 0, len = 2, any.missing = FALSE),
+        check_subset(names(possible_steps), c("minimum", "maximum")),
+        combine = "and",
         add = coll
       )
 
