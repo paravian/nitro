@@ -103,7 +103,7 @@ ReadTreesCommand <- R6Class(
     #'   command class.
     #'
     #' @return A new `ReadTreesCommand` object.
-    initialize = function(trees, ...) {
+    initialize = function(trees, inline = TRUE, ...) {
       a <- as.list(environment(), all = TRUE) %>%
         head(-1)
 

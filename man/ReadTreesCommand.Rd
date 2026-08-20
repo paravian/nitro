@@ -114,7 +114,7 @@ execute first.}
   Create a new \code{ReadTreesCommand} object.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ReadTreesCommand$new(trees, ...)}
+    \preformatted{ReadTreesCommand$new(trees, inline = TRUE, ...)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -122,6 +122,9 @@ execute first.}
     \describe{
       \item{\code{trees}}{[\code{phylo} or \code{multiPhylo}]\cr
 The tree or trees to read into TNT. See the \verb{$trees} field.}
+      \item{\code{inline}}{[\code{logical(1)}]\cr
+Whether to write this command to a separate file during script
+assembly (default: \code{FALSE}). See the \verb{$inline} field.}
       \item{\code{...}}{Optional named arguments passed to the constructor of the
 command class.}
     }
