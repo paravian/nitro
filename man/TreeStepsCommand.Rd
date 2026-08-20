@@ -38,7 +38,7 @@ Calling \verb{$enqueue()} adds this command to a \link{CommandQueue} at priority
 }
 \keyword{internal}
 \section{Super classes}{
-\code{\link[nitro:BasicCommand]{BasicCommand}} -> \code{\link[nitro:StandardCommand]{StandardCommand}} -> \code{ScoresCommand}
+\code{\link[nitro:BasicCommand]{BasicCommand}} -> \code{\link[nitro:StandardCommand]{StandardCommand}} -> \code{TreeStepsCommand}
 }
 \section{Active bindings}{
   \if{html}{\out{<div class="r6-active-bindings">}}
@@ -53,10 +53,10 @@ counts.}
 \section{Methods}{
 \subsection{Public methods}{
   \itemize{
-    \item \href{#method-ScoresCommand-enqueue}{\code{ScoresCommand$enqueue()}}
-    \item \href{#method-ScoresCommand-initialize}{\code{ScoresCommand$new()}}
-    \item \href{#method-ScoresCommand-transform}{\code{ScoresCommand$transform()}}
-    \item \href{#method-ScoresCommand-clone}{\code{ScoresCommand$clone()}}
+    \item \href{#method-TreeStepsCommand-enqueue}{\code{TreeStepsCommand$enqueue()}}
+    \item \href{#method-TreeStepsCommand-initialize}{\code{TreeStepsCommand$new()}}
+    \item \href{#method-TreeStepsCommand-transform}{\code{TreeStepsCommand$transform()}}
+    \item \href{#method-TreeStepsCommand-clone}{\code{TreeStepsCommand$clone()}}
   }
 }
 \if{html}{\out{<details><summary>Inherited methods</summary>
@@ -73,15 +73,15 @@ counts.}
 </ul>
 </details>}}
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ScoresCommand-enqueue"></a>}}
-\if{latex}{\out{\hypertarget{method-ScoresCommand-enqueue}{}}}
-\subsection{\code{ScoresCommand$enqueue()}}{
+\if{html}{\out{<a id="method-TreeStepsCommand-enqueue"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeStepsCommand-enqueue}{}}}
+\subsection{\code{TreeStepsCommand$enqueue()}}{
   Add this command to a \link{CommandQueue}.
 
 Adds this command at priority \code{700} by default.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ScoresCommand$enqueue(.queue, priority = 700)}
+    \preformatted{TreeStepsCommand$enqueue(.queue, priority = 700)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -97,13 +97,13 @@ execute first.}
 }
 
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ScoresCommand-initialize"></a>}}
-\if{latex}{\out{\hypertarget{method-ScoresCommand-initialize}{}}}
-\subsection{\code{ScoresCommand$new()}}{
+\if{html}{\out{<a id="method-TreeStepsCommand-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeStepsCommand-initialize}{}}}
+\subsection{\code{TreeStepsCommand$new()}}{
   Create a new \code{TreeStepsCommand} object.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ScoresCommand$new(soft_polytomies = FALSE, ...)}
+    \preformatted{TreeStepsCommand$new(soft_polytomies = FALSE, ...)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -123,13 +123,13 @@ command class.}
 }
 
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ScoresCommand-transform"></a>}}
-\if{latex}{\out{\hypertarget{method-ScoresCommand-transform}{}}}
-\subsection{\code{ScoresCommand$transform()}}{
+\if{html}{\out{<a id="method-TreeStepsCommand-transform"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeStepsCommand-transform}{}}}
+\subsection{\code{TreeStepsCommand$transform()}}{
   Parse raw TNT output into a numeric vector of step counts.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ScoresCommand$transform(output)}
+    \preformatted{TreeStepsCommand$transform(output)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{
@@ -146,13 +146,13 @@ A character vector of raw output lines from the TNT executable.}
 }
 
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-ScoresCommand-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-ScoresCommand-clone}{}}}
-\subsection{\code{ScoresCommand$clone()}}{
+\if{html}{\out{<a id="method-TreeStepsCommand-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-TreeStepsCommand-clone}{}}}
+\subsection{\code{TreeStepsCommand$clone()}}{
   The objects of this class are cloneable with this method.
   \subsection{Usage}{
     \if{html}{\out{<div class="r">}}
-    \preformatted{ScoresCommand$clone(deep = FALSE)}
+    \preformatted{TreeStepsCommand$clone(deep = FALSE)}
     \if{html}{\out{</div>}}
   }
   \subsection{Arguments}{

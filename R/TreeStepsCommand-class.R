@@ -26,7 +26,7 @@
 #' `700`.
 #'
 #' @keywords internal
-#' @importFrom checkmate assert check_flag check_integerish check_null makeAssertCollection test_null test_numeric test_true test_class
+#' @importFrom checkmate assert check_flag check_null test_null test_numeric test_true test_class
 #' @importFrom cli cli_abort
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
@@ -34,7 +34,7 @@
 #' @importFrom stringr str_extract_all str_remove str_split
 #' @importFrom utils tail
 TreeStepsCommand <- R6Class(
-  "ScoresCommand",
+  "TreeStepsCommand",
   inherit = StandardCommand,
   active = list(
     #' @field soft_polytomies \[`logical(1)`\]\cr
