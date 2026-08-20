@@ -106,12 +106,16 @@ resolve_dependencies <- function(commands, suppress_errors = TRUE) {
         old_resolved <- lapply(resolved, function(x) x$clone(deep = TRUE))
         is_resolved <- resolve_command(cmd, resolved, "required")
 
-        cmd_diff <- sapply(seq(resolved), function(x) {
-          !identical(resolved[[x]]$format(), old_resolved[[x]]$format())
-        })
-        for (cmd_idx in which(cmd_diff)) {
-          queues[[cmd_idx]] <- resolved[[cmd_idx]]$enqueue()
+        if (length(resolved) > 0) {
+          cmd_diff <- sapply(seq(resolved), function(x) {
+            !identical(resolved[[x]]$format(), old_resolved[[x]]$format())
+          })
+          for (cmd_idx in which(cmd_diff)) {
+            queues[[cmd_idx]] <- CommandQueue$new()
+            resolved[[cmd_idx]]$enqueue(queues[[cmd_idx]])
+          }
         }
+
       }
 
       if (is_resolved) {
