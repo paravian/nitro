@@ -119,7 +119,8 @@ resolve_dependencies <- function(commands, suppress_errors = TRUE) {
       }
 
       if (is_resolved) {
-        tmp_queue <- cmd$enqueue()
+        tmp_queue <- CommandQueue$new()
+        cmd$enqueue(tmp_queue)
         is_resolved <- tmp_queue$is_resolved
         if (!is_resolved) {
           queue_cmds <- tmp_queue$commands()
