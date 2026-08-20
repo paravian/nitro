@@ -294,7 +294,7 @@ ExtraSearchMethodsCommand <- R6Class(
     #'
     #' @param .queue A [CommandQueue] object.
     enqueue = function(.queue, priority = 501) {
-      .queue <- super$enqueue(.queue, priority)
+      super$enqueue(.queue, priority)
 
       for (cmd in self$sectorial_search) {
         cmd$set_only <- TRUE
