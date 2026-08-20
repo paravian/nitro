@@ -73,29 +73,23 @@ ReadDataCommand <- R6Class(
         if (test_class(value, "AbstractCharacterMatrix")) {
           value <- c(value)
         } else {
-          n_mtx <- length(value)
-          for (comb_a in seq(n_mtx - 1)) {
-            mtx_a <- value[comb_a]
-            mtx_match <- c()
-            for (comb_b in (comb_a + 1):n_mtx) {
-              mtx_b <- value[comb_b]
-              taxa_match <- test_disjunct(mtx_a$taxa, mtx_b$taxa)
-              mtx_match <- c(mtx_match, taxa_match)
-            }
-
-            if (!all(mtx_match)) {
+          Reduce(x = value, f = function(m1, m2) {
+            val_check <- check_subset(m1$taxa, m2$taxa)
+            if (!test_true(val_check)) {
               cli_abort(c("Matrices in {.arg data} must have at least one taxon in common."))
             }
-          }
-        }
 
-        is_continuous <- sapply(value, getElement, "data_type") %>%
-          equals("continuous")
-        if (any(is_continuous)) {
-          mtx_idx <- not(is_continuous) %>%
-            as.numeric() %>%
-            order()
-          value <- Reduce(c, value[mtx_idx])
+            unique(m1$taxa, m2$taxa)
+          })
+
+          is_continuous <- sapply(value, getElement, "data_type") %>%
+            equals("continuous")
+          if (any(is_continuous)) {
+            mtx_idx <- not(is_continuous) %>%
+              as.numeric() %>%
+              order()
+            value <- Reduce(c, value[mtx_idx])
+          }
         }
 
         private$.data <- value
