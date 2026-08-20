@@ -37,7 +37,7 @@ OutgroupCommand <- R6Class(
       if (missing(value)) {
         return(private$.taxon_name)
       } else {
-        val_check <- check_string(value)
+        val_check <- check_string(value, min.chars = 1)
 
         if (!test_true(val_check)) {
           cli_abort(c("{.arg {label}} must be a string.",
