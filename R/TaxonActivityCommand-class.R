@@ -39,10 +39,10 @@ TaxonActivityCommand <- R6Class(
       if (missing(value)) {
         return(private$.inactive_taxa)
       } else {
-        val_check <- check_character(value, min.chars = 1)
+        val_check <- check_character(value, min.chars = 1, min.len = 1, any.missing = FALSE)
 
         if (!test_true(val_check)) {
-          cli_abort(c("{.arg inactive_taxa} must be either {.val NULL} or a valid string.",
+          cli_abort(c("{.arg inactive_taxa} must be a valid character vector.",
             "x" = val_check
           ))
         }
