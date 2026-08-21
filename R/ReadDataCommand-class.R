@@ -74,12 +74,12 @@ ReadDataCommand <- R6Class(
           value <- c(value)
         } else {
           Reduce(x = value, f = function(m1, m2) {
-            val_check <- check_subset(m1$taxa, m2$taxa)
-            if (!test_true(val_check)) {
+            val_check <- any(m1$taxa %in% m2$taxa)
+            if (!val_check) {
               cli_abort(c("Matrices in {.arg data} must have at least one taxon in common."))
             }
 
-            unique(m1$taxa, m2$taxa)
+            list(taxa = unique(m1$taxa, m2$taxa))
           })
 
           is_continuous <- sapply(value, getElement, "data_type") |>
