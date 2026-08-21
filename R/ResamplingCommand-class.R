@@ -93,7 +93,7 @@
 #' @importFrom checkmate asInt assertInt check_character check_flag check_int check_multi_class check_null check_string check_subset test_class test_null test_true
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
+#' @importFrom purrr keep_at
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_replace str_replace_all str_to_lower str_to_upper
 #' @importFrom tibble as_tibble
@@ -137,9 +137,9 @@ ResamplingCommand <- R6Class(
         }
 
         choices <- c("absolute", "difference", "slope")
-        value <- pmatch(value, choices) %>%
-          na.omit() %>%
-          choices[.]
+        value <- pmatch(value, choices) |>
+          na.omit() |>
+          keep_at(x = choices, at = _)
 
         val_check <- check_subset(value, choices, empty.ok = FALSE)
         if (!test_true(val_check)) {
@@ -168,9 +168,9 @@ ResamplingCommand <- R6Class(
         }
 
         choices <- c("bootstrap", "jackknife", "symmetric")
-        value <- pmatch(value, choices) %>%
-          na.omit() %>%
-          choices[.]
+        value <- pmatch(value, choices) |>
+          na.omit() |>
+          keep_at(x = choices, at = _)
 
         val_check <- check_subset(value, choices)
         if (!test_true(val_check)) {
@@ -472,20 +472,20 @@ ResamplingCommand <- R6Class(
 
       legend_re <- "Copied legends: \"(?<frequency>[A-Za-z\\. ]+), (?<replicates>[0-9]+) replicates, cut=(?<cutoff>[0-9]+) \\(tree [0-9]\\) - (?<method>[A-Za-z ]+) \\(P=(?<probability>[0-9]+)\\)"
 
-      output <- str_match_all(output, legend_re) %>%
-        Reduce(f = rbind) %>%
-        extract(, -1)
+      output <- str_match_all(output, legend_re) |>
+        Reduce(f = rbind) |>
+        subset(select = -1)
 
       if (is.vector(output)) {
         output <- t(output)
       }
 
-      output <- as_tibble(output) %>%
+      output <- as_tibble(output) |>
         mutate(
           frequency = str_replace_all(frequency, summ_pattern),
-          method = str_replace_all(method, type_pattern) %>%
+          method = str_replace_all(method, type_pattern) |>
             str_to_lower(),
-          label = glue("{method} ({frequency})") %>%
+          label = glue("{method} ({frequency})") |>
             str_to_sentence(),
           across(all_of(c("replicates", "cutoff", "probability")), as.numeric)
         )

@@ -90,7 +90,7 @@ TaxonActivityCommand <- R6Class(
     #'
     #' @return A new `TaxonActivityCommand` object.
     initialize = function(inactive_taxa, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(

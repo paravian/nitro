@@ -87,7 +87,7 @@ OutgroupCommand <- R6Class(
     #'
     #' @return A new `OutgroupCommand` object.
     initialize = function(taxon_name, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(

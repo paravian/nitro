@@ -45,11 +45,12 @@
 #' * [TreeAnalysisResults] — the object returned by `$execute()`.
 #'
 #' @keywords internal
-#' @importFrom checkmate check_character check_choice check_environment check_flag check_null check_string test_list test_null test_string test_true
+#' @importFrom checkmate check_character check_choice check_environment check_file_exists check_flag check_null check_string test_list test_null test_string test_true
 #' @importFrom cli cli_abort cli_alert_danger cli_alert_info cli_alert_success cli_alert_warning cli_text col_grey col_red style_italic
 #' @importFrom glue glue
-#' @importFrom magrittr %>% extract extract2
+#' @importFrom magrittr extract
 #' @importFrom processx process
+#' @importFrom purrr keep keep_at pluck
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_detect str_extract str_match str_replace_all str_split_1 str_trim str_wrap
 #' @importFrom utils head tail
@@ -77,9 +78,9 @@ TntInterface <- R6Class(
         ))
       }
 
-      cleaned <- str_split_1(value, private$newline) %>%
-        str_trim() %>%
-        .[nchar(.) > 0]
+      cleaned <- str_split_1(value, private$newline) |>
+        str_trim() |>
+        keep(\(x) nchar(x) > 0)
       cleaned
     },
     #' @description
@@ -370,10 +371,10 @@ TntInterface <- R6Class(
         version_re <- "Version (?<number>[0-9]+\\.[0-9]+) - [0-9]+ bits - \\((?<date>[A-Za-z]+ [0-9]{4})\\)"
       }
 
-      tnt_info <- str_extract(buffer, version_re) %>%
-        na.omit() %>%
-        str_match(version_re) %>%
-        extract(1, -1) %>%
+      tnt_info <- str_extract(buffer, version_re) |>
+        na.omit() |>
+        str_match(version_re) |>
+        extract(1, -1) |>
         as.list()
 
       self$version <- glue("{tnt_info$number} ({tnt_info$date})")
@@ -452,8 +453,8 @@ TntInterface <- R6Class(
           err_check <- str_detect(proc_out, private$prompts$err)
           if (any(err_check)) {
             self$process$kill()
-            tnt_err <- str_match(proc_out[which(err_check)], private$prompts$err) %>%
-              extract(2)
+            tnt_err <- str_match(proc_out[which(err_check)], private$prompts$err) |>
+              keep_at(2)
             cli_abort(c("A TNT error occurred, cannot continue.",
               "x" = tnt_err
             ))
@@ -471,12 +472,12 @@ TntInterface <- R6Class(
       cli_alert_success("Tree analysis complete.")
 
       raw_output <- paste(raw_output, collapse = "")
-      cmd_names <- str_match_all(raw_output, private$prompts$cmd) %>%
-        extract2(1) %>%
-        extract(, 2) %>%
+      cmd_names <- str_match_all(raw_output, private$prompts$cmd) |>
+        pluck(1) |>
+        subset(select = 2) |>
         str_to_lower()
 
-      cmd_out <- str_split_1(raw_output, private$prompts$cmd) %>%
+      cmd_out <- str_split_1(raw_output, private$prompts$cmd) |>
         tail(-1)
 
       if (length(cmd_names) != length(cmd_out)) {
@@ -495,7 +496,7 @@ TntInterface <- R6Class(
           cmd <- queue_cmds[[cmd_idx]]
 
           if (cmd$name == cmd_name) {
-            cmd_match <- cmd_out[cmd$name == cmd_names] %>%
+            cmd_match <- cmd_out[cmd$name == cmd_names] |>
               paste(collapse = "")
             output_type <- str_replace(cmd$outputs, " ", "_")
             cmd_res <- cmd$transform(cmd_match)
@@ -587,7 +588,7 @@ TntInterface <- R6Class(
               cmd_output <- self$process$read_output()
             }
 
-            cmd_output <- str_split_1(cmd_output, private$newline) %>%
+            cmd_output <- str_split_1(cmd_output, private$newline) |>
               str_trim()
             all_output <- c(all_output, cmd_output)
           }

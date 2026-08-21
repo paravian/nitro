@@ -82,11 +82,11 @@ ReadDataCommand <- R6Class(
             unique(m1$taxa, m2$taxa)
           })
 
-          is_continuous <- sapply(value, getElement, "data_type") %>%
+          is_continuous <- sapply(value, getElement, "data_type") |>
             equals("continuous")
           if (any(is_continuous)) {
-            mtx_idx <- not(is_continuous) %>%
-              as.numeric() %>%
+            mtx_idx <- not(is_continuous) |>
+              as.numeric() |>
               order()
             value <- Reduce(c, value[mtx_idx])
           }
@@ -115,13 +115,13 @@ ReadDataCommand <- R6Class(
       )
       tax_name$enqueue(.queue)
 
-      max_states <- sapply(self$data, getElement, "n_states") %>%
+      max_states <- sapply(self$data, getElement, "n_states") |>
         unlist()
       if (!test_null(max_states)) {
         max_states <- max(max_states)
       }
 
-      any_continuous <- sapply(self$data, test_class, "ContinuousMatrix") %>%
+      any_continuous <- sapply(self$data, test_class, "ContinuousMatrix") |>
         any()
 
       state_num <- StateNumberCommand$new(max_states, any_continuous)
@@ -138,12 +138,12 @@ ReadDataCommand <- R6Class(
     #' @return A `data.frame` with columns for description, current value,
     #'   and default value.
     format = function(...) {
-      which_mtx <- sapply(self$data, function(x) class(x)[1]) %>%
+      which_mtx <- sapply(self$data, function(x) class(x)[1]) |>
         table()
-      names(which_mtx) <- names(which_mtx) %>%
-        str_to_lower() %>%
+      names(which_mtx) <- names(which_mtx) |>
+        str_to_lower() |>
         str_remove("matrix")
-      which_mtx <- glue("{which_mtx} {names(which_mtx)}") %>%
+      which_mtx <- glue("{which_mtx} {names(which_mtx)}") |>
         paste(collapse = ", ")
 
       options <- data.frame(
@@ -167,7 +167,7 @@ ReadDataCommand <- R6Class(
     #'
     #' @return A new `ReadDataCommand` object.
     initialize = function(data, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(
@@ -192,11 +192,11 @@ ReadDataCommand <- R6Class(
     #'
     #' @return A character vector of TNT command lines.
     render = function(...) {
-      all_taxa <- sapply(self$data, getElement, "taxa") %>%
-        unlist() %>%
+      all_taxa <- sapply(self$data, getElement, "taxa") |>
+        unlist() |>
         unique()
 
-      n_char <- sapply(self$data, getElement, "n_characters") %>%
+      n_char <- sapply(self$data, getElement, "n_characters") |>
         sum()
 
       args <- paste(n_char, length(all_taxa))

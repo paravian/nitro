@@ -150,8 +150,8 @@ TaxonNameCommand <- R6Class(
     #'
     #' @return A character vector of two TNT command strings.
     render = function(...) {
-      cmd <- super$render() %>%
-        str_remove(";$") %>%
+      cmd <- super$render() |>
+        str_remove(";$") |>
         str_split_1(" ")
 
       all_cmds <- paste(cmd[1], " ", cmd[-1], ";", sep = "")

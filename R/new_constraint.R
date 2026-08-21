@@ -39,7 +39,6 @@
 #'
 #' @importFrom checkmate check_list check_string test_null test_true
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
 #' @export
 new_constraint <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
@@ -70,9 +69,9 @@ new_constraint <- function(name, ...) {
   )
 
   args <- list(
-    name          = name,
+    name = name,
     object_choice = object_choice
-  ) %>%
+  ) |>
     c(args)
 
   do.call(create_new_object, args)

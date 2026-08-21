@@ -94,8 +94,8 @@ StandardCommand <- R6Class(
           arg$render("pretty", "value"),
           arg$render("pretty", "default_value")
         )
-      }) %>%
-        t() %>%
+      }) |>
+        t() |>
         as.data.frame()
 
       tbl[, 1] <- format(tbl[, 1], justify = "left")

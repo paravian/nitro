@@ -43,7 +43,7 @@
 #' @importFrom ape .compressTipLabel .uncompressTipLabel read.tree
 #' @importFrom checkmate check_class check_flag test_class test_true
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
+#' @importFrom magrittr add
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_match str_replace_all str_trim
 #' @importFrom utils tail
@@ -159,9 +159,9 @@ TreePlottingCommand <- R6Class(
     transform = function(output) {
       output <- super$transform(output)
 
-      phy <- str_match(output, "[\\(\\)0-9 ]+") %>%
-        tail(-1) %>%
-        str_trim() %>%
+      phy <- str_match(output, "[\\(\\)0-9 ]+") |>
+        tail(-1) |>
+        str_trim() |>
         str_replace_all(
           c(
             " " = ",",
@@ -169,18 +169,18 @@ TreePlottingCommand <- R6Class(
             "\\)\\(" = "\\),\\(",
             "$" = ";"
           )
-        ) %>%
-        lapply(read.tree, file = NULL) %>%
+        ) |>
+        lapply(read.tree, file = NULL) |>
         .compressTipLabel()
 
       matrix <- self$get_dependency("matrix")
 
-      all_taxa <- sapply(matrix$data, getElement, "taxa") %>%
-        unlist() %>%
+      all_taxa <- sapply(matrix$data, getElement, "taxa") |>
+        unlist() |>
         unique()
 
-      tax_idx <- attr(phy, "TipLabel") %>%
-        as.numeric() %>%
+      tax_idx <- attr(phy, "TipLabel") |>
+        as.numeric() |>
         add(1)
 
       attr(phy, "TipLabel") <- all_taxa[tax_idx]

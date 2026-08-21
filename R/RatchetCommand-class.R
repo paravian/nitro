@@ -67,7 +67,6 @@
 #' @importFrom checkmate asInt check_class check_int check_logical check_null test_null test_true
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom glue glue_data
-#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @export
 RatchetCommand <- R6Class(

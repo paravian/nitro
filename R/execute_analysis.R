@@ -118,7 +118,7 @@ execute_analysis <- function(interface, tree_analysis, tree_buffer_size = 100,
     ))
   }
 
-  all_cmds <- Reduce(c, tree_analysis$commands) %>%
+  all_cmds <- Reduce(c, tree_analysis$commands) |>
     c(
       EchoCommand$new(enable = TRUE),
       ScreenSizeCommand$new(columns = 50000, rows = 25),

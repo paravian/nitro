@@ -100,7 +100,7 @@ new_tree_search <- function(name, ...) {
   args <- list(
     name = name,
     object_choice = object_choice
-  ) %>%
+  ) |>
     c(args)
 
   tree_search_obj <- do.call(create_new_object, args)

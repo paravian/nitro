@@ -41,7 +41,6 @@
 #' @importFrom cli cli_abort cli_text col_grey col_red style_italic
 #' @importFrom dplyr across everything group_by mutate summarise where
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @importFrom stats na.omit
 #' @importFrom stringr str_pad str_replace_all str_replace_na
@@ -84,13 +83,13 @@ ContinuousMatrix <- R6Class(
           value[, taxon_col] <- str_replace_all(value[, taxon_col], "\\s+", "_")
 
           if (any(duplicated(value[, taxon_col]))) {
-            value <- group_by(value, taxon) %>%
+            value <- group_by(value, taxon) |>
               summarise(across(everything(), function(x) {
                 x <- na.omit(x)
                 if (length(x) > 0) {
-                  x <- round(x, 3) %>%
-                    range(x) %>%
-                    unique() %>%
+                  x <- round(x, 3) |>
+                    range(x) |>
+                    unique() |>
                     paste(collapse = "-")
                 } else {
                   x <- "?"
@@ -125,10 +124,7 @@ ContinuousMatrix <- R6Class(
     #'
     #' @return A `data.frame` summarising the matrix properties.
     format = function(...) {
-      n_inactive <- self$inactive %>%
-        {
-          ifelse(test_null(.), 0, length(.))
-        }
+      n_inactive <- length(self$inactive)
 
       options <- data.frame(
         c(

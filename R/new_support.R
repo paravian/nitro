@@ -43,7 +43,6 @@
 #'
 #' @importFrom checkmate check_list check_string test_null test_true
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
 #' @importFrom stringr str_to_lower
 #' @export
 new_support <- function(name, ...) {
@@ -77,7 +76,7 @@ new_support <- function(name, ...) {
   args <- list(
     name = name,
     object_choice = object_choice
-  ) %>%
+  ) |>
     c(args)
 
   resampling_choice <- c(

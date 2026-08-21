@@ -40,7 +40,8 @@
 #' @importFrom checkmate check_choice test_true
 #' @importFrom cli cli_abort
 #' @importFrom dplyr arrange mutate rowwise across everything
-#' @importFrom magrittr %>% use_series set_colnames
+#' @importFrom magrittr use_series set_colnames
+#' @importFrom purrr keep_at
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_extract str_match_all str_replace_all str_split
 #' @importFrom tibble as_tibble
@@ -66,9 +67,9 @@ TreeTaggingCommand <- R6Class(
       if (missing(value)) {
         return(private$.action)
       } else {
-        value <- pmatch(value, private$actions) %>%
-          na.omit() %>%
-          private$actions[.]
+        value <- pmatch(value, private$actions) |>
+          na.omit() |>
+          keep_at(x = private$actions, at = _)
 
         val_check <- check_choice(value, private$actions)
 
@@ -108,7 +109,7 @@ TreeTaggingCommand <- R6Class(
     #'
     #' @return A new `TreeTaggingCommand` object.
     initialize = function(action, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(
@@ -152,8 +153,8 @@ TreeTaggingCommand <- R6Class(
       phy <- str_extract(
         output,
         "[\\(\\)0-9 ]*"
-      ) %>%
-        paste(collapse = "") %>%
+      ) |>
+        paste(collapse = "") |>
         str_replace_all(
           c(
             " " = ",",
@@ -161,40 +162,40 @@ TreeTaggingCommand <- R6Class(
             "\\)\\(" = "\\),\\(",
             "$" = ";"
           )
-        ) %>%
+        ) |>
         read.tree(file = NULL)
 
-      tags <- str_replace(output, "\\[([0-9\\.]+)\\]", "-\\1") %>%
-        str_match_all("ttag \\+(?<node>[0-9]+) (?<tag>[0-9\\?\\.\\-]+[/0-9\\?\\.\\-]*)") %>%
-        Reduce(f = rbind) %>%
-        extract(, -1) %>%
-        as_tibble() %>%
+      tags <- str_replace(output, "\\[([0-9\\.]+)\\]", "-\\1") |>
+        str_match_all("ttag \\+(?<node>[0-9]+) (?<tag>[0-9\\?\\.\\-]+[/0-9\\?\\.\\-]*)") |>
+        Reduce(f = rbind) |>
+        subset(select = -1) |>
+        as_tibble() |>
         mutate(
           node = seq(Nnode(phy) - 1) + Ntip(phy) + 1,
         )
 
-      output <- tags %>%
-        rowwise() %>%
+      output <- tags |>
+        rowwise() |>
         mutate(
           tag = str_split(tag, "/")
-        ) %>%
+        ) |>
         unnest_wider(
           col = "tag",
           names_sep = "_"
         )
 
       phy_labels <- phy$tip.label
-      phy <- as.numeric(phy_labels) %>%
-        sort() %>%
-        as.character() %>%
+      phy <- as.numeric(phy_labels) |>
+        sort() |>
+        as.character() |>
         RenumberTips(tree = phy)
 
-      tnt_phy <- TntOrder(phy) %>%
+      tnt_phy <- TntOrder(phy) |>
         rotateConstr(phy_labels)
 
       get_ancs <- function(phy) {
-        edges <- reorder(phy) %>%
-          ladderize(right = FALSE) %>%
+        edges <- reorder(phy) |>
+          ladderize(right = FALSE) |>
           use_series("edge")
 
         n_tips <- Ntip(phy)
@@ -219,14 +220,14 @@ TreeTaggingCommand <- R6Class(
         ancs
       }
 
-      node_map <- list(tnt_phy, phy) %>%
-        sapply(get_ancs) %>%
-        set_colnames(c("tnt", "node")) %>%
+      node_map <- list(tnt_phy, phy) |>
+        sapply(get_ancs) |>
+        set_colnames(c("tnt", "node")) |>
         as_tibble()
 
-      output <- merge(node_map, output, by.x = "tnt", by.y = "node") %>%
-        mutate(tnt = NULL) %>%
-        arrange(node) %>%
+      output <- merge(node_map, output, by.x = "tnt", by.y = "node") |>
+        mutate(tnt = NULL) |>
+        arrange(node) |>
         as_tibble()
 
       output

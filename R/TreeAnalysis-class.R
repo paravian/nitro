@@ -96,7 +96,8 @@
 #' @importFrom cli cli_abort cli_alert_info cli_text col_grey col_red style_italic symbol
 #' @importFrom dplyr bind_rows if_else
 #' @importFrom glue glue
-#' @importFrom magrittr %>% %$% add and extract extract2
+#' @importFrom magrittr add and
+#' @importFrom purrr keep_at pluck
 #' @importFrom R6 R6Class
 #' @importFrom tibble tibble
 #' @importFrom tidytree as.treedata
@@ -170,8 +171,8 @@ TreeAnalysis <- R6Class(
       if (missing(value)) {
         return(private$.inactive_taxa)
       } else {
-        all_taxa <- sapply(private$.data, getElement, "taxa") %>%
-          unlist() %>%
+        all_taxa <- sapply(private$.data, getElement, "taxa") |>
+          unlist() |>
           unique()
 
         coll <- makeAssertCollection()
@@ -212,7 +213,7 @@ TreeAnalysis <- R6Class(
     #'   in `$data`.
     n_characters = function(value) {
       if (missing(value)) {
-        n_char <- sapply(self$data, getElement, "n_characters") %>%
+        n_char <- sapply(self$data, getElement, "n_characters") |>
           sum()
       } else {
         cli_abort(c("{.val n_taxa} is a read-only attribute."))
@@ -223,9 +224,9 @@ TreeAnalysis <- R6Class(
     #'   `$data`.
     n_taxa = function(value) {
       if (missing(value)) {
-        sapply(self$data, getElement, "taxa") %>%
-          as.vector() %>%
-          unique() %>%
+        sapply(self$data, getElement, "taxa") |>
+          unlist() |>
+          unique() |>
           length()
       } else {
         cli_abort(c("{.val n_taxa} is a read-only attribute."))
@@ -239,8 +240,8 @@ TreeAnalysis <- R6Class(
       if (missing(value)) {
         return(private$.outgroup)
       } else {
-        all_taxa <- sapply(self$data, getElement, "taxa") %>%
-          unlist() %>%
+        all_taxa <- sapply(self$data, getElement, "taxa") |>
+          unlist() |>
           unique()
 
         coll <- makeAssertCollection()
@@ -342,9 +343,9 @@ TreeAnalysis <- R6Class(
     #'   and default value.
     format = function(...) {
       parse_names <- function(name) {
-        str_extract_all(name, "[A-Z][a-z]+") %>%
-          extract2(1) %>%
-          paste(collapse = " ") %>%
+        str_extract_all(name, "[A-Z][a-z]+") |>
+          pluck(1) |>
+          paste(collapse = " ") |>
           str_to_sentence()
       }
 
@@ -406,10 +407,10 @@ TreeAnalysis <- R6Class(
       }
 
       if (test_null(outgroup)) {
-        self$outgroup <- self$data %>%
-          extract2(1) %$%
-          taxa %>%
-          extract(1)
+        self$outgroup <- self$data |>
+          pluck(1) |>
+          use_series("taxa") |>
+          keep_at(1)
       }
     },
     #' @description

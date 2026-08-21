@@ -74,7 +74,7 @@ ReadTreesCommand <- R6Class(
             x$node.label <- NULL
             x$edge.length <- NULL
             x
-          }) %>%
+          }) |>
             .compressTipLabel()
         }
 
@@ -104,7 +104,7 @@ ReadTreesCommand <- R6Class(
     #'
     #' @return A new `ReadTreesCommand` object.
     initialize = function(trees, inline = TRUE, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(
@@ -136,9 +136,9 @@ ReadTreesCommand <- R6Class(
         "," = " "
       )
 
-      tnt_trees <- write.tree(self$trees) %>%
-        paste(collapse = " ") %>%
-        str_replace_all(tnt_fmt) %>%
+      tnt_trees <- write.tree(self$trees) |>
+        paste(collapse = " ") |>
+        str_replace_all(tnt_fmt) |>
         str_split_1(";")
 
       cmd <- c(self$name, tnt_trees, ";")

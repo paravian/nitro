@@ -74,7 +74,7 @@ CommandQueue <- R6Class(
     #'   commands currently in the queue are satisfied.
     is_resolved = function(value) {
       if (missing(value)) {
-        is_resolved <- sapply(private$.commands, function(x) x$command$is_resolved) %>%
+        is_resolved <- sapply(private$.commands, function(x) x$command$is_resolved) |>
           all()
         return(is_resolved)
       }
@@ -175,7 +175,7 @@ CommandQueue <- R6Class(
       config <- c(
         "Queue length:" = self$length(),
         "Resolved:" = ifelse(self$is_resolved, "yes", "no")
-      ) %>%
+      ) |>
         data.frame()
       names(config) <- NULL
       print(config)

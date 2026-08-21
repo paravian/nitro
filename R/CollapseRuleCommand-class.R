@@ -44,7 +44,7 @@
 #' @keywords internal
 #' @importFrom checkmate check_choice check_flag test_true test_class
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
+#' @importFrom purrr keep_at
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_replace_all
 CollapseRuleCommand <- R6Class(
@@ -72,8 +72,8 @@ CollapseRuleCommand <- R6Class(
         return(self$get_argument_value(label))
       } else {
         value <- pmatch(value, private$rules) |>
-          na.omit() %>%
-          private$rules[.]
+          na.omit() |>
+          keep_at(x = private$rules, at = _)
 
         val_check <- check_choice(value, private$rules)
 
@@ -115,7 +115,7 @@ CollapseRuleCommand <- R6Class(
     #'
     #' @return A new `CollapseRuleCommand` object.
     initialize = function(rule, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         tail(-1)
 
       super$initialize(

@@ -48,7 +48,6 @@
 #'   makeAssertCollection test_class test_list test_null test_true
 #' @importFrom cli cli_abort cli_text col_grey style_italic col_red
 #' @importFrom glue glue
-#' @importFrom magrittr extract2
 #' @importFrom R6 R6Class
 TopologicalConstraintsCommand <- R6Class(
   "TopologicalConstraintsCommand",
@@ -145,9 +144,9 @@ TopologicalConstraintsCommand <- R6Class(
           ))
         }
 
-        all_taxa <- value$data %>%
-          sapply(getElement, "taxa") %>%
-          unlist() %>%
+        all_taxa <- value$data |>
+          sapply(getElement, "taxa") |>
+          unlist() |>
           unique()
 
         for (constraint in self$constraints) {
@@ -160,7 +159,7 @@ TopologicalConstraintsCommand <- R6Class(
             )
           } else if (test_class(constraint, "BackboneConstraint")) {
             ref_tree <- self$get_dependency("reference tree")
-            constraint_taxa <- ref_tree$trees %>%
+            constraint_taxa <- ref_tree$trees |>
               use_series("tip.label")
           }
 
@@ -238,15 +237,17 @@ TopologicalConstraintsCommand <- R6Class(
             type = ifelse(constraint$is_positive, "+", "-")
           )
         } else if (test_class(constraint, "BackboneConstraint")) {
-          force_arg <- ifelse(constraint$is_positive, "/", ":") %>%
+          force_arg <- ifelse(constraint$is_positive, "/", ":") |>
             paste("&0")
         }
 
         force_args <- c(force_args, force_arg)
       }
 
-      cmd <- paste(force_args, collapse = " ") %>%
-        paste(self$name, " ", ., ";", sep = "")
+      cmd <- glue(
+        "{self$name} {force_args};",
+        force_args = paste(force_args, collapse = " ")
+      )
       cmd
     }
   )

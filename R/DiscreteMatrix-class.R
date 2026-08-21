@@ -51,7 +51,7 @@
 #' @importFrom checkmate asInt assert check_class check_logical check_null check_numeric check_subset makeAssertCollection test_null test_true
 #' @importFrom cli cli_abort cli_text col_grey col_red style_italic
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
+#' @importFrom purrr keep
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_pad str_replace_all str_to_lower
 #' @importFrom tibble as_tibble
@@ -86,18 +86,16 @@ DiscreteMatrix <- R6Class(
           private$.data <- value
           private$.n_states <- attr(value, "nc")
           private$.n_characters <- length(attr(value, "index"))
-          private$.symbols <- attr(value, "levels") %>%
+          private$.symbols <- attr(value, "levels") |>
             as.character()
           private$.taxa <- names(value)
 
-          data_type <- attr(value, "type") %>%
+          data_type <- attr(value, "type") |>
             str_to_lower()
           if (data_type == "user") {
             noncoding <- c("?", "-")
-            symbols <- self$symbols %>%
-              {
-                .[!. %in% noncoding]
-              }
+            symbols <- self$symbols |>
+              keep(\(x) x %notin% noncoding)
             val_check <- check_subset(symbols, as.character(0:9))
             if (!test_true(val_check)) {
               val_check <- str_replace_all(val_check, "([\\{\\}])", "\\1\\1")
@@ -148,7 +146,7 @@ DiscreteMatrix <- R6Class(
         }
         return(NULL)
       } else {
-        n_chars <- attr(private$.data, "index") %>%
+        n_chars <- attr(private$.data, "index") |>
           length()
         coll <- makeAssertCollection()
         assert(
@@ -186,10 +184,8 @@ DiscreteMatrix <- R6Class(
     #'
     #' @return A `data.frame` summarising the matrix properties.
     format = function(...) {
-      log_lists <- list(ordered = self$ordered, inactive = self$inactive) %>%
-        {
-          lapply(., function(x) ifelse(is.null(x), 0, length(x)))
-        }
+      log_lists <- list(ordered = self$ordered, inactive = self$inactive) |>
+        lapply(length)
 
       options <- data.frame(
         c(

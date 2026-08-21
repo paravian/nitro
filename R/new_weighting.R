@@ -44,7 +44,6 @@
 #'
 #' @importFrom checkmate check_list check_string test_null test_true
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>%
 #' @export
 new_weighting <- function(name, ...) {
   val_check <- check_string(name, min.chars = 1)
@@ -77,7 +76,7 @@ new_weighting <- function(name, ...) {
   args <- list(
     name = name,
     object_choice = object_choice
-  ) %>%
+  ) |>
     c(args)
 
   weighting_obj <- do.call(create_new_object, args)

@@ -83,7 +83,8 @@
 #'
 #' @importFrom checkmate asInt assert check_class check_flag check_int check_class check_list check_null test_true test_null
 #' @importFrom cli cli_abort cli_text col_grey symbol
-#' @importFrom magrittr %>% extract extract2
+#' @importFrom magrittr extract
+#' @importFrom purrr keep_at pluck
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_detect str_extract_all str_replace str_to_sentence str_trim
 #' @export
@@ -349,9 +350,9 @@ ExtraSearchMethodsCommand <- R6Class(
       names(empty_row) <- names(options)
 
       parse_names <- function(name) {
-        str_extract_all(name, "[A-Z][a-z]+") %>%
-          extract2(1) %>%
-          paste(collapse = " ") %>%
+        str_extract_all(name, "[A-Z][a-z]+") |>
+          pluck(1) |>
+          paste(collapse = " ") |>
           str_to_sentence()
       }
 
@@ -360,11 +361,11 @@ ExtraSearchMethodsCommand <- R6Class(
           next
         }
 
-        module_class <- class(module) %>%
-          extract(1)
+        module_class <- class(module) |>
+          keep_at(1)
 
-        module_desc <- str_replace(module_class, "Command", "") %>%
-          parse_names() %>%
+        module_desc <- str_replace(module_class, "Command", "") |>
+          parse_names() |>
           paste("parameters:")
         module_header_row <- empty_row
         module_header_row[, 1] <- module_desc
@@ -457,9 +458,9 @@ ExtraSearchMethodsCommand <- R6Class(
           Random = "rss",
           Exclusive = "xss"
         )
-        class_names <- sapply(value, class) %>%
+        class_names <- sapply(value, class) |>
           extract(1, )
-        mask <- sapply(names(options), str_detect, string = class_names) %>%
+        mask <- sapply(names(options), str_detect, string = class_names) |>
           apply(2, any)
         cmd <- paste(
           c(options[mask], paste("no", options[!mask], sep = "")),
@@ -471,9 +472,9 @@ ExtraSearchMethodsCommand <- R6Class(
         ifelse(
           test_null(value),
           "none",
-          sapply(value, class) %>%
-            extract(1, ) %>%
-            str_replace("^([A-Z][a-z]+).+", "\\1") %>%
+          sapply(value, class) |>
+            extract(1, ) |>
+            str_replace("^([A-Z][a-z]+).+", "\\1") |>
             paste(collapse = ", ")
         )
       }

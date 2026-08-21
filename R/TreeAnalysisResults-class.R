@@ -70,7 +70,7 @@
 #' @importFrom cli cli_abort cli_text col_grey col_red style_italic
 #' @importFrom dplyr across bind_cols everything full_join mutate reframe rename
 #' @importFrom glue glue
-#' @importFrom magrittr %>% extract2 use_series
+#' @importFrom magrittr use_series
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_to_sentence
 #' @importFrom tibble as_tibble tibble
@@ -109,10 +109,11 @@ TreeAnalysisResults <- R6Class(
     statistics = function(...) {
       if (length(list(...)) == 0) {
         stat_df <- lapply(self$trees, function(x) {
-          slot(x, "info") %>% use_series("statistics")
-        }) %>%
-          Reduce(f = rbind) %>%
-          as_tibble() %>%
+          slot(x, "info") |>
+            use_series("statistics")
+        }) |>
+          Reduce(f = rbind) |>
+          as_tibble() |>
           unnest(cols = everything())
 
         return(stat_df)
@@ -255,8 +256,8 @@ TreeAnalysisResults <- R6Class(
         label_legend$label <- NULL
       }
 
-      trees <- lapply(trees, as_tibble) %>%
-        tibble(tree = .) %>%
+      trees <- lapply(trees, as_tibble) |>
+        tibble(tree = _) |>
         bind_cols(tree_data)
 
       rf_fn <- function(data) {
@@ -266,16 +267,16 @@ TreeAnalysisResults <- R6Class(
         }
         tree <- as.treedata(tree)
         slot(tree, "info") <- list(
-          statistics = mutate(data, tree = NULL) %>%
+          statistics = mutate(data, tree = NULL) |>
             as.vector()
         )
         list(tree)
       }
 
-      trees <- rowwise(trees) %>%
+      trees <- rowwise(trees) |>
         reframe(
           tree = rf_fn(across(everything()))
-        ) %>%
+        ) |>
         use_series("tree")
 
       private$.trees <- trees
@@ -287,7 +288,7 @@ TreeAnalysisResults <- R6Class(
     print = function(...) {
       cli_text(col_grey("# A ", style_italic(col_red("nitro")), " tree analysis result"))
 
-      options <- c(length(private$.trees)) %>%
+      options <- c(length(private$.trees)) |>
         data.frame()
 
       rownames(options) <- c("Number of trees:")
@@ -318,7 +319,7 @@ TreeAnalysisResults <- R6Class(
 #' @importFrom ape .compressTipLabel as.phylo
 #' @export
 as.phylo.TreeAnalysisResults <- function(x, ...) {
-  phy <- lapply(x$trees, as.phylo) %>%
+  phy <- lapply(x$trees, as.phylo) |>
     .compressTipLabel()
   if (length(phy) == 1) {
     return(phy[[1]])

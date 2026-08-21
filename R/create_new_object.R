@@ -22,7 +22,7 @@
 #' @importFrom cli cli_abort
 #' @importFrom stringr str_remove_all str_replace_all str_to_lower
 create_new_object <- function(name, object_choice, ...) {
-  name <- str_to_lower(name) %>%
+  name <- str_to_lower(name) |>
     str_remove_all("_")
 
   arg_choice <- str_to_lower(object_choice)

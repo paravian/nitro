@@ -31,7 +31,7 @@
 #' @importFrom checkmate check_flag test_true test_class
 #' @importFrom cli cli_abort
 #' @importFrom dplyr mutate rename
-#' @importFrom magrittr %>% extract2 set_names
+#' @importFrom magrittr set_names
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_match_all str_to_lower
 #' @importFrom tibble as_tibble
@@ -123,11 +123,11 @@ PossibleStepsCommand <- R6Class(
     #' @return A named numeric vector with elements `"minimum"` and
     #'   `"maximum"`.
     transform = function(output) {
-      steps <- str_match_all(output, "(?<type>M(ax|in)imum).+total = (?<count>[0-9\\.]+)") %>%
-        extract2(1) %>%
+      steps <- str_match_all(output, "(?<type>M(ax|in)imum).+total = (?<count>[0-9\\.]+)") |>
+        pluck(1) |>
         as.data.frame()
 
-      output <- as.numeric(steps$count) %>%
+      output <- as.numeric(steps$count) |>
         set_names(str_to_lower(steps$type))
 
       output

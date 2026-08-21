@@ -29,7 +29,6 @@
 #' @importFrom checkmate assert check_flag check_null test_null test_numeric test_true test_class
 #' @importFrom cli cli_abort
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_extract_all str_remove str_split
 #' @importFrom utils tail
@@ -78,7 +77,7 @@ TreeStepsCommand <- R6Class(
     #'
     #' @return A new `TreeStepsCommand` object.
     initialize = function(soft_polytomies = FALSE, ...) {
-      a <- as.list(environment(), all = TRUE) %>%
+      a <- as.list(environment(), all = TRUE) |>
         head(-1)
 
       super$initialize(
@@ -122,12 +121,12 @@ TreeStepsCommand <- R6Class(
     #'
     #' @return A numeric vector of step counts, one per tree.
     transform = function(output) {
-      output <- str_extract_all(output, "( *[0-9\\.]+)+") %>%
-        unlist() %>%
-        tail(-1) %>%
-        str_remove(" *[0-9]+ +") %>%
-        str_split(" +") %>%
-        unlist() %>%
+      output <- str_extract_all(output, "( *[0-9\\.]+)+") |>
+        unlist() |>
+        tail(-1) |>
+        str_remove(" *[0-9]+ +") |>
+        str_split(" +") |>
+        unlist() |>
         as.numeric()
 
       output

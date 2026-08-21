@@ -3,7 +3,7 @@
 #' @importFrom checkmate assert check_choice check_class check_null check_flag
 #'   makeAssertCollection test_null test_true
 #' @importFrom cli cli_abort
-#' @importFrom magrittr %>% extract extract2
+#' @importFrom magrittr extract2
 #' @param command A command to be resolved
 #' @param resolved A `CommandList` of resolved commands
 #' @param type The type of dependency to resolve
@@ -50,10 +50,9 @@ resolve_command <- function(command, resolved, type = "required",
   }
 
   provides <- sapply(resolved, getElement, "provides")
-  provide_cmds <- sapply(provides, test_null) %>%
-    not() %>%
-    which() %>%
-    extract(resolved, .)
+  provide_cmds <- sapply(provides, test_null) |>
+    not() |>
+    subset(x = resolved, subset = _)
   provides <- unlist(provides)
 
   all_depen <- command$requires
@@ -80,7 +79,7 @@ resolve_command <- function(command, resolved, type = "required",
           cli_abort(c("More than one command satisfies the dependency"))
         }
       } else if (sum(mask) == 1) {
-        dep_cmd <- extract(provide_cmds, mask) %>%
+        dep_cmd <- subset(provide_cmds, mask) |>
           extract2(1)
         command$set_dependency(depen, dep_cmd)
       }
