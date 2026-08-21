@@ -73,9 +73,6 @@
 #' bs$set_only <- TRUE
 #' bs$render()
 #'
-#' # Add to a command queue
-#' queue <- bs$enqueue()
-#'
 #' @importFrom checkmate check_int check_flag test_true test_class
 #' @importFrom cli cli_abort cli_text col_grey
 #' @importFrom R6 R6Class

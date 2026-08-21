@@ -70,9 +70,6 @@ bs$render()
 bs$set_only <- TRUE
 bs$render()
 
-# Add to a command queue
-queue <- bs$enqueue()
-
 }
 \references{
 Goloboff, P. A., Farris, J. S., & Nixon, K. C. (2008). TNT, a free
